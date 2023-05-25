@@ -1,5 +1,6 @@
 # RuMorph
 
+The rust compiler can only be accessed from nightly.
 ```bash
 rustup toolchain install nightly
 rustup default nightly         // change to nightly channel
