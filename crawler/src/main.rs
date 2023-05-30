@@ -1,6 +1,6 @@
 use std::error;
-use std::fs::File;
-use std::io::{BufReader, Read};
+use std::fs::{File, OpenOptions};
+use std::io::{BufReader, Read, Write};
 use csv::ReaderBuilder;
 use libflate::gzip::Decoder;
 use serde::de::DeserializeOwned;
@@ -44,6 +44,12 @@ fn read_csv<D: DeserializeOwned>(file: impl Read) -> Result<Vec<D>> {
     Ok(records)
 }
 
+/**
+The purpose of executor:
+from 052923 cratesio dbdump
+get top 20k downloaded crates
+write into list as .txt file
+**/
 fn executor() -> Result<()> {
     let mut crates: Vec<Crate> = Vec::new();
     let mut versions: Vec<CrateVersion> = Vec::new();
@@ -86,8 +92,16 @@ fn executor() -> Result<()> {
     }
     crates.par_sort_unstable_by(|a, b| b.downloads.cmp(&a.downloads));
     crates = crates.into_iter().take(MAX_CRATE_SIZE).collect();
+    let file_name = "crates_list.txt";
+    let mut file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .append(true)
+        .open(file_name)?;
+    writeln!(file, "crates:")?;
     for c in crates {
-        println!("{:?}", c);
+        writeln!(file, "{}", c.name);
     }
     Ok(())
 }
