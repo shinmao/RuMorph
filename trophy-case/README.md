@@ -24,4 +24,5 @@
 | [vrp/heuristic-research](https://crates.io/crates/vrp-cli) | M-ML | from-transmute | [#110](https://github.com/reinterpretcat/vrp/issues/110) | Exp crate in side vrp |
 | [OLD-twizzler/twz-rust](https://github.com/twizzler-operating-system/OLD-twizzler) | M- | transmute | [#9](https://github.com/twizzler-operating-system/OLD-twizzler/issues/9) | Not Lib |
 | [rust-8080](https://github.com/irevoire/rust-8080) | M-ML | transmute | [#16](https://github.com/irevoire/rust-8080/issues/16) | Not Lib |
-| [cyfs-base](https://crates.io/crates/cyfs-base) | .. | .. | .. | .. |
+| [cyfs-base](https://crates.io/crates/cyfs-base) | M-ML | transmute | [#275](https://github.com/buckyos/CYFS/issues/275) | In progress |
+| [cyfs-base](https://crates.io/crates/cyfs-base) | M-ML | transmute | [#274](https://github.com/buckyos/CYFS/issues/274) | Still not reported |
