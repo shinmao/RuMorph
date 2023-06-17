@@ -8,6 +8,8 @@ use serde_derive::Deserialize;
 use semver::Version;
 use tar::Archive;
 use rayon::prelude::*;
+use std::collections::HashMap;
+use std::cmp::Ordering;
 
 const MAX_CRATE_SIZE: usize = 20 * 1000;
 
@@ -92,6 +94,26 @@ fn executor() -> Result<()> {
     }
     crates.par_sort_unstable_by(|a, b| b.downloads.cmp(&a.downloads));
     crates = crates.into_iter().take(MAX_CRATE_SIZE).collect();
+
+    let mut latest_versions = HashMap::<u64, Version>::with_capacity(versions.len());
+    versions.into_iter().for_each(|cv| {
+        let num = cv.num;
+        latest_versions
+            .entry(cv.crate_id)
+            .and_modify(|v| {
+                if (*v).cmp(&num) == Ordering::Less {
+                    *v = num.clone();
+                }
+            })
+            .or_insert(num);
+    });
+
+    crates.iter_mut().for_each(|item: &mut Crate| {
+        if let Some(version) = latest_versions.remove(&item.crate_id) {
+            item.version = version;
+        }
+    });
+
     let file_name = "crates_list.txt";
     let mut file = OpenOptions::new()
         .read(true)
@@ -99,9 +121,13 @@ fn executor() -> Result<()> {
         .create(true)
         .append(true)
         .open(file_name)?;
-    writeln!(file, "crates:")?;
+    //writeln!(file, "crates:")?;
     for c in crates {
-        writeln!(file, "{}", c.name);
+        let repo_url = match c.repository {
+            Some(url) => url,
+            None => String::from("none"),
+        };
+        writeln!(file, "{},{},{}", c.name, c.version, repo_url);
     }
     Ok(())
 }
