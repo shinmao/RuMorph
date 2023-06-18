@@ -1,0 +1,462 @@
+*const adt>fnptr7715
+adt>adt3143
+uint>adt1455
+uint>uint1235
+fnptr>fnptr1106
+adt>fnptr1005
+int>adt657
+&adt>&adt481
+&[uint]>*mut uint313
+uint>char270
+*mut adt>fnptr253
+*mut uint>*mut adt204
+&mut adt>&mut adt201
+adt>uint147
+uint>[uint]146
+[int]>adt111
+*mut adt>&mut adt110
+&param>&param107
+uint>fnptr107
+&mut adt>[uint]107
+adt>*const adt92
+[uint]>adt91
+adt>[uint]89
+[uint]>uint85
+float>uint82
+*mut adt>adt80
+tuple>tuple76
+&*const adt>adt73
+adt>[int]68
+adt>*mut uint65
+adt>[float]59
+uint>float59
+&&[uint]>&str59
+&str>&adt55
+*mut uint>*mut int54
+&adt>[uint]52
+&&[uint]>&adt50
+&mut adt>*mut adt47
+&[adt]>&[param]47
+&[uint]>&[uint]46
+[float]>adt45
+*mut uint>*mut [int]44
+&&[uint]>&&[uint]41
+*mut adt>*mut param40
+adt>*mut adt39
+int>uint39
+int>[uint]35
+*const uint>*const adt35
+&str>&str34
+uint>int34
+*mut tuple>fnptr34
+*const int>*const adt34
+*const adt>uint34
+*mut adt>*mut adt33
+*mut adt>&adt33
+*const adt>&adt32
+&&[uint]>tuple32
+[uint]>[[uint]]30
+&mut param>&mut param30
+*mut int>*mut adt30
+&adt>&[param]29
+*const uint>fnptr29
+&uint>&adt28
+[uint]>int27
+&mut adt>&mut [param]27
+&adt>*const uint27
+&adt>&[uint]26
+[uint]>[uint]24
+*const param>&[param]24
+&param>&mut param24
+&adt>&tuple23
+&alias>&adt23
+*mut fnptr>fnptr22
+uint>&adt22
+*const adt>*const adt21
+*mut uint>*mut uint21
+adt>int21
+uint>*mut float21
+&mut &[uint]>&mut adt20
+&mut uint>&mut [uint]20
+float>[uint]19
+&&[param]>&&[uint]18
+*const param>&param16
+*mut param>&mut param16
+&param>&adt16
+*mut param>&mut [param]16
+&[adt]>&adt16
+*const tuple>fnptr16
+&mut [param]>&mut adt16
+float>int15
+&adt>*mut adt15
+*const adt>*const uint15
+&[param]>&adt15
+&adt>&[float]14
+&tuple>&tuple14
+&&[param]>&adt13
+[int]>[uint]13
+*mut adt>&mut param13
+&trait obj>&trait obj12
+&adt>&mut adt12
+&&[adt]>&&[adt]12
+&mut param>&mut adt12
+[adt]>[adt]12
+&mut param>*mut adt12
+&adt>&param11
+&mut adt>&mut param11
+&mut adt>*mut param11
+&uint>*const uint11
+fnptr>uint10
+*const adt>adt10
+*mut uint>*mut *mut adt10
+*const uint>adt10
+&&[int]>&&[uint]10
+*const fnptr>*const fnptr10
+&mut adt>&mut tuple10
+[uint]>float9
+&mut &[int]>&mut &[uint]9
+[[uint]]>[uint]9
+&&[uint]>&&[adt]9
+tuple>&trait obj9
+*const trait obj>adt9
+&tuple>&adt9
+&mut tuple>&mut adt9
+&mut &[adt]>&mut &[adt]8
+&mut [uint]>&mut [uint]8
+&[uint]>&[int]8
+&adt>*const param8
+&int>*const uint8
+&trait obj>tuple8
+*mut tuple>adt8
+uint>*const adt8
+&&[tuple]>&&[tuple]8
+[uint]>[adt]7
+adt>&adt7
+&adt>&[[float]]7
+[[float]]>adt7
+adt>[[float]]7
+*mut uint>*mut param7
+&mut trait obj>&mut trait obj7
+bool>uint7
+*mut adt>*mut uint7
+uint>*mut adt7
+&adt>&[adt]7
+&mut &[adt]>&mut &[param]7
+tuple>&mut trait obj7
+&adt>*mut uint7
+*const tuple>adt7
+&mut trait obj>adt7
+&adt>adt6
+*const trait obj>tuple6
+&&[param]>&&[param]6
+*mut adt>*const adt6
+&&[adt]>&&[param]6
+*const param>uint6
+&mut &[param]>&mut adt6
+*const uint>&adt6
+*const uint>*const uint5
+*mut param>adt5
+int>fnptr5
+&mut &[param]>&mut &[param]5
+int>int5
+uint>bool5
+tuple>adt5
+[int]>[int]5
+&param>*const uint5
+int>float5
+*const tuple>&param5
+*mut trait obj>*mut trait obj5
+*const adt>*mut uint5
+*const float>*const adt5
+tuple>*const adt5
+*mut adt>[uint]5
+*const int>[uint]5
+&[adt]>&[uint]4
+*mut uint>*mut *mut int4
+*mut param>*mut adt4
+*const uint>&[uint]4
+&[int]>*const int4
+&uint>&uint4
+&&[adt]>&&[uint]4
+*const int>*const int4
+*mut uint>*mut *mut uint4
+adt>*const tuple4
+*const uint>&int4
+*mut adt>uint4
+adt>*const uint4
+&adt>&uint4
+&&[uint]>&mut &[uint]4
+*const adt>*mut int4
+&trait obj>adt4
+*mut param>&param4
+&mut int>[uint]4
+&param>uint3
+&adt>*const adt3
+&mut adt>&mut [uint]3
+&mut alias>&mut alias3
+*mut uint>*mut [uint]3
+*const adt>*mut adt3
+*const param>adt3
+&mut param>adt3
+float>float3
+&&[uint]>&&[int]3
+&mut &param>&mut &param3
+adt>&mut param3
+&mut uint>&mut uint3
+&uint>&param3
+&mut adt>&mut uint3
+*mut uint>&mut adt3
+*const param>*mut param3
+*mut param>uint3
+uint>&mut adt3
+[adt]>[uint]3
+*const uint>*const [*const uint]3
+&[*const uint]>*const uint3
+&mut *mut uint>*mut *mut uint3
+adt>&mut adt3
+&mut &[adt]>&mut &[uint]3
+&uint>&[int]3
+&adt>&[[param]]3
+&mut adt>&mut [[param]]3
+&[[param]]>&adt3
+&mut [[param]]>&mut adt3
+uint>&mut param3
+&&[int]>&adt3
+&alias>&param3
+&mut alias>&mut param3
+&mut adt>&mut *mut param3
+&mut adt>*mut int3
+&mut adt>*mut uint3
+&mut adt>*mut float3
+&mut *mut uint>*mut adt3
+[uint]>tuple3
+*mut tuple>&mut param3
+*mut alias>&param3
+*const uint>[uint]3
+uint>[adt]3
+int>[adt]3
+adt>&mut trait obj3
+&adt>&[int]2
+&mut adt>&adt2
+tuple>&&[uint]2
+*mut uint>*mut float2
+[uint]>[int]2
+&adt>&&[uint]2
+&&[param]>&&[adt]2
+&float>*const adt2
+*const uint>*mut uint2
+&[uint]>*mut [int]2
+[*mut adt]>[adt]2
+&mut &[uint]>adt2
+&mut tuple>&mut tuple2
+&&[param]>&&[int]2
+&[uint]>&[param]2
+&[int]>&[param]2
+tuple>&&[alias]2
+uint>*mut param2
+*const uint>*const int2
+*mut adt>*mut *mut adt2
+&int>&int2
+&&param>&&param2
+uint>*mut uint2
+*const uint>&uint2
+adt>tuple2
+&*const int>*mut adt2
+&mut &[param]>&mut &[adt]2
+&&[adt]>&&[&&[adt]]2
+&&[&mut &[adt]]>&&[&&[adt]]2
+*const tuple>&mut param2
+&mut &[float]>&mut &[adt]2
+tuple>uint2
+uint>tuple2
+&param>&alias2
+&mut param>&mut alias2
+&mut &[float]>&mut &[uint]2
+&&[float]>&&[uint]2
+char>[uint]2
+&int>&uint2
+&mut int>&mut uint2
+*const float>*const uint2
+*const int>*const uint2
+*const param>*const uint2
+uint>&param2
+*const uint>uint2
+*const adt>*mut float2
+&param>&uint2
+&mut uint>&mut param2
+&*mut adt>&param2
+*mut adt>*mut &mut trait obj2
+&&mut trait obj>*mut adt2
+[float]>[adt]2
+[adt]>[float]2
+&mut adt>&mut &[uint]2
+&mut trait obj>tuple2
+*const uint>&mut adt2
+&[float]>uint2
+&adt>*mut tuple2
+*mut trait obj>tuple2
+&mut &[uint]>&mut str2
+&&[&adt]>&&[*const adt]2
+*const adt>&mut adt2
+&mut int>&adt2
+&trait obj>[*mut tuple]2
+*const &[param]>&mut &[param]2
+&[uint]>&uint2
+&uint>&[uint]2
+&[int]>&uint2
+&*const uint>*mut *mut int2
+&uint>*mut uint2
+*mut tuple>&param2
+&uint>*mut adt2
+&adt>tuple2
+*mut adt>*mut tuple2
+*mut tuple>*mut adt2
+bool>[uint]2
+&mut uint>[uint]2
+&mut float>[uint]2
+[uint]>[float]2
+*const param>*const param2
+*mut trait obj>adt1
+adt>*mut trait obj1
+&[param]>&[uint]1
+*mut adt>*const param1
+*const &[adt]>&&[adt]1
+*mut uint>*mut [adt]1
+&fnptr>&fnptr1
+&[float]>&[[float]]1
+&&[param]>&&[float]1
+&[float]>&[param]1
+&&[&adt]>&&[&&[param]]1
+*const trait obj>*const trait obj1
+&&[*const adt]>&&[adt]1
+adt>&str1
+float>*mut param1
+&*mut adt>*mut adt1
+*const &adt>*const *const adt1
+&&int>&&int1
+&mut &int>&mut &int1
+&mut int>&mut int1
+&&mut int>&&mut int1
+&mut &mut int>&mut &mut int1
+&alias>&alias1
+&&mut param>&&mut param1
+&mut &mut param>&mut &mut param1
+&mut *mut uint>adt1
+*const uint>*const param1
+*mut uint>&adt1
+&&[int]>adt1
+adt>&&[uint]1
+&adt>&str1
+&&[&&[uint]]>&&[&&[adt]]1
+&&[&mut &[uint]]>&&[&&[adt]]1
+&&[&&[adt]]>&&[&&[adt]]1
+&&[&&[int]]>&&[&&[adt]]1
+&&[&mut &[int]]>&&[&&[adt]]1
+&mut &[adt]>&mut &[&mut &[adt]]1
+&mut &[&mut &[uint]]>&mut &[&mut &[adt]]1
+&mut &[&mut &[adt]]>&mut &[&mut &[adt]]1
+&mut &[&mut &[int]]>&mut &[&mut &[adt]]1
+[float]>[uint]1
+[uint]>char1
+*const fnptr>fnptr1
+*const uint>&param1
+*const uint>&mut param1
+char>uint1
+&&[int]>&&[adt]1
+*mut uint>fnptr1
+&&[&adt]>&&[adt]1
+&mut &[&mut adt]>&mut &[adt]1
+&&[uint]>adt1
+adt>*mut tuple1
+&adt>&*mut tuple1
+&*mut tuple>&adt1
+&uint>&[float]1
+&mut uint>&mut [float]1
+&mut adt>&mut [float]1
+&mut uint>&mut [int]1
+&mut adt>&mut [int]1
+*mut param>*mut uint1
+&[adt]>&[[uint]]1
+&mut [adt]>&mut [uint]1
+&adt>&[alias]1
+&mut adt>&mut [alias]1
+adt>*mut param1
+&*mut adt>*mut *mut adt1
+&param>*const adt1
+&&[adt]>&str1
+*const adt>*mut bool1
+&mut param>&mut uint1
+int>&mut adt1
+[adt]>adt1
+*mut adt>&mut &mut trait obj1
+&mut str>&mut &[uint]1
+*const adt>&param1
+*const adt>&mut param1
+&alias>&mut alias1
+&mut alias>&mut adt1
+&adt>&&param1
+&mut adt>&mut &mut param1
+*mut int>*const int1
+&mut &[param]>&mut &[uint]1
+&mut adt>*mut *mut adt1
+*const param>*const adt1
+*const *const uint>*const uint1
+&mut *mut adt>*mut *mut adt1
+&*const uint>&param1
+*mut uint>*const uint1
+&mut [*const adt]>&mut adt1
+&mut *const adt>&mut adt1
+&[*const adt]>&adt1
+&*const adt>&adt1
+uint>*const param1
+&mut *mut uint>&mut &mut adt1
+&mut trait obj>[*mut tuple]1
+&trait obj>[uint]1
+*mut *mut adt>*mut *mut adt1
+*mut *mut adt>*mut adt1
+&&[adt]>&adt1
+&adt>&&[adt]1
+bool>bool1
+&&[*mut adt]>&&[&adt]1
+fnptr>*mut adt1
+fnptr>*const adt1
+&mut [adt]>&mut adt1
+&mut adt>&mut [adt]1
+&adt>&float1
+&float>&adt1
+[uint]>*const str1
+*const str>adt1
+tuple>*mut adt1
+*const *const param>*const *const tuple1
+*mut *mut param>*mut *mut tuple1
+*mut uint>*const adt1
+&[param]>&[alias]1
+&mut [param]>&mut [alias]1
+adt>&mut [adt]1
+&uint>*const adt1
+&mut uint>*mut uint1
+&mut param>*mut uint1
+&mut *mut param>&mut *mut param1
+&mut *mut param>&mut adt1
+*mut alias>&mut param1
+adt>[adt]1
+[[adt]]>[adt]1
+int>&adt1
+&adt>int1
+*mut float>*mut adt1
+[int]>[adt]1
+fnptr>adt1
+closure>fnptr1
+*const param>[uint]1
+*mut param>[uint]1
+&&adt>&mut adt1
+&adt>uint1
+adt>&mut &[int]1
+adt>&mut &[*mut int]1
+adt>&mut &[adt]1
+*mut float>&float1
+*mut float>&mut float1
+*mut int>*mut int1
+*const adt>*const int1
+tuple>&adt1
+*const param>*mut int1
