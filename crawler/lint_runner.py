@@ -1,6 +1,6 @@
 #!/usr/bin/python3.8
 import os, tarfile
-from multiprocessing import Pool, Manager, Queue
+from multiprocessing import Pool
 import subprocess
 from glob import glob
 
@@ -37,7 +37,7 @@ def analyzer(path):
 def writer(record):
     with open('./transmute_statistics.txt', 'a+') as output:
         for r in record:
-            output.write(r + '\n')
+            output.write(r)
 
 # check how many log files have been created
 def lint_log_checker():
@@ -46,9 +46,8 @@ def lint_log_checker():
 # execute clippy lint in each crate source
 def linter(path):
     os.chdir( os.path.join(base_path, path) )
-    if not os.path.exists("./lint.log"):
-        subprocess.call(lint_cmd, shell=True)
-        print(f"lint log for {path} has been created!")
+    subprocess.call(lint_cmd, shell=True)
+    print(f"lint log for {path} has been created!")
 
 # unzip the crate source
 def unzip(path):
@@ -62,12 +61,10 @@ def unzip(path):
             print(f"read error on {path}!")
 
 if __name__ == '__main__':
-    #mg = Manager()
-    #q = mg.Queue()
-    #with Pool(20) as pool:
-    #    for log in lint_log:
-    #        pool.apply_async(analyzer, (log,), callback=writer)
-    for log in lint_log:
-        writer(analyzer(log))
+    #with Pool(processes=20) as pool:
+    #    pool.map(linter, src_path)
     #pool.close()
     #pool.join()
+    #lint_log_checker()
+    for log in lint_log:
+        writer(analyzer(log))

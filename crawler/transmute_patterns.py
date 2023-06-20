@@ -2,8 +2,15 @@
 from pandas import *
 import collections
 
+def conv_txt_to_csv(input_path, output_path):
+    data = read_csv(input_path)
+    data.to_csv(output_path, index=None)
+
 if __name__ == '__main__':
-    data = read_csv("./transmute_stats.csv")
+    txt_path = "./transmute_statistics.txt"
+    csv_path = "./transmute_statistics.csv"
+    conv_txt_to_csv(txt_path, csv_path)
+    data = read_csv(csv_path)
     conv = data['conv'].tolist()
     col = collections.Counter(conv)
     with open("transmute_patterns.txt", 'a+') as f:
