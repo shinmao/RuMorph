@@ -9,7 +9,7 @@ def conv_txt_to_csv(input_path, output_path):
 if __name__ == '__main__':
     txt_path = "./transmute_statistics.txt"
     csv_path = "./transmute_statistics.csv"
-    conv_txt_to_csv(txt_path, csv_path)
+    #conv_txt_to_csv(txt_path, csv_path)
     data = read_csv(csv_path)
     conv = data['conv'].tolist()
     col = collections.Counter(conv)
