@@ -33,7 +33,7 @@ def analyzer(path):
                     caller = ty_info_warn[0].split(">")[0]
                     from_ty = ty_info_warn[0].split(">")[1]
                     to_ty = ty_info_warn[0].split(">")[2]
-                    record += crate + "," + caller + "," + from_ty + ">" + to_ty + "," + unsound
+                    record += crate + "," + caller + "," + from_ty + ">" + to_ty + "," + unsound + ","
                     CAPTURED = True
                 except IndexError as e:
                     print(f"IndexError occurs in {path}")

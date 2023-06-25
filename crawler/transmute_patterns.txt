@@ -7,7 +7,7 @@ enum>enum570
 uint>struct424
 int>struct373
 struct>fnptr347
-uint>enum317
+uint>enum319
 &[uint]>*mut uint277
 int>enum276
 uint>char270
@@ -17,8 +17,8 @@ uint>char270
 uint>[uint]135
 [int]>struct111
 &mut struct>[uint]107
-uint>fnptr96
 enum>uint96
+uint>fnptr96
 &param>&param94
 [uint]>struct90
 struct>[uint]87
@@ -55,19 +55,19 @@ uint>int32
 int>uint30
 *mut int>*mut enum30
 &struct>&[param]29
-*const uint>fnptr27
 &mut struct>&mut [param]27
-*mut struct>&struct26
+*const uint>fnptr27
 &struct>&[uint]26
+*mut struct>&struct26
 &uint>&enum26
 &mut struct>*mut struct25
 &str>&str25
 struct>*mut struct24
 [uint]>[uint]24
-&mut param>&mut param24
 int>[uint]24
-&param>&mut param24
+&mut param>&mut param24
 *const param>&[param]24
+&param>&mut param24
 *mut fnptr>fnptr22
 &alias>&struct22
 &struct>&tuple21
@@ -80,169 +80,167 @@ float>[uint]19
 &&[param]>&&[uint]18
 &mut enum>&mut enum17
 *const struct>*const struct17
-*mut enum>&mut struct16
-*mut enum>enum16
-&mut [param]>&mut struct16
 *mut param>&mut param16
 enum>struct16
 *mut param>&mut [param]16
-struct>enum15
-struct>int15
-&[param]>&struct15
+*mut enum>&mut struct16
+*mut enum>enum16
+&mut [param]>&mut struct16
 [uint]>int15
+struct>int15
+struct>enum15
 *mut uint>*mut enum15
+&[param]>&struct15
+&struct>&[float]14
 float>int14
 *const enum>*const uint14
-&struct>&[float]14
 *const param>&param14
 &tuple>&tuple14
-[int]>[uint]13
-*const tuple>fnptr13
-tuple>&trait obj13
 &&[param]>&struct13
+[int]>[uint]13
+tuple>&trait obj13
+*const tuple>fnptr13
+&struct>&mut struct12
 &param>&struct12
 struct>*mut enum12
 *mut struct>*mut struct12
 *mut enum>&mut param12
-&struct>&mut struct12
 &uint>*const uint11
 &struct>*mut struct11
-&[struct]>&struct11
 tuple>&mut trait obj11
-*mut enum>struct10
+&[struct]>&struct11
 *const uint>struct10
-&mut struct>&mut tuple10
+*mut enum>struct10
 *const fnptr>*const fnptr10
-&mut &[int]>&mut &[uint]9
+&mut struct>&mut tuple10
 [uint]>float9
-&mut param>*mut enum9
 [union]>[struct]9
+&mut &[int]>&mut &[uint]9
+[[uint]]>[uint]9
 &&[uint]>&&[struct]9
+&&[int]>&&[uint]9
+&mut param>*mut enum9
+*const trait obj>struct9
 &tuple>&struct9
 &mut tuple>&mut struct9
-*const trait obj>struct9
-[[uint]]>[uint]9
-&&[int]>&&[uint]9
 &mut struct>&mut param8
+&&[struct]>&&[struct]8
+&mut [uint]>&mut [uint]8
 &[uint]>&[int]8
 &struct>*const param8
 &mut struct>*mut param8
-*mut tuple>struct8
 &int>*const uint8
-&&[struct]>&&[struct]8
-&mut [uint]>&mut [uint]8
+*mut tuple>struct8
 &&[tuple]>&&[tuple]8
 &struct>&param7
 *mut enum>*mut struct7
-&mut &[union]>&mut &[param]7
-&mut param>&mut struct7
-enum>int7
 &struct>&[[float]]7
 [[float]]>struct7
 struct>[[float]]7
 *mut uint>*mut param7
 &mut trait obj>&mut trait obj7
+enum>int7
 bool>uint7
+&mut &[union]>&mut &[param]7
 &struct>*mut uint7
 &trait obj>tuple7
+&mut param>&mut struct7
 &mut trait obj>struct7
-*mut struct>*const struct6
-&mut struct>*mut enum6
-*const param>uint6
 &enum>&enum6
+*mut struct>*const struct6
+*const param>uint6
+&mut struct>*mut enum6
 *const enum>enum6
-*const uint>&struct6
 &mut &[param]>&mut struct6
+*const uint>&struct6
 *mut uint>*mut *mut struct5
-&mut &[param]>&mut &[param]5
 *const uint>*const uint5
+int>fnptr5
+&mut &[param]>&mut &[param]5
+int>int5
+uint>bool5
 uint>*mut struct5
 [int]>[int]5
 *mut enum>&struct5
+&&[union]>&&[param]5
 *const tuple>&param5
 *const enum>*mut uint5
 &trait obj>&trait obj5
-&struct>&[struct]5
-int>int5
-&&[union]>&&[param]5
-int>fnptr5
-uint>bool5
 [uint]>[struct]5
+&struct>&[struct]5
 *const float>*const enum5
 tuple>*const struct5
 *mut struct>[uint]5
 *const int>[uint]5
 *mut param>*mut enum4
+struct>&struct4
 *const uint>&[uint]4
-*const int>*const int4
-*mut enum>*mut enum4
 &union>&param4
+&[int]>*const int4
+&mut &[union]>&mut &[struct]4
+*const int>*const int4
+*mut uint>*mut *mut enum4
+*mut uint>*mut *mut uint4
+*const uint>&int4
+int>float4
+*mut enum>*mut enum4
+*mut param>struct4
 *mut struct>uint4
 struct>*const uint4
-*const uint>&int4
-struct>&struct4
+*mut trait obj>*mut trait obj4
 &struct>&uint4
 &&[uint]>&mut &[uint]4
 *const enum>*mut int4
-&param>*const uint4
-*mut param>struct4
-*mut param>&param4
-*mut trait obj>*mut trait obj4
-&[int]>*const int4
-&mut &[union]>&mut &[struct]4
-*mut uint>*mut *mut enum4
-*mut uint>*mut *mut uint4
-int>float4
 &trait obj>struct4
+*mut param>&param4
 tuple>struct4
+&param>*const uint4
 &mut int>[uint]4
+fnptr>uint3
 &param>uint3
 &&[uint]>&&[int]3
-*mut uint>*mut *mut int3
-*mut uint>*mut [uint]3
 &struct>*const struct3
-&mut union>&mut param3
-uint>&mut struct3
-*const param>*const enum3
-*const uint>*const [*const uint]3
-&[*const uint]>*const uint3
-*const uint>*const struct3
-&mut *mut uint>*mut *mut uint3
-&mut struct>&mut uint3
-&struct>&[[param]]3
-&mut struct>&mut [[param]]3
-&[[param]]>&struct3
-&mut [[param]]>&mut struct3
-&mut struct>&mut *mut param3
-fnptr>uint3
-&mut struct>*mut int3
-&mut struct>*mut uint3
-&mut struct>*mut float3
-&mut alias>&mut alias3
-*mut uint>&mut struct3
-*const struct>*mut struct3
-*mut param>uint3
-&struct>*mut enum3
-uint>[struct]3
-int>[enum]3
 &[enum]>&[uint]3
+*mut uint>*mut *mut int3
 &mut struct>&mut [uint]3
+&mut alias>&mut alias3
+&mut union>&mut param3
 &param>&union3
 &mut param>&mut union3
+*mut uint>*mut [uint]3
+*const uint>*const struct3
+*const struct>*mut struct3
 &&[union]>&&[struct]3
 &&[struct]>&&[uint]3
 float>float3
 enum>&mut param3
 &mut uint>&mut uint3
+&mut struct>&mut uint3
+*mut uint>&mut struct3
 *const param>*mut param3
+*mut param>uint3
+uint>&mut struct3
 [union]>[uint]3
+*const param>*const enum3
+*const uint>*const [*const uint]3
+&[*const uint]>*const uint3
+&mut *mut uint>*mut *mut uint3
 struct>&enum3
+&struct>*mut enum3
 &mut &[union]>&mut &[uint]3
+&struct>&[[param]]3
+&mut struct>&mut [[param]]3
+&[[param]]>&struct3
+&mut [[param]]>&mut struct3
 uint>&mut param3
 &&[int]>&struct3
 &alias>&param3
 &mut alias>&mut param3
+&mut struct>&mut *mut param3
 &mut union>*mut param3
+&mut struct>*mut int3
+&mut struct>*mut uint3
+&mut struct>*mut float3
 &struct>struct3
 &mut *mut uint>*mut enum3
 [uint]>tuple3
@@ -250,54 +248,42 @@ uint>&mut param3
 *mut tuple>&mut param3
 *mut alias>&param3
 *const uint>[uint]3
+uint>[struct]3
+int>[enum]3
 struct>&mut trait obj3
 &struct>&[int]2
+tuple>&&[uint]2
+[uint]>[enum]2
 *mut uint>*mut float2
 &struct>&&[uint]2
 &&[param]>&&[union]2
 &float>*const enum2
-&&[param]>&&[int]2
-&[uint]>&[param]2
-&[int]>&[param]2
-*const struct>struct2
-uint>*mut param2
-&union>&struct2
-&*const int>*mut enum2
-struct>*const struct2
-&uint>&struct2
-*const tuple>&mut param2
-*const uint>&uint2
-*const tuple>ManuallyDrop<struct2
-*const tuple>struct2
-struct>&mut struct2
-*const float>*const uint2
-*const int>*const uint2
-*const param>*const uint2
-*const enum>*mut float2
-&mut uint>&mut param2
-&[float]>uint2
-*const trait obj>tuple2
-*mut trait obj>tuple2
-&trait obj>[*mut tuple]2
-&uint>&param2
 *const uint>*mut uint2
-uint>*mut enum2
-&uint>*mut enum2
-*const uint>uint2
-tuple>&&[uint]2
-[uint]>[enum]2
 union>union2
 &[uint]>*mut [int]2
 *const param>enum2
 [*mut struct]>[struct]2
+*const trait obj>tuple2
+&&[param]>&&[int]2
+&[uint]>&[param]2
+&[int]>&[param]2
 tuple>&&[alias]2
+*const struct>struct2
+uint>*mut param2
 *const uint>*const int2
 *mut enum>*mut uint2
+&union>&struct2
 uint>*mut uint2
+*const uint>&uint2
 &uint>&uint2
+&uint>&param2
 struct>tuple2
+&*const int>*mut enum2
+struct>*const struct2
+&uint>&struct2
 &&[struct]>&&[&&[union]]2
 &&[&mut &[union]]>&&[&&[union]]2
+*const tuple>&mut param2
 &mut &[float]>&mut &[struct]2
 tuple>uint2
 uint>tuple2
@@ -308,7 +294,16 @@ uint>tuple2
 char>[uint]2
 &int>&uint2
 &mut int>&mut uint2
+*const tuple>ManuallyDrop<struct2
+*const tuple>struct2
+struct>&mut struct2
+*const float>*const uint2
+*const int>*const uint2
+*const param>*const uint2
 uint>&param2
+*const uint>uint2
+*const enum>*mut float2
+&mut uint>&mut param2
 &*mut enum>&param2
 &&mut trait obj>*mut enum2
 [float]>[struct]2
@@ -316,16 +311,21 @@ uint>&param2
 &mut struct>&mut &[uint]2
 &mut trait obj>tuple2
 *const uint>&mut struct2
+&[float]>uint2
+*mut trait obj>tuple2
 &mut &[uint]>&mut str2
 &&[&struct]>&&[*const struct]2
 *const struct>&mut struct2
 &mut int>&struct2
 [struct]>[struct]2
+&trait obj>[*mut tuple]2
 &mut &[enum]>&mut &[enum]2
+uint>*mut enum2
 *const &[param]>&mut &[param]2
 &*const uint>*mut *mut int2
 &uint>*mut uint2
 *mut tuple>&param2
+&uint>*mut enum2
 &struct>tuple2
 *mut struct>*mut tuple2
 *mut tuple>*mut struct2
@@ -339,94 +339,32 @@ struct>*mut trait obj1
 &[param]>&[uint]1
 &*mut struct>&struct1
 &&[*mut struct]>&&[struct]1
-*mut param>*mut struct1
-*const &[enum]>&&[enum]1
-&[float]>&[[float]]1
-&&[param]>&&[float]1
-&[float]>&[param]1
-*const trait obj>*const trait obj1
-float>*mut param1
-&*mut struct>*mut struct1
-*const &struct>*const *const struct1
-enum>*const tuple1
-*mut struct>*mut union1
-&mut struct>*mut union1
-&union>*mut struct1
-&mut union>&mut struct1
-&tuple>&param1
-*const struct>*const uint1
-*const fnptr>fnptr1
-*const uint>&param1
-*const uint>&mut param1
-&&[int]>&&[struct]1
-&struct>enum1
-&&[&struct]>&&[struct]1
-&mut &[&mut struct]>&mut &[struct]1
-&&[uint]>struct1
-struct>*mut tuple1
-&struct>&*mut tuple1
-&*mut tuple>&struct1
-&uint>&[float]1
-&mut uint>&mut [float]1
-&mut struct>&mut [float]1
-&uint>&[int]1
-&mut uint>&mut [int]1
-&mut struct>&mut [int]1
-*mut param>*mut uint1
-&[struct]>&[[uint]]1
-&mut [struct]>&mut [uint]1
-&[struct]>&[uint]1
-*const param>struct1
-&struct>&[alias]1
-&mut struct>&mut [alias]1
-union>uint1
-enum>*mut param1
-&*mut enum>*mut *mut enum1
-&param>*const enum1
-&&[enum]>&str1
-&&[enum]>&&[uint]1
-*const enum>*mut bool1
-&param>&uint1
-&mut param>&mut uint1
-&struct>&&param1
-&mut struct>&mut &mut param1
-&mut struct>*mut *mut enum1
-*const *const uint>*const uint1
-&mut *mut struct>*mut *mut struct1
-&*const uint>&param1
-&mut trait obj>[*mut tuple]1
-&trait obj>[uint]1
-*mut *mut enum>*mut *mut enum1
-*mut *mut enum>*mut enum1
-&&[struct]>&struct1
-&struct>&&[struct]1
-enum>&mut struct1
-fnptr>*mut enum1
-fnptr>*const enum1
-[uint]>*const str1
-*const str>enum1
-*const *const param>*const *const tuple1
-*mut *mut param>*mut *mut tuple1
-&uint>*const enum1
-&mut *mut param>&mut *mut param1
-*mut float>*mut enum1
-[int]>[struct]1
-fnptr>enum1
-closure>fnptr1
-&&struct>&mut struct1
-*const param>*mut int1
 *const struct>enum1
 &enum>enum1
+*mut param>*mut struct1
+*const &[enum]>&&[enum]1
 *mut uint>*mut [struct]1
 &mut &[struct]>&mut &[struct]1
 &mut param>&mut ManuallyDrop<struct1
 &mut ManuallyDrop<struct>1
 *mut param>enum1
+&[float]>&[[float]]1
+&&[param]>&&[float]1
+&[float]>&[param]1
 &&[&struct]>&&[&&[param]]1
+*const trait obj>*const trait obj1
 struct>&str1
+float>*mut param1
+&*mut struct>*mut struct1
+*const &struct>*const *const struct1
 tuple>enum1
 &int>&int1
 &mut *mut uint>struct1
+enum>*const tuple1
+*mut struct>*mut union1
+&mut struct>*mut union1
+&union>*mut struct1
+&mut union>&mut struct1
 *const uint>*const param1
 *mut uint>&struct1
 &mut &[param]>&mut &[union]1
@@ -443,17 +381,52 @@ struct>&&[uint]1
 &mut &[&mut &[union]]>&mut &[&mut &[union]]1
 &mut &[&mut &[int]]>&mut &[&mut &[union]]1
 [float]>[uint]1
+&tuple>&param1
+*const struct>*const uint1
 &enum>&struct1
 [uint]>char1
+*const fnptr>fnptr1
+*const uint>&param1
+*const uint>&mut param1
 uint>&enum1
 char>uint1
+&&[int]>&&[struct]1
 *mut uint>fnptr1
+&struct>enum1
+&&[&struct]>&&[struct]1
+&mut &[&mut struct]>&mut &[struct]1
+&&[uint]>struct1
+struct>*mut tuple1
+&struct>&*mut tuple1
+&*mut tuple>&struct1
+&uint>&[float]1
+&mut uint>&mut [float]1
+&mut struct>&mut [float]1
+&uint>&[int]1
+&mut uint>&mut [int]1
+&mut struct>&mut [int]1
 &&[struct]>&&[param]1
 &[struct]>&[param]1
+*mut param>*mut uint1
+&[struct]>&[[uint]]1
+&mut [struct]>&mut [uint]1
+&[struct]>&[uint]1
 union>[uint]1
 [uint]>union1
+*const param>struct1
 *mut struct>*mut uint1
 [uint]>[int]1
+&struct>&[alias]1
+&mut struct>&mut [alias]1
+union>uint1
+enum>*mut param1
+&*mut enum>*mut *mut enum1
+&param>*const enum1
+&&[enum]>&str1
+&&[enum]>&&[uint]1
+*const enum>*mut bool1
+&param>&uint1
+&mut param>&mut uint1
 *mut struct>*mut enum1
 enum>*mut enum1
 int>&mut struct1
@@ -464,8 +437,14 @@ int>&mut struct1
 *const struct>&param1
 *const struct>&mut param1
 &alias>&mut alias1
+&struct>&&param1
+&mut struct>&mut &mut param1
 *mut int>*const int1
 &mut &[param]>&mut &[uint]1
+&mut struct>*mut *mut enum1
+*const *const uint>*const uint1
+&mut *mut struct>*mut *mut struct1
+&*const uint>&param1
 &struct>&enum1
 &mut [*const struct]>&mut struct1
 &mut *const struct>&mut struct1
@@ -473,12 +452,25 @@ int>&mut struct1
 &*const struct>&struct1
 uint>*const param1
 &mut *mut uint>&mut &mut struct1
+&mut trait obj>[*mut tuple]1
+&trait obj>[uint]1
 &mut &[param]>&mut &[struct]1
+*mut *mut enum>*mut *mut enum1
+*mut *mut enum>*mut enum1
+&&[struct]>&struct1
+&struct>&&[struct]1
+enum>&mut struct1
 bool>bool1
+fnptr>*mut enum1
+fnptr>*const enum1
 &&[enum]>&&[enum]1
 &mut [struct]>&mut struct1
 &mut struct>&mut [struct]1
+[uint]>*const str1
+*const str>enum1
 tuple>*mut struct1
+*const *const param>*const *const tuple1
+*mut *mut param>*mut *mut tuple1
 &mut struct>&struct1
 *mut enum>*mut *mut enum1
 *mut uint>*const enum1
@@ -487,15 +479,22 @@ tuple>*mut struct1
 &mut [param]>&mut [alias]1
 &mut &param>&mut &param1
 struct>&mut [union]1
+&uint>*const enum1
 &mut param>*mut uint1
+&mut *mut param>&mut *mut param1
 &mut *mut param>&mut enum1
 *mut alias>&mut param1
 struct>[union]1
 [[union]]>[struct]1
 int>&struct1
 &struct>int1
+*mut float>*mut enum1
+[int]>[struct]1
+fnptr>enum1
+closure>fnptr1
 *const param>[uint]1
 *mut param>[uint]1
+&&struct>&mut struct1
 &struct>uint1
 enum>[uint]1
 struct>&mut &[int]1
@@ -506,3 +505,4 @@ struct>&mut &[struct]1
 *mut int>*mut int1
 *const union>*const int1
 tuple>&struct1
+*const param>*mut int1
