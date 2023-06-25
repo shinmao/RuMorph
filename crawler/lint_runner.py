@@ -9,6 +9,7 @@ src_path = os.listdir("/home/RuMorph/crates/source")
 base_path = "/home/RuMorph/crates/source/"
 lint_cmd = "cargo +nightly-2023-06-02 clippy -- -Wclippy::transmute_statistics > ./lint.log 2>&1"
 lint_log = glob("/home/RuMorph/crates/source/*/lint.log")
+fail_log_path = "/home/RuMorph/crawler/fail.log"
 
 # analyzer the lint.log in each crate source
 def analyzer(path):
@@ -20,15 +21,27 @@ def analyzer(path):
     with open(path, 'r', encoding='utf-8') as f:
         for l_num, line in enumerate(f):
             if CAPTURED:
-                code_loc = line
+                code_loc = line[ line.find("-->") + 4: ]
                 record += code_loc
                 CAPTURED = False
                 record_list.append(record)
                 record = ""
             if line.startswith('warning: Here is transmute('):
-                ty_info_warn = line[27:-3].split("=>")
-                record += crate + "," + ty_info_warn[0] + "," + ty_info_warn[1] + ","
-                CAPTURED = True
+                try:
+                    ty_info_warn = line[27:-3].split("=>")
+                    unsound = ty_info_warn[1]
+                    caller = ty_info_warn[0].split(">")[0]
+                    from_ty = ty_info_warn[0].split(">")[1]
+                    to_ty = ty_info_warn[0].split(">")[2]
+                    record += crate + "," + caller + "," + from_ty + ">" + to_ty + "," + unsound
+                    CAPTURED = True
+                except IndexError as e:
+                    print(f"IndexError occurs in {path}")
+                    with open(fail_log_path, 'a+') as f2:
+                        f2.write(path + '\n')
+                    f2.close()
+                    f.close()
+                    return []
     f.close()
     print(f"done for {crate}")
     return record_list
@@ -39,15 +52,24 @@ def writer(record):
         for r in record:
             output.write(r)
 
-# check how many log files have been created
-def lint_log_checker():
-    print( sum(1 for c in lint_log) )
+# run lint on the crates which fail the test again
+def fail_log_analyzer():
+    with open( fail_log_path, 'r', encoding='utf-8' ) as f:
+        for l_num, line in enumerate(f):
+            writer(analyzer(line.strip() + 'lint.log'))
+    f.close()
 
 # execute clippy lint in each crate source
 def linter(path):
     os.chdir( os.path.join(base_path, path) )
     subprocess.call(lint_cmd, shell=True)
     print(f"lint log for {path} has been created!")
+
+# remove all existing log files
+def existing_log_rm():
+    for log in lint_log:
+        if os.path.exists(log):
+            os.remove(log)
 
 # unzip the crate source
 def unzip(path):
@@ -61,10 +83,13 @@ def unzip(path):
             print(f"read error on {path}!")
 
 if __name__ == '__main__':
-    #with Pool(processes=20) as pool:
-    #    pool.map(linter, src_path)
-    #pool.close()
-    #pool.join()
-    #lint_log_checker()
-    for log in lint_log:
-        writer(analyzer(log))
+    '''
+    existing_log_rm()
+    with Pool(processes=20) as pool:
+        pool.map(linter, src_path)
+    pool.close()
+    pool.join()
+    '''
+    fail_log_analyzer()
+    #for log in lint_log:
+    #    writer(analyzer(log))
