@@ -26,6 +26,6 @@
 | [vrp/heuristic-research](https://crates.io/crates/vrp-cli) | M-ML | from-transmute | [#110](https://github.com/reinterpretcat/vrp/issues/110) | Issue |
 | [OLD-twizzler/twz-rust](https://github.com/twizzler-operating-system/OLD-twizzler) | M- | transmute | [#9](https://github.com/twizzler-operating-system/OLD-twizzler/issues/9) | Issue |
 | [rust-8080](https://github.com/irevoire/rust-8080) | M-ML | transmute | [#16](https://github.com/irevoire/rust-8080/issues/16) | Issue |
-| [cyfs-base](https://crates.io/crates/cyfs-base) | M-ML | transmute | [#275](https://github.com/buckyos/CYFS/issues/275) | In progress |
+| [cyfs-base](https://crates.io/crates/cyfs-base) | M-ML | transmute | [#275](https://github.com/buckyos/CYFS/issues/275) | [![RUSTSEC-2023-0046](https://img.shields.io/badge/RUSTSEC-2023--0046-blue?style=flat-square)](https://rustsec.org/advisories/RUSTSEC-2023-0046.html) |
 | [cyfs-base](https://crates.io/crates/cyfs-base) | M-ML | transmute | [#274](https://github.com/buckyos/CYFS/issues/274) | Issue |
 | [d4](https://crates.io/crates/d4) | D-ML | transmute | [#71](https://github.com/38/d4-format/issues/71) | Issue |
