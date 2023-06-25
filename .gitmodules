@@ -1,0 +1,3 @@
+[submodule "rust-clippy"]
+	path = rust-clippy
+	url = https://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@github.com/shinmao/rust-clippy.git
