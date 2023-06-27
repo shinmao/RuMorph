@@ -9,7 +9,6 @@ src_path = os.listdir("/home/RuMorph/crates/source")
 base_path = "/home/RuMorph/crates/source/"
 lint_cmd = "cargo +nightly-2023-06-02 clippy -- -Wclippy::transmute_statistics > ./lint.log 2>&1"
 lint_log = glob("/home/RuMorph/crates/source/*/lint.log")
-fail_log_path = "/home/RuMorph/crawler/fail.log"
 
 # analyzer the lint.log in each crate source
 def analyzer(path):
@@ -52,13 +51,6 @@ def writer(record):
         for r in record:
             output.write(r)
 
-# run lint on the crates which fail the test again
-def fail_log_analyzer():
-    with open( fail_log_path, 'r', encoding='utf-8' ) as f:
-        for l_num, line in enumerate(f):
-            writer(analyzer(line.strip() + 'lint.log'))
-    f.close()
-
 # execute clippy lint in each crate source
 def linter(path):
     os.chdir( os.path.join(base_path, path) )
@@ -90,6 +82,5 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
     '''
-    fail_log_analyzer()
-    #for log in lint_log:
-    #    writer(analyzer(log))
+    for log in lint_log:
+        writer(analyzer(log))
