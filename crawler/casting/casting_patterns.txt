@@ -1,0 +1,278 @@
+uint>int10356
+struct>struct7567
+struct>[float]3703
+uint>uint2318
+uint>struct1892
+struct>uint1609
+uint>enum1176
+struct>enum668
+enum>struct608
+param>enum558
+uint>param508
+int>int499
+int>uint488
+param>uint465
+param>param402
+enum>enum357
+[uint]>uint347
+int>enum316
+enum>uint291
+int>struct233
+uint>[uint]218
+param>struct152
+enum>param143
+struct>param142
+struct>tuple130
+tuple>struct122
+*const struct>*const struct107
+struct>float103
+struct>int88
+param>tuple87
+struct>union87
+trait obj>param81
+float>uint80
+uint>[struct]67
+tuple>param66
+enum>int64
+float>float61
+param>[param]54
+param>float50
+union>param49
+[uint]>struct49
+uint>tuple48
+struct>[uint]48
+union>uint48
+float>struct41
+tuple>enum40
+param>alias37
+param>int36
+union>struct32
+char>uint31
+tuple>tuple30
+trait obj>tuple30
+&[uint]>uint27
+*mut enum>*mut enum26
+uint>float25
+struct>*mut enum25
+float>enum25
+&[uint]>[uint]24
+*const uint>uint24
+uint>*const uint24
+tuple>uint23
+[uint]>[uint]23
+[float]>float22
+param>union22
+trait obj>struct22
+enum>union21
+&[uint]>struct21
+alias>alias20
+enum>*mut enum20
+union>union19
+[param]>param19
+*const param>uint18
+union>int18
+struct>[struct]18
+[union]>[param]16
+&[int]>int16
+alias>struct16
+union>enum16
+&[uint]>int15
+[int]>int15
+uint>fnptr15
+alias>param15
+*mut struct>enum15
+int>param15
+&[uint]>enum14
+[int]>uint14
+alias>tuple13
+*const int>*const int13
+&[param]>param12
+enum>tuple12
+struct>[int]12
+uint>[int]12
+[*const param]>uint12
+*const param>struct12
+[*mut param]>uint12
+*mut param>struct12
+*mut param>uint12
+[param]>[[param]]11
+alias>uint11
+enum>float11
+struct>[param]11
+*const uint>enum10
+trait obj>uint10
+uint>union9
+alias>enum9
+uint>alias9
+*const int>*mut int8
+enum>*mut struct8
+*const uint>*const uint8
+fnptr>struct8
+[uint]>enum8
+int>tuple8
+bool>uint7
+ManuallyDrop<struct>6
+int>float6
+*const struct>&struct6
+&[uint]>param6
+*const struct>*const uint6
+*const enum>*const uint6
+enum>*const uint6
+*mut param>*mut enum6
+*mut enum>enum5
+&[param]>uint5
+*const param>tuple5
+*mut param>tuple5
+&[struct]>struct5
+int>[uint]5
+*const uint>*const int5
+[union]>uint5
+*mut struct>*const struct5
+&[param]>[param]5
+union>tuple5
+union>alias4
+&[union]>uint4
+[int]>struct4
+param>ManuallyDrop<struct4
+enum>bool4
+bool>enum4
+*mut struct>*mut struct4
+*mut enum>param4
+[struct]>[uint]4
+enum>[float]4
+*mut int>enum4
+enum>*mut int4
+*mut enum>uint4
+param>[[param]]4
+float>tuple4
+*mut uint>uint4
+*mut param>*mut uint4
+*mut struct>uint4
+uint>[float]4
+[float]>uint4
+union>float4
+&[uint]>*const uint4
+tuple>int4
+[uint]>[param]3
+float>[float]3
+&&[uint]>enum3
+uint>&&[uint]3
+struct>*mut struct3
+struct>alias3
+enum>*const enum3
+[uint]>int3
+[param]>[union]3
+param>*mut enum3
+*const struct>struct3
+enum>*const struct3
+int>*mut int3
+*mut int>int3
+*mut uint>*mut uint3
+bool>bool3
+*mut uint>enum3
+&mut &[union]>struct3
+*mut int>*mut int3
+[union]>union3
+struct>[[param]]3
+float>int3
+[int]>enum3
+[uint]>*mut param3
+fnptr>fnptr3
+[union]>[alias]2
+*const enum>*mut enum2
+union>[param]2
+trait obj>&struct2
+trait obj>&mut struct2
+struct>bool2
+*mut param>param2
+[float]>struct2
+[*mut enum]>*mut enum2
+[struct]>[struct]2
+[struct]>struct2
+enum>fnptr2
+&[param]>enum2
+str>uint2
+*mut struct>*const tuple2
+uint>*const int2
+*mut int>*mut uint2
+*mut tuple>enum2
+*mut struct>*mut uint2
+&float>float2
+*mut *const struct>*mut enum2
+&&[uint]>struct2
+[struct]>uint2
+tuple>float2
+[alias]>alias2
+alias>float2
+bool>tuple2
+[uint]>param2
+*const float>*const float2
+*mut float>*mut float2
+[uint]>[struct]2
+uint>*const tuple2
+alias>[alias]2
+*const enum>enum2
+[enum]>enum2
+&[union]>enum2
+tuple>union2
+struct>*const struct2
+uint>char2
+&[*const int]>*const int2
+[float]>enum2
+*const uint>*mut int2
+*const uint>struct2
+*mut struct>struct2
+&[union]>param1
+[uint]>[enum]1
+&mut trait obj>enum1
+enum>&mut trait obj1
+uint>[[uint]]1
+uint>[alias]1
+&[union]>union1
+tuple>*mut trait obj1
+*const uint>*mut enum1
+*const struct>*mut struct1
+[uint]>[union]1
+&str>enum1
+uint>&str1
+struct>[[float]]1
+str>int1
+param>*const enum1
+struct>*const int1
+uint>[enum]1
+uint>[union]1
+int>*mut struct1
+uint>[param]1
+uint>*mut struct1
+trait obj>enum1
+*mut enum>&struct1
+[&struct]>[&param]1
+enum>[enum]1
+&[struct]>uint1
+*mut int>*const int1
+&mut &[uint]>enum1
+enum>alias1
+enum>*mut alias1
+&[int]>uint1
+*const int>int1
+param>[uint]1
+[union]>[enum]1
+*mut param>*const uint1
+*const param>*const uint1
+&mut &[param]>&mut &[union]1
+&[tuple]>uint1
+*const struct>*const alias1
+&str>*const int1
+&&[uint]>*const uint1
+&struct>*const int1
+param>&enum1
+param>&&enum1
+[uint]>tuple1
+closure>enum1
+*const param>*mut tuple1
+&param>tuple1
+&mut &[uint]>struct1
+*const int>enum1
+int>alias1
+&[param]>tuple1
+&struct>struct1
