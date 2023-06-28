@@ -8,9 +8,10 @@
 `Root Cause`:  
 **UM**: Uninitialized MaybeUninit  
 **UT**: Unsound transmute (Others)  
-**RTR**: Relaxing Type Requirement  
-**ML**: Mis-Layout  
-**STR**: Stricter Type Requirement
+**RT**: Conversion to **R**elaxed **T**ype  
+**ML**: Conversion without **M**emory **L**ayout consideration  
+**ST**: Conversion to **S**tricter **T**ype  
+**ABP**: Conversion with **A**rbitrary **B**it **P**atterns
 
 2. In the column of Conv, it shows the method of type conversion:  
 **ptr-as**: raw pointer casting  
@@ -31,4 +32,4 @@
 | [cyfs-base](https://crates.io/crates/cyfs-base) | D-ML | transmute | [#274](https://github.com/buckyos/CYFS/issues/274) |
 | [d4](https://crates.io/crates/d4) | D-ML | transmute | [#71](https://github.com/38/d4-format/issues/71) |
 | [hash-rs](https://crates.io/crates/hash-rs) | D-ML | ptr-as | [#2](https://github.com/asukharev/hash-rs/issues/2) |
-| [lmdb-rs](https://crates.io/crates/lmdb-rs) | M-STR | transmute | [#67](https://github.com/vhbit/lmdb-rs/issues/67) |
+| [lmdb-rs](https://crates.io/crates/lmdb-rs) | M-ABP | transmute | [#67](https://github.com/vhbit/lmdb-rs/issues/67) |
