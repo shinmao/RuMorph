@@ -33,3 +33,5 @@
 | [d4](https://crates.io/crates/d4) | D-ML | transmute | [#71](https://github.com/38/d4-format/issues/71) |
 | [hash-rs](https://crates.io/crates/hash-rs) | D-ML | ptr-as | [#2](https://github.com/asukharev/hash-rs/issues/2) |
 | [lmdb-rs](https://crates.io/crates/lmdb-rs) | M-ABP | transmute | [#67](https://github.com/vhbit/lmdb-rs/issues/67) |
+| [rendy](https://crates.io/crates/rendy/) | M-ABP | ptr-as | [#328](https://github.com/amethyst/rendy/issues/328) |
+| [data-buffer](https://crates.io/crates/data_buffer) | M-ABP | ptr-as | [#2](https://github.com/elrnv/buffer/issues/2) |
