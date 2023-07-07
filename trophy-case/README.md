@@ -4,7 +4,7 @@ In the column of Bugs, there are two elements `Method-Cause`:
 * Method: **M**anual or **D**etector    
 * -`{Cause}`: Conversion without Inconsistent Memory Layout  
     * **SLR**: Conversion to type with **s**tricter **l**ayout **r**equirement
-    * **APB**: Conversion from **a**rbitrary type without **p**roper **b**ound
+    * **APB**: Conversion from **a**rbitrary type without **p**adding **b**ytes exposure
     * **IAD**: **I**nconsistent layout betweeen **a**llocator and **d**eallocator
 * -**O**: **O**thers (e.g., **UM**: Uninitialized Memory exposure, **UT**: Unsound transmute, **IT**: Invalid type creation)  
 
@@ -31,3 +31,12 @@ In the column of Conv, it shows the method of type conversion:
 | [lonlat-bng](https://crates.io/crates/lonlat_bng) | D-APB 1 | ptr-as | `std::slice::from_raw_parts_mut` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/urschrei/lonlat_bng/19?logo=github)](https://github.com/urschrei/lonlat_bng/issues/19#issuecomment-1618461663) |
 | [preserves](https://crates.io/crates/preserves) | D-APB 1 / O(UM) 1 | ptr-as | dereference | [![GitLab all issues](https://img.shields.io/gitlab/issues/all/preserves%2Fpreserves?logo=gitlab&label=issue%2042)](https://gitlab.com/preserves/preserves/-/issues/42) |
 | [byte-conv](https://crates.io/crates/byte_conv) | D-APB 1 | ptr-as | `std::slice::from_raw_parts` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/Lolirofle/byte_conv/1?logo=github)](https://github.com/Lolirofle/byte_conv/issues/1) |
+
+
+## Ground Truth
+1. Positive cases for SLR
+	- [] [Possible soundness bug: alignment not checked](https://github.com/softprops/atty/issues/50)
+2. Positive cases for APB
+	- [] [Can the pointer alignment situation be improved?](https://github.com/TimelyDataflow/abomonation/issues/23)
+	- [] [ComponentBytes is unsound](https://github.com/kornelski/rust-rgb/issues/35)
+3. Positive cases for IAD
