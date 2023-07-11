@@ -15,3 +15,11 @@ Cargo.lock
 
 
 crates/
+
+
+# Added by cargo
+
+/target
+/Cargo.lock
+
+rumorph-home/
