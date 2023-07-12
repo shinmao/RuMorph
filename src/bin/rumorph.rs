@@ -37,14 +37,18 @@ impl rustc_driver::Callbacks for RuMorphCompilerCalls {
 
         rumorph::log::setup_logging(self.config.verbosity).expect("RuMorph failed to initialize");
 
-        debug!(
-            "Input file name: {}",
-            compiler.input().source_name().prefer_local()
-        );
-        debug!("Crate name: {}", queries.crate_name().unwrap().peek_mut());
+        // debug!(
+        //     "Input file name: {}",
+        //     compiler.input().source_name().prefer_local()
+        // );
+        //debug!("Crate name: {}", queries.crate_name().unwrap().peek_mut());
 
-        progress_info!("Rudra started");
-        queries.global_ctxt().unwrap().peek_mut().enter(|tcx| {
+        progress_info!("RuMorph started");
+        queries.global_ctxt().unwrap().enter(|tcx| {
+            debug!(
+                "Input file name: {}",
+                tcx.sess.io.input.filestem().to_string()
+            );
             analyze(tcx, self.config);
         });
         progress_info!("RuMorph finished");
@@ -104,7 +108,7 @@ fn run_compiler(
     // them the first arguments after the binary name (but later arguments can overwrite them).
     args.splice(
         1..1,
-        rudra::RUMORPH_DEFAULT_ARGS.iter().map(ToString::to_string),
+        rumorph::RUMORPH_DEFAULT_ARGS.iter().map(ToString::to_string),
     );
 
     // Invoke compiler, and handle return code.
@@ -116,7 +120,10 @@ fn run_compiler(
 }
 
 fn main() {
-    rustc_driver::install_ice_hook();
+    rustc_driver::install_ice_hook(
+        "https://github.com/shinmao/RuMorph/issues/new",
+        |_| ()
+    );
 
     let exit_code = {
         // initialize the report logger
@@ -142,7 +149,7 @@ fn main() {
         }
 
         // Finally, add the default flags all the way in the beginning, but after the binary name.
-        rustc_args.splice(1..1, RUDRA_DEFAULT_ARGS.iter().map(ToString::to_string));
+        rustc_args.splice(1..1, RUMORPH_DEFAULT_ARGS.iter().map(ToString::to_string));
 
         debug!("rustc arguments: {:?}", &rustc_args);
         run_compiler(rustc_args, &mut RuMorphCompilerCalls::new(config))

@@ -20,6 +20,9 @@ extern crate log as log_crate;
 pub mod log;
 pub mod report;
 pub mod utils;
+pub mod context;
+
+use rustc_middle::ty::TyCtxt;
 
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
@@ -72,4 +75,48 @@ pub fn compile_time_sysroot() -> Option<String> {
             .expect("To build RuMorph without rustup, set the `RUST_SYSROOT` env var at build time")
             .to_owned(),
     })
+}
+
+fn run_analysis<F, R>(name: &str, f: F) -> R
+where
+    F: FnOnce() -> R,
+{
+    progress_info!("{} analysis started", name);
+    let result = f();
+    progress_info!("{} analysis finished", name);
+    result
+}
+
+pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
+    // workaround to mimic arena lifetime
+    // let rcx_owner = RuMorphCtxtOwner::new(tcx, config.report_level);
+    // let rcx = &*Box::leak(Box::new(rcx_owner));
+
+    // // shadow the variable tcx
+    // #[allow(unused_variables)]
+    // let tcx = ();
+
+    // // Unsafe destructor analysis
+    // if config.unsafe_destructor_enabled {
+    //     run_analysis("UnsafeDestructor", || {
+    //         let mut checker = UnsafeDestructorChecker::new(rcx);
+    //         checker.analyze();
+    //     })
+    // }
+
+    // // Send/Sync variance analysis
+    // if config.send_sync_variance_enabled {
+    //     run_analysis("SendSyncVariance", || {
+    //         let checker = SendSyncVarianceChecker::new(rcx);
+    //         checker.analyze();
+    //     })
+    // }
+
+    // // Unsafe dataflow analysis
+    // if config.unsafe_dataflow_enabled {
+    //     run_analysis("UnsafeDataflow", || {
+    //         let checker = UnsafeDataflowChecker::new(rcx);
+    //         checker.analyze();
+    //     })
+    // }
 }

@@ -1,4 +1,5 @@
 use rustc_hir::def_id::LocalDefId;
+use rustc_hir::intravisit::Map;
 use rustc_middle::ty::TyCtxt;
 
 use std::borrow::Cow;
@@ -77,21 +78,21 @@ impl Report {
         level: ReportLevel,
         analyzer: T,
         description: U,
-        item_hir_id: LocalDefId,
+        item_local_def_id: LocalDefId,
     ) -> Report
     where
         T: Into<Cow<'static, str>>,
         U: Into<Cow<'static, str>>,
     {
         let hir_map = tcx.hir();
-        let item_hir_id = hir_map.local_def_id_to_hir_id(item_hir_id);
+        let item_hir_id = hir_map.local_def_id_to_hir_id(item_local_def_id);
         let span = hir_map.span(item_hir_id);
 
         let source_map = tcx.sess.source_map();
         let source = if span.from_expansion() {
             // User-Friendly report for macro-generated code
-            rustc_hir_pretty::to_string(hir_map.krate(), |state| {
-                state.print_item(hir_map.expect_item(item_hir_id));
+            rustc_hir_pretty::to_string(&(&hir_map as &dyn Map<'_>), |state| {
+                state.print_item(hir_map.expect_item(item_local_def_id));
             })
         } else {
             source_map
