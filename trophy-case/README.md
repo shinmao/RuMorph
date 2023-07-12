@@ -40,3 +40,6 @@ In the column of Conv, it shows the method of type conversion:
 	- [ ] [Can the pointer alignment situation be improved?](https://github.com/TimelyDataflow/abomonation/issues/23)
 	- [ ] [ComponentBytes is unsound](https://github.com/kornelski/rust-rgb/issues/35)
 3. Positive cases for IAD
+
+## Tips for PoC
+1. [struct visibility](https://doc.rust-lang.org/rust-by-example/mod/struct_visibility.html)
