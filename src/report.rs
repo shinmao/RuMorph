@@ -47,6 +47,10 @@ pub fn default_report_logger() -> Box<dyn ReportLogger> {
     }
 }
 
+pub fn rumorph_report(report: Report) {
+    REPORT_LOGGER.get().unwrap().log(report);
+}
+
 #[derive(Serialize, Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum ReportLevel {
     // Rank: High

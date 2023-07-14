@@ -133,5 +133,6 @@ fn executor() -> Result<()> {
 }
 
 fn main() {
-    let _ = executor();
+    //let _ = executor();
+    println!("Tested by RuMorph");
 }

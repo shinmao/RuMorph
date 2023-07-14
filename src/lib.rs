@@ -14,18 +14,32 @@ extern crate rustc_middle;
 extern crate rustc_span;
 
 #[macro_use]
+extern crate bitflags;
+
+#[macro_use]
+extern crate if_chain;
+
+#[macro_use]
 extern crate log as log_crate;
 
+#[macro_use]
+mod macros;
+
 // so that we can call than from lib.rs
+mod analysis;
 pub mod log;
 pub mod report;
 pub mod utils;
 pub mod context;
+pub mod visitor;
+pub mod ir;
 
 use rustc_middle::ty::TyCtxt;
 
+use crate::analysis::{BrokenLayoutChecker};
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
+use crate::context::RuMorphCtxtOwner;
 
 // Insert rustc arguments at the beginning of the argument list that RuMorph wants to be
 // set per default, for maximal validation power.
@@ -89,33 +103,33 @@ where
 
 pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     // workaround to mimic arena lifetime
-    // let rcx_owner = RuMorphCtxtOwner::new(tcx, config.report_level);
-    // let rcx = &*Box::leak(Box::new(rcx_owner));
+    let rcx_owner = RuMorphCtxtOwner::new(tcx, config.report_level);
+    let rcx = &*Box::leak(Box::new(rcx_owner));
 
-    // // shadow the variable tcx
-    // #[allow(unused_variables)]
-    // let tcx = ();
+    // shadow the variable tcx
+    #[allow(unused_variables)]
+    let tcx = ();
 
-    // // Unsafe destructor analysis
-    // if config.unsafe_destructor_enabled {
-    //     run_analysis("UnsafeDestructor", || {
-    //         let mut checker = UnsafeDestructorChecker::new(rcx);
+    // Broken layout analysis
+    if config.broken_layout_enabled {
+        run_analysis("BrokenLayout", || {
+            let mut checker = BrokenLayoutChecker::new(rcx);
+            checker.analyze();
+        })
+    }
+
+    // // Uninit Exposure analysis
+    // if config.uninit_exposure_enabled {
+    //     run_analysis("UninitExposure", || {
+    //         let checker = UninitExposureChecker::new(rcx);
     //         checker.analyze();
     //     })
     // }
 
-    // // Send/Sync variance analysis
-    // if config.send_sync_variance_enabled {
-    //     run_analysis("SendSyncVariance", || {
-    //         let checker = SendSyncVarianceChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
-
-    // // Unsafe dataflow analysis
-    // if config.unsafe_dataflow_enabled {
-    //     run_analysis("UnsafeDataflow", || {
-    //         let checker = UnsafeDataflowChecker::new(rcx);
+    // // Alloc Dealloc Inconsistency analysis
+    // if config.alloc_inconsistency_enabled {
+    //     run_analysis("AllocInconsistency", || {
+    //         let checker = AllocInconsistencyChecker::new(rcx);
     //         checker.analyze();
     //     })
     // }
