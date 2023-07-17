@@ -16,6 +16,7 @@ pub struct Terminator<'tcx> {
     pub original: mir::Terminator<'tcx>,
 }
 
+// https://doc.rust-lang.org/stable/nightly-rustc/rustc_middle/mir/syntax/enum.TerminatorKind.html
 #[derive(Debug)]
 pub enum TerminatorKind<'tcx> {
     Goto(usize),

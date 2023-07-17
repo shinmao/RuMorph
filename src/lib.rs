@@ -33,6 +33,10 @@ pub mod utils;
 pub mod context;
 pub mod visitor;
 pub mod ir;
+pub mod graph;
+pub mod iter;
+pub mod paths;
+pub mod prelude;
 
 use rustc_middle::ty::TyCtxt;
 
