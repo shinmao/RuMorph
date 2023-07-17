@@ -1,5 +1,7 @@
 mod broken_layout;
 
+use rustc_middle::ty::{Ty, ParamEnv};
+
 use snafu::{Error, ErrorCompat};
 
 use crate::report::ReportLevel;
@@ -99,6 +101,74 @@ impl Into<Cow<'static, str>> for AnalysisKind {
                 }
                 v.join("/").into()
             }
+        }
+    }
+}
+
+// e.g., A is less than B
+// A is equal to B
+// A is greater than B
+#[derive(Debug, Copy, Clone)]
+pub enum Comparison {
+    Less,
+    Equal,
+    Greater,
+    Noidea,
+}
+
+pub LayoutChecker<'tcx> {
+    rcx: RuMorphCtxt<'tcx>,
+    from_ty: Ty<'tcx>,
+    to_ty: Ty<'tcx>,
+    align_status: Comparison<'tcx>,
+    size_status: Comparison<'tcx>,
+}
+
+// we also need to check whether type is pointer or reference
+// and find pointee type
+
+impl LayoutChecker<'tcx> {
+    pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
+        // rustc_middle::ty::TyCtxt
+        let tcx = self.rcx.tcx();
+        // from_ty_and_layout = rustc_target::abi::TyAndLayout
+        // (align_status, size_status)
+        let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty))
+            && let Ok(to_ty_and_layout) = tcx.layout_of(p_env.and(t_ty))
+        {
+            let (from_layout, to_layout) = (from_ty_and_layout.layout, to_ty_and_layout.layout);
+            let (from_align, to_align) = (from_layout.align(), to_layout.align());
+            let (from_size, to_size) = (from_layout.size(), to_layout.size());
+            // for align_status
+            let ag_status = if from_align.abi.bytes() < to_align.abi.bytes() {
+                Comparison::Less
+            } else if from_align.abi.bytes() == to_align.abi.bytes() {
+                Comparison::Equal
+            } else if from_align.abi.bytes() > to_align.abi.bytes() {
+                Comparison::Greater
+            } else {
+                Comparison::Noidea
+            };
+            // for size_status
+            let sz_status = if from_size.bytes() < to_size.bytes() {
+                Comparison::Less
+            } else if from_size.bytes() == to_size.bytes() {
+                Comparison::Equal
+            } else if from_size.bytes() > to_size.bytes() {
+                Comparison::Greater
+            } else {
+                Comparison::Noidea
+            };
+
+            (ag_status, sz_status)
+        } else {
+            (Comparison::Noidea, Comparison::Noidea)
+        };
+        LayoutChecker { rcx: rc, 
+            from_ty: f_ty, 
+            to_ty: t_ty,
+            align_status: layout_res.0,
+            size_status: layout_res.1,
         }
     }
 }

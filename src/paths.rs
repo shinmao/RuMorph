@@ -162,3 +162,12 @@ pub static WEAK_BYPASS_MAP: Lazy<PathMap> = Lazy::new(move || {
         SLICE_FROM_RAW_PARTS_MUT.iter().map(|p| Symbol::intern(p)).collect::<Vec<_>>() => BehaviorFlag::SLICE_FROM_RAW,
     }
 });
+
+pub static TRANSMUTE_MAP: Lazy<PathMap> = Lazy::new(move || {
+    use BrokenLayoutBehaviorFlag as BehaviorFlag;
+
+    hashmap! {
+        TRANSMUTE.iter().map(|p| Symbol::intern(p)).collect::<Vec<_>>() => BehaviorFlag::TRANSMUTE,
+        STD_TRANSMUTE.iter().map(|p| Symbol::intern(p)).collect::<Vec<_>>() => BehaviorFlag::TRANSMUTE,
+    }
+})

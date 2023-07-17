@@ -9,7 +9,7 @@ use termcolor::Color;
 use crate::graph::GraphTaint;
 use crate::prelude::*;
 use crate::{
-    analysis::{AnalysisKind, IntoReportLevel},
+    analysis::{AnalysisKind, IntoReportLevel, LayoutChecker},
     graph::TaintAnalyzer,
     ir,
     paths::{self, *},
@@ -79,6 +79,7 @@ mod inner {
         strong_bypasses: Vec<Span>,
         weak_bypasses: Vec<Span>,
         unresolvable_generic_functions: Vec<Span>,
+        ty_convs: Vec<Span>,
         behavior_flag: BehaviorFlag,
     }
 
@@ -97,6 +98,10 @@ mod inner {
 
         pub fn unresolvable_generic_function_spans(&self) -> &Vec<Span> {
             &self.unresolvable_generic_functions
+        }
+
+        pub fn ty_conv_spans(&self) -> &Vec<Span> {
+            &self.ty_convs
         }
     }
 
@@ -206,9 +211,13 @@ mod inner {
                                 .push(terminator.original.source_info.span);
                         } else if paths::TRANSMUTE_LIST.contains(&symbol_vec) {
                             // check transmute conversion of (Type A, B)
-                            taint_analyzer.mark_source(id, );
+                            taint_analyzer.mark_source(id, TRANSMUTE_MAP.get(&symbol_vec).unwrap());
+                            self.status
+                                .ty_convs
+                                .push(terminator.original.source_info.span);
                             // args[0] as type A
                             let op_ty = args[0].ty(self.body, tcx);
+                            LayoutChecker::new();
                             if let TyKind::RawPtr(ty_and_mut) = op_ty.kind() {
                                 let pointed_ty = ty_and_mut.ty;
                                 // use TyCtxt.layout_of to compute the layout of type
