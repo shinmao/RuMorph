@@ -9,7 +9,7 @@ use termcolor::Color;
 use crate::graph::GraphTaint;
 use crate::prelude::*;
 use crate::{
-    analysis::{AnalysisKind, IntoReportLevel, LayoutChecker},
+    analysis::{AnalysisKind, IntoReportLevel, LayoutChecker, Comparison},
     graph::TaintAnalyzer,
     ir,
     paths::{self, *},
@@ -211,33 +211,16 @@ mod inner {
                                 .push(terminator.original.source_info.span);
                         } else if paths::TRANSMUTE_LIST.contains(&symbol_vec) {
                             // check transmute conversion of (Type A, B)
-                            taint_analyzer.mark_source(id, TRANSMUTE_MAP.get(&symbol_vec).unwrap());
-                            self.status
-                                .ty_convs
-                                .push(terminator.original.source_info.span);
-                            // args[0] as type A
-                            let op_ty = args[0].ty(self.body, tcx);
-                            LayoutChecker::new();
-                            if let TyKind::RawPtr(ty_and_mut) = op_ty.kind() {
-                                let pointed_ty = ty_and_mut.ty;
-                                // use TyCtxt.layout_of to compute the layout of type
+                            let (from_ty, to_ty) = (args[0].ty(self.body, tcx), args[1].ty(self.body, tcx));
+                            let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                            let align_status = lc.get_align_status();
+                            // if A's align < B's align, taint as source
+                            if align_status == Comparison::Less {
+                                taint_analyzer.mark_source(id, TRANSMUTE_MAP.get(&symbol_vec).unwrap());
+                                self.status
+                                    .ty_convs
+                                    .push(terminator.original.source_info.span);
                             }
-                            // args[1] as type B
-                            // for arg in args.iter() {
-                            //     if_chain! {
-                            //         if let Operand::Move(place) = arg;
-                            //         let place_ty = place.ty(self.body, tcx);
-                            //         if let TyKind::RawPtr(ty_and_mut) = place_ty.ty.kind();
-                            //         let pointed_ty = ty_and_mut.ty;
-                            //         if pointed_ty.is_copy_modulo_regions(tcx.at(DUMMY_SP), self.param_env);
-                            //         then {
-                            //             return true;
-                            //         }
-                            //     }
-                            //     // No need to inspect beyond first arg of the
-                            //     // target bypass functions.
-                            //     break;
-                            // }
                         }
                         } else {
                             // Check for unresolvable generic function calls

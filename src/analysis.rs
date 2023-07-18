@@ -1,6 +1,6 @@
 mod broken_layout;
 
-use rustc_middle::ty::{Ty, ParamEnv};
+use rustc_middle::ty::{Ty, ParamEnv, TypeAndMut};
 
 use snafu::{Error, ErrorCompat};
 
@@ -116,7 +116,7 @@ pub enum Comparison {
     Noidea,
 }
 
-pub LayoutChecker<'tcx> {
+pub struct LayoutChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
     from_ty: Ty<'tcx>,
     to_ty: Ty<'tcx>,
@@ -124,17 +124,15 @@ pub LayoutChecker<'tcx> {
     size_status: Comparison<'tcx>,
 }
 
-// we also need to check whether type is pointer or reference
-// and find pointee type
-
-impl LayoutChecker<'tcx> {
+impl<'tcx> LayoutChecker<'tcx> {
     pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
         // rustc_middle::ty::TyCtxt
         let tcx = self.rcx.tcx();
+        let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
         // from_ty_and_layout = rustc_target::abi::TyAndLayout
         // (align_status, size_status)
-        let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty))
-            && let Ok(to_ty_and_layout) = tcx.layout_of(p_env.and(t_ty))
+        let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_))
+            && let Ok(to_ty_and_layout) = tcx.layout_of(p_env.and(t_ty_))
         {
             let (from_layout, to_layout) = (from_ty_and_layout.layout, to_ty_and_layout.layout);
             let (from_align, to_align) = (from_layout.align(), to_layout.align());
@@ -170,5 +168,24 @@ impl LayoutChecker<'tcx> {
             align_status: layout_res.0,
             size_status: layout_res.1,
         }
+    }
+
+    pub fn get_pointee(matched_ty: Ty) -> Ty {
+        let pointee = if let ty::RawPtr(ty_mut: TypeAndMut) = matched_ty.kind() {
+            get_pointee(ty_mut.ty)
+        } else if let ty::Ref(_, referred_ty: Ty, _) = matched_ty.kind() {
+            get_pointee(referred_ty)
+        } else {
+            matched_ty
+        };
+        pointee
+    }
+
+    pub fn get_align_status(&self) -> Comparison {
+        self.align_status
+    }
+
+    pub fn get_size_status(&self) -> Comparison {
+        self.size_status
     }
 }
