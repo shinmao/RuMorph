@@ -39,6 +39,8 @@ fn main() {
     }
 
     log::setup_logging(Verbosity::Normal).expect("RuMorph failed to initialize");
+    
+    let rustc_sysroot = std::env::var("RUSTC_SYSROOT").expect("Couldn't find the env variable `RUSTC_SYSROOT`");
 
     if let Some("rumorph") = std::env::args().nth(1).as_ref().map(AsRef::as_ref) {
         progress_info!("Running cargo rumorph");
@@ -47,7 +49,7 @@ fn main() {
         // and dispatch the invocations to `rustc` and `rumorph`, respectively.
         in_cargo_rumorph();
         progress_info!("cargo rumorph finished");
-    } else if let Some("/root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/bin/rustc") = std::env::args().nth(1).as_ref().map(AsRef::as_ref) {
+    } else if let Some(rustc_sysroot) = std::env::args().nth(1).as_ref().map(AsRef::as_ref) {
         // This arm is executed when `cargo-rumorph` runs `cargo rustc` with the `RUSTC_WRAPPER` env var set to itself:
         // dependencies get dispatched to `rustc`, the final test/binary to `rumorph`.
         inside_cargo_rustc();

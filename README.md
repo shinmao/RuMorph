@@ -17,6 +17,7 @@ export RUMORPH_RUST_CHANNEL=nightly-2023-06-02
 export RUMORPH_RUNNER_HOME="/home/RuMorph/rumorph-home"
 export RUSTFLAGS="-L $HOME/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$HOME/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib"
+export RUSTC_SYSROOT="$HOME/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/bin/rustc"
 ```
 
 ## install with `install.sh`
