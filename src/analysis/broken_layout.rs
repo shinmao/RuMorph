@@ -1,6 +1,6 @@
 use rustc_hir::{def_id::DefId, BodyId};
-use rustc_middle::mir::Operand;
-use rustc_middle::ty::{Instance, ParamEnv, TyKind};
+use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place};
+use rustc_middle::ty::{Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
 
 use snafu::{Backtrace, Snafu};
@@ -153,8 +153,58 @@ mod inner {
             }
         }
 
+        fn get_ty_from_op(op: Operand<'tcx>) -> Result<Ty<'tcx>, &'static str> {
+            match op {
+                Operand::Copy(place<'tcx>) | Operand::Move(place<'tcx>) => {
+                    Ok(place.ty(self.body, self.rcx.tcx()).ty)
+                },
+                Operand::Constant(box (cnst<'tcx>)) => {
+                    Ok(cnst.ty())
+                },
+                _ => { Err("Can't get ty from place") },
+            }
+        }
+
+        fn get_place_from_op(op: Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
+            match op {
+                Operand::Copy(place<'tcx>) | Operand::Move(place<'tcx>) => {
+                    Ok(place)
+                },
+                _ => { Err("Can't get place from operand") },
+            }
+        }
+
         fn analyze(mut self) -> BrokenLayoutStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
+
+            for (id, statement) in self.body.statements().enumerate() {
+                // statement here is mir::Statement without translation
+                match statement.kind {
+                    StatementKind::Assign(box (lplace, rval)) => {
+                        match rval {
+                            Rvalue::Cast(cast_kind, op, to_ty) => {
+                                match cast_kind {
+                                    CastKind::PtrToPtr | CastKind::Transmute => {
+                                        let from_ty = get_ty_from_op(op).expect("Can't get ty info from place");
+
+                                        let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+
+                                        let place = get_place_from_op(op).expect("Can't get place info from operand");
+                                        taint_analyzer.mark_source(place.local.index(), );
+                                    },
+                                    _ => (),
+                                }
+
+                                
+
+                                
+                            },
+                            _ => {},
+                        }
+                    },
+                    _ => {},
+                }
+            }
 
             for (id, terminator) in self.body.terminators().enumerate() {
                 match terminator.kind {

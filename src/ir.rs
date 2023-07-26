@@ -61,6 +61,14 @@ impl<'tcx> mir::HasLocalDecls<'tcx> for Body<'tcx> {
 }
 
 impl<'tcx> Body<'tcx> {
+    pub fn statements(&self) -> impl Iterator<Item = &Statement<'tcx>> {
+        let statement_list: Vec<mir::Statement<'tcx>> = Vec::new();
+        for block in self.basic_blocks {
+            statement_list.push(block.statements);
+        }
+        statement_list
+    }
+
     pub fn terminators(&self) -> impl Iterator<Item = &Terminator<'tcx>> {
         self.basic_blocks.iter().map(|block| &block.terminator)
     }
