@@ -78,6 +78,7 @@ mod inner {
     pub struct BrokenLayoutStatus {
         strong_bypasses: Vec<Span>,
         weak_bypasses: Vec<Span>,
+        plain_deref: Vec<Span>,
         unresolvable_generic_functions: Vec<Span>,
         ty_convs: Vec<Span>,
         behavior_flag: BehaviorFlag,
@@ -94,6 +95,10 @@ mod inner {
 
         pub fn weak_bypass_spans(&self) -> &Vec<Span> {
             &self.weak_bypasses
+        }
+
+        pub fn plain_deref_spans(&self) -> &Vec<Span> {
+            &self.plain_deref
         }
 
         pub fn unresolvable_generic_function_spans(&self) -> &Vec<Span> {
@@ -177,27 +182,89 @@ mod inner {
         fn analyze(mut self) -> BrokenLayoutStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
-            for (id, statement) in self.body.statements().enumerate() {
+            for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
+                // while iterating statements, we plan to mark ty conv as source / plain deref as sink
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         match rval {
                             Rvalue::Cast(cast_kind, op, to_ty) => {
                                 match cast_kind {
-                                    CastKind::PtrToPtr | CastKind::Transmute => {
+                                    CastKind::PtrToPtr => {
                                         let from_ty = get_ty_from_op(op).expect("Can't get ty info from place");
 
                                         let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                        let align_status = lc.get_align_status();
 
                                         let place = get_place_from_op(op).expect("Can't get place info from operand");
-                                        taint_analyzer.mark_source(place.local.index(), );
+                                        let id = place.local.as_u32();
+
+                                        // if A's align < B's align, taint as source
+                                        if align_status == Comparison::Less {
+                                            taint_analyzer.mark_source(id, BehaviorFlag::CAST);
+                                            self.status
+                                                .ty_convs
+                                                .push(statement.source_info.span);
+                                            // no matter cast legal or not, dataflow exists from rvalue to lplace
+                                            self.body.place_neighbor_list[id].push(lplace.local.as_u32());
+                                        }
+                                    },
+                                    CastKind::Transmute => {
+                                        let from_ty = get_ty_from_op(op).expect("Can't get ty info from place");
+
+                                        let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                        let align_status = lc.get_align_status();
+
+                                        let place = get_place_from_op(op).expect("Can't get place info from operand");
+                                        let id = place.local.as_u32();
+
+                                        // if A's align < B's align, taint as source
+                                        if align_status == Comparison::Less {
+                                            taint_analyzer.mark_source(id, BehaviorFlag::TRANSMUTE);
+                                            self.status
+                                                .ty_convs
+                                                .push(statement.source_info.span);
+                                        }
+                                        // no matter transmute legal or not, dataflow exists from rvalue to lplace
+                                        self.body.place_neighbor_list[id].push(lplace.local.as_u32());
                                     },
                                     _ => (),
                                 }
-
-                                
-
-                                
+                            },
+                            Rvalue::Use(op)
+                            | Rvalue::Repeat(op, _)
+                            | Rvalue::ShallowInitBox(op, _) => {
+                                match op {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.as_u32();
+                                        if pl.is_indirect() {
+                                            // contains deref projection
+                                            taint_analyzer.mark_sink(id);
+                                            self.status
+                                                .plain_deref
+                                                .push(statement.source_info.span);
+                                        }
+                                        // no matter deref or not, dataflow exists from rvalue to lplace
+                                        self.body.place_neighbor_list[id].push(lplace.local.as_u32());
+                                    },
+                                    _ => {},
+                                }
+                            },
+                            Rvalue::Ref(_, _, pl)
+                            | Rvalue::AddressOf(_, pl)
+                            | Rvalue::Len(pl)
+                            | Rvalue::Discriminant(pl)
+                            | Rvalue::CopyForDeref(pl) => {
+                                let id = pl.local.as_u32();
+                                if pl.is_indirect() {
+                                    // contains deref projection
+                                    taint_analyzer.mark_sink(id);
+                                    self.status
+                                        .plain_deref
+                                        .push(statement.source_info.span);
+                                }
+                                // no matter deref or not, dataflow exists from rvalue to lplace
+                                self.body.place_neighbor_list[id].push(lplace.local.as_u32());
                             },
                             _ => {},
                         }
@@ -220,58 +287,54 @@ mod inner {
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
                         if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            if self.fn_called_on_copy(
-                                (callee_did, args),
-                                &[&PTR_READ[..], &PTR_DIRECT_READ[..]],
-                            ) {
-                                // read on Copy types is not a lifetime bypass.
-                                continue;
-                            }
+                            // if self.fn_called_on_copy(
+                            //     (callee_did, args),
+                            //     &[&PTR_READ[..], &PTR_DIRECT_READ[..]],
+                            // ) {
+                            //     // read on Copy types is not a lifetime bypass.
+                            //     continue;
+                            // }
 
-                            if ext.match_def_path(callee_did, &VEC_SET_LEN)
-                                && vec_set_len_to_0(self.rcx, callee_did, args)
-                            {
-                                // Leaking data is safe (`vec.set_len(0);`)
-                                continue;
-                            }
+                            // if ext.match_def_path(callee_did, &VEC_SET_LEN)
+                            //     && vec_set_len_to_0(self.rcx, callee_did, args)
+                            // {
+                            //     // Leaking data is safe (`vec.set_len(0);`)
+                            //     continue;
+                            // }
 
-                            taint_analyzer
-                                .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
-                            self.status
-                                .strong_bypasses
-                                .push(terminator.original.source_info.span);
+                            // taint_analyzer
+                            //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
+                            // self.status
+                            //     .strong_bypasses
+                            //     .push(terminator.original.source_info.span);
                         } else if paths::WEAK_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            if self.fn_called_on_copy(
-                                (callee_did, args),
-                                &[&PTR_WRITE[..], &PTR_DIRECT_WRITE[..]],
-                            ) {
-                                // writing Copy types is not a lifetime bypass.
-                                continue;
-                            }
+                            // if self.fn_called_on_copy(
+                            //     (callee_did, args),
+                            //     &[&PTR_WRITE[..], &PTR_DIRECT_WRITE[..]],
+                            // ) {
+                            //     // writing Copy types is not a lifetime bypass.
+                            //     continue;
+                            // }
 
-                            taint_analyzer
-                                .mark_source(id, WEAK_BYPASS_MAP.get(&symbol_vec).unwrap());
-                            self.status
-                                .weak_bypasses
-                                .push(terminator.original.source_info.span);
+                            // taint_analyzer
+                            //     .mark_source(id, WEAK_BYPASS_MAP.get(&symbol_vec).unwrap());
+                            // self.status
+                            //     .weak_bypasses
+                            //     .push(terminator.original.source_info.span);
                         } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
-                            taint_analyzer.mark_sink(id);
-                            self.status
-                                .unresolvable_generic_functions
-                                .push(terminator.original.source_info.span);
-                        } else if paths::TRANSMUTE_LIST.contains(&symbol_vec) {
-                            // check transmute conversion of (Type A, B)
-                            let (from_ty, to_ty) = (args[0].ty(self.body, tcx), args[1].ty(self.body, tcx));
-                            let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
-                            let align_status = lc.get_align_status();
-                            // if A's align < B's align, taint as source
-                            if align_status == Comparison::Less {
-                                taint_analyzer.mark_source(id, TRANSMUTE_MAP.get(&symbol_vec).unwrap());
-                                self.status
-                                    .ty_convs
-                                    .push(terminator.original.source_info.span);
+                            for arg in args {
+                                // arg: mir::Operand
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.as_u32();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .unresolvable_generic_functions
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
                             }
-                        }
                         } else {
                             // Check for unresolvable generic function calls
                             match Instance::resolve(
@@ -288,11 +351,20 @@ mod inner {
                                     // Call contains unresolvable generic parts
                                     // Here, we are making a two step approximation:
                                     // 1. Unresolvable generic code is potentially user-provided
-                                    // 2. User-provided code potentially panics
-                                    taint_analyzer.mark_sink(id);
-                                    self.status
-                                        .unresolvable_generic_functions
-                                        .push(terminator.original.source_info.span);
+                                    // 2. User-provided code potentially deref the resulted type of type conversion
+                                    for arg in args {
+                                        // arg: mir::Operand
+                                        match arg {
+                                            Operand::Copy(pl) | Operand::Move(pl) => {
+                                                let id = pl.local.as_u32();
+                                                taint_analyzer.mark_sink(id);
+                                                self.status
+                                                    .unresolvable_generic_functions
+                                                    .push(terminator.original.source_info.span);
+                                            },
+                                            _ => {},
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -377,5 +449,29 @@ mod inner {
             }
         }
         false
+    }
+}
+
+// Type Conversion Kind.
+// Used to associate each broken layout bug report with its cause.
+bitflags! {
+    #[derive(Default)]
+    pub struct BehaviorFlag: u16 {
+        const CAST = 0b00000001;
+        const TRANSMUTE = 0b00000010;
+    }
+}
+
+impl GraphTaint for BehaviorFlag {
+    fn is_empy(&self) -> bool {
+        self.is_all()
+    }
+
+    fn contains(&self, taint: &Self) -> bool {
+        self.contains(*taint)
+    }
+
+    fn join(&mut self, taint: &Self) {
+        *self |= *taint;
     }
 }

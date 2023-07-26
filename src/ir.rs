@@ -52,6 +52,7 @@ pub struct Body<'tcx> {
     pub original_decls: IndexVec<mir::Local, mir::LocalDecl<'tcx>>,
     pub basic_blocks: Vec<BasicBlock<'tcx>>,
     pub original: mir::Body<'tcx>,
+    pub place_neighbor_list: [Vec<u32>; usize],
 }
 
 impl<'tcx> mir::HasLocalDecls<'tcx> for Body<'tcx> {
@@ -61,7 +62,7 @@ impl<'tcx> mir::HasLocalDecls<'tcx> for Body<'tcx> {
 }
 
 impl<'tcx> Body<'tcx> {
-    pub fn statements(&self) -> impl Iterator<Item = &Statement<'tcx>> {
+    pub fn statements(&self) -> Vec<mir::Statement<'tcx>> {
         let statement_list: Vec<mir::Statement<'tcx>> = Vec::new();
         for block in self.basic_blocks {
             statement_list.push(block.statements);

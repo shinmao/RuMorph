@@ -9,16 +9,13 @@ pub trait Graph {
 
 impl<'tcx> Graph for ir::Body<'tcx> {
     fn len(&self) -> usize {
-        self.basic_blocks.len()
+        // the count of all vars used at MIR level
+        self.local_decls.len()
     }
 
-    fn next(&self, id: usize) -> Vec<usize> {
-        self.basic_blocks[id]
-            .terminator
-            .original
-            .successors()
-            .map(|block| block.index())
-            .collect()
+    fn next(&self, id: usize) -> Vec<u32> {
+        // next places of current place id
+        self.place_neighbor_list[id]
     }
 }
 
