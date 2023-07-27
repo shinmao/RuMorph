@@ -74,7 +74,7 @@ impl PathSet {
 
 /// Special path used only for path discovery
 pub static SPECIAL_PATH_DISCOVERY: Lazy<PathSet> =
-    Lazy::new(move || PathSet::new(&[&["rudra_paths_discovery", "PathsDiscovery", "discover"]]));
+    Lazy::new(move || PathSet::new(&[&["rumorph_paths_discovery", "PathsDiscovery", "discover"]]));
 
 pub static STRONG_LIFETIME_BYPASS_LIST: Lazy<PathSet> = Lazy::new(move || {
     PathSet::new(&[
@@ -108,13 +108,6 @@ pub static WEAK_LIFETIME_BYPASS_LIST: Lazy<PathSet> = Lazy::new(move || {
         &PTR_SLICE_FROM_RAW_PARTS_MUT,
         &SLICE_FROM_RAW_PARTS,
         &SLICE_FROM_RAW_PARTS_MUT,
-    ])
-});
-
-pub static TRANSMUTE_LIST: Lazy<PathSet> = Lazy::new(move || {
-    PathSet::new(&[
-        &TRANSMUTE,
-        &STD_TRANSMUTE,
     ])
 });
 
@@ -162,12 +155,3 @@ pub static WEAK_BYPASS_MAP: Lazy<PathMap> = Lazy::new(move || {
         SLICE_FROM_RAW_PARTS_MUT.iter().map(|p| Symbol::intern(p)).collect::<Vec<_>>() => BehaviorFlag::SLICE_FROM_RAW,
     }
 });
-
-pub static TRANSMUTE_MAP: Lazy<PathMap> = Lazy::new(move || {
-    use BrokenLayoutBehaviorFlag as BehaviorFlag;
-
-    hashmap! {
-        TRANSMUTE.iter().map(|p| Symbol::intern(p)).collect::<Vec<_>>() => BehaviorFlag::TRANSMUTE,
-        STD_TRANSMUTE.iter().map(|p| Symbol::intern(p)).collect::<Vec<_>>() => BehaviorFlag::TRANSMUTE,
-    }
-})

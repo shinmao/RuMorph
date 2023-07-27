@@ -1,10 +1,11 @@
 mod broken_layout;
 
-use rustc_middle::ty::{Ty, ParamEnv, TypeAndMut};
+use rustc_middle::ty::{self, Ty, ParamEnv, TypeAndMut};
 
 use snafu::{Error, ErrorCompat};
 
 use crate::report::ReportLevel;
+use crate::context::RuMorphCtxt;
 
 pub use broken_layout::{BehaviorFlag as BrokenLayoutBehaviorFlag, BrokenLayoutChecker};
 
@@ -72,33 +73,33 @@ impl Into<Cow<'static, str>> for AnalysisKind {
         match &self {
             AnalysisKind::BrokenLayout(bypass_kinds) => {
                 let mut v = vec!["BrokenLayout:"];
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::READ_FLOW) {
-                    v.push("ReadFlow")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::COPY_FLOW) {
-                    v.push("CopyFlow")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::VEC_FROM_RAW) {
-                    v.push("VecFromRaw")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::TRANSMUTE) {
-                    v.push("Transmute")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::WRITE_FLOW) {
-                    v.push("WriteFlow")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::PTR_AS_REF) {
-                    v.push("PtrAsRef")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::SLICE_UNCHECKED) {
-                    v.push("SliceUnchecked")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::SLICE_FROM_RAW) {
-                    v.push("SliceFromRaw")
-                }
-                if bypass_kinds.contains(BrokenLayoutBehaviorFlag::VEC_SET_LEN) {
-                    v.push("VecSetLen")
-                }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::READ_FLOW) {
+                //     v.push("ReadFlow")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::COPY_FLOW) {
+                //     v.push("CopyFlow")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::VEC_FROM_RAW) {
+                //     v.push("VecFromRaw")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::TRANSMUTE) {
+                //     v.push("Transmute")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::WRITE_FLOW) {
+                //     v.push("WriteFlow")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::PTR_AS_REF) {
+                //     v.push("PtrAsRef")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::SLICE_UNCHECKED) {
+                //     v.push("SliceUnchecked")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::SLICE_FROM_RAW) {
+                //     v.push("SliceFromRaw")
+                // }
+                // if bypass_kinds.contains(BrokenLayoutBehaviorFlag::VEC_SET_LEN) {
+                //     v.push("VecSetLen")
+                // }
                 v.join("/").into()
             }
         }
@@ -120,15 +121,15 @@ pub struct LayoutChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
     from_ty: Ty<'tcx>,
     to_ty: Ty<'tcx>,
-    align_status: Comparison<'tcx>,
-    size_status: Comparison<'tcx>,
+    align_status: Comparison,
+    size_status: Comparison,
 }
 
 impl<'tcx> LayoutChecker<'tcx> {
-    pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
+    pub fn new(&self, rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
         // rustc_middle::ty::TyCtxt
         let tcx = self.rcx.tcx();
-        let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
+        let (f_ty_, t_ty_) = (Self::get_pointee(f_ty), Self::get_pointee(t_ty));
         // from_ty_and_layout = rustc_target::abi::TyAndLayout
         // (align_status, size_status)
         let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_))
@@ -171,10 +172,10 @@ impl<'tcx> LayoutChecker<'tcx> {
     }
 
     pub fn get_pointee(matched_ty: Ty) -> Ty {
-        let pointee = if let ty::RawPtr(ty_mut: TypeAndMut) = matched_ty.kind() {
-            get_pointee(ty_mut.ty)
-        } else if let ty::Ref(_, referred_ty: Ty, _) = matched_ty.kind() {
-            get_pointee(referred_ty)
+        let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
+            Self::get_pointee(ty_mut.ty)
+        } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {
+            Self::get_pointee(referred_ty)
         } else {
             matched_ty
         };

@@ -129,12 +129,12 @@ impl<'tcx> TyCtxtExtension<'tcx> {
             ) -> Result<Self::Path, Self::Error> {
                 if trait_ref.is_none() {
                     if let ty::Adt(def, substs) = self_ty.kind() {
-                        return self.print_def_path(def.did, substs);
+                        return self.print_def_path(def.did(), substs);
                     }
                 }
 
                 // This shouldn't ever be needed, but just in case:
-                with_no_trimmed_paths(|| {
+                with_no_trimmed_paths!(|| {
                     Ok(vec![match trait_ref {
                         Some(trait_ref) => Symbol::intern(&format!("{:?}", trait_ref)),
                         None => Symbol::intern(&format!("<{}>", self_ty)),
@@ -153,7 +153,7 @@ impl<'tcx> TyCtxtExtension<'tcx> {
 
                 // This shouldn't ever be needed, but just in case:
                 path.push(match trait_ref {
-                    Some(trait_ref) => with_no_trimmed_paths(|| {
+                    Some(trait_ref) => with_no_trimmed_paths!(|| {
                         Symbol::intern(&format!(
                             "<impl {} for {}>",
                             trait_ref.print_only_trait_path(),
@@ -161,7 +161,7 @@ impl<'tcx> TyCtxtExtension<'tcx> {
                         ))
                     }),
                     None => {
-                        with_no_trimmed_paths(|| Symbol::intern(&format!("<impl {}>", self_ty)))
+                        with_no_trimmed_paths!(|| Symbol::intern(&format!("<impl {}>", self_ty)))
                     }
                 });
 

@@ -104,7 +104,7 @@ fn run_compiler(
         }
     }
 
-    // Some options have different defaults in Rudra than in plain rustc; apply those by making
+    // Some options have different defaults in Rumorph than in plain rustc; apply those by making
     // them the first arguments after the binary name (but later arguments can overwrite them).
     args.splice(
         1..1,

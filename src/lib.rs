@@ -2,6 +2,7 @@
 #![feature(rustc_private)]
 #![feature(try_blocks)]
 #![feature(never_type)]
+#![feature(let_chains)]
 
 extern crate rustc_data_structures;
 extern crate rustc_driver;

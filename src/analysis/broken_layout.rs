@@ -16,13 +16,33 @@ use crate::{
     report::{Report, ReportLevel},
     utils,
     visitor::ContainsUnsafe,
+    context::RuMorphCtxt,
+    progress_info,
 };
 
-pub BrokenLayoutChecker<'tcx> {
+#[derive(Debug, Snafu)]
+pub enum BrokenLayoutError {
+    PushPopBlock { backtrace: Backtrace },
+    ResolveError { backtrace: Backtrace },
+    InvalidSpan { backtrace: Backtrace },
+}
+
+impl AnalysisError for BrokenLayoutError {
+    fn kind(&self) -> AnalysisErrorKind {
+        use BrokenLayoutError::*;
+        match self {
+            PushPopBlock { .. } => AnalysisErrorKind::Unreachable,
+            ResolveError { .. } => AnalysisErrorKind::OutOfScope,
+            InvalidSpan { .. } => AnalysisErrorKind::Unreachable,
+        }
+    }
+}
+
+pub struct BrokenLayoutChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
 }
 
-impl BrokenLayoutChecker<'tcx> {
+impl<'tcx> BrokenLayoutChecker<'tcx> {
     pub fn new(rcx: RuMorphCtxt<'tcx>) -> Self {
         BrokenLayoutChecker { rcx }
     }
@@ -31,40 +51,45 @@ impl BrokenLayoutChecker<'tcx> {
         let tcx = self.rcx.tcx();
         let hir_map = tcx.hir();
 
+        progress_info!("BrokenLayoutChecker::analyze()");
+
         // Iterates all (type, related function) pairs
         for (_ty_hir_id, (body_id, related_item_span)) in self.rcx.types_with_related_items() {
             if let Some(status) = inner::BrokenLayoutBodyAnalyzer::analyze_body(self.rcx, body_id)
             {
                 let behavior_flag = status.behavior_flag();
                 if !behavior_flag.is_empty()
-                    && behavior_flag.report_level() >= self.rcx.report_level()
+                    //&& behavior_flag.report_level() >= self.rcx.report_level()
                 {
-                    let mut color_span = unwrap_or!(
-                        utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
-                    );
+                    progress_info!("find the bug with behavior_flag: {}", behavior_flag);
+                    // let mut color_span = unwrap_or!(
+                    //     utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
+                    // );
 
-                    for &span in status.strong_bypass_spans() {
-                        color_span.add_sub_span(Color::Red, span);
-                    }
+                    // for &span in status.strong_bypass_spans() {
+                    //     color_span.add_sub_span(Color::Red, span);
+                    // }
 
-                    for &span in status.weak_bypass_spans() {
-                        color_span.add_sub_span(Color::Yellow, span);
-                    }
+                    // for &span in status.weak_bypass_spans() {
+                    //     color_span.add_sub_span(Color::Yellow, span);
+                    // }
 
-                    for &span in status.unresolvable_generic_function_spans() {
-                        color_span.add_sub_span(Color::Cyan, span);
-                    }
+                    // for &span in status.unresolvable_generic_function_spans() {
+                    //     color_span.add_sub_span(Color::Cyan, span);
+                    // }
 
-                    rudra_report(Report::with_color_span(
-                        tcx,
-                        behavior_flag.report_level(),
-                        AnalysisKind::BrokenLayout(behavior_flag),
-                        format!(
-                            "Potential unsafe dataflow issue in `{}`",
-                            tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
-                        ),
-                        &color_span,
-                    ))
+                    // rudra_report(Report::with_color_span(
+                    //     tcx,
+                    //     behavior_flag.report_level(),
+                    //     AnalysisKind::BrokenLayout(behavior_flag),
+                    //     format!(
+                    //         "Potential unsafe dataflow issue in `{}`",
+                    //         tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
+                    //     ),
+                    //     &color_span,
+                    // ))
+                } else {
+                    progress_info!("bug not found");
                 }
             }
         }
@@ -131,6 +156,8 @@ mod inner {
             let hir_map = rcx.tcx().hir();
             let body_did = hir_map.body_owner_def_id(body_id).to_def_id();
 
+            progress_info!("BrokenLayoutBodyAnalyzer::analyze_body()");
+
             if rcx.tcx().ext().match_def_path(
                 body_did,
                 &["rumorph_paths_discovery", "PathsDiscovery", "discover"],
@@ -158,21 +185,21 @@ mod inner {
             }
         }
 
-        fn get_ty_from_op(op: Operand<'tcx>) -> Result<Ty<'tcx>, &'static str> {
+        fn get_ty_from_op(&self, op: Operand<'tcx>) -> Result<Ty<'tcx>, &'static str> {
             match op {
-                Operand::Copy(place<'tcx>) | Operand::Move(place<'tcx>) => {
+                Operand::Copy(place) | Operand::Move(place) => {
                     Ok(place.ty(self.body, self.rcx.tcx()).ty)
                 },
-                Operand::Constant(box (cnst<'tcx>)) => {
+                Operand::Constant(box cnst) => {
                     Ok(cnst.ty())
                 },
                 _ => { Err("Can't get ty from place") },
             }
         }
 
-        fn get_place_from_op(op: Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
+        fn get_place_from_op(&self, op: Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
             match op {
-                Operand::Copy(place<'tcx>) | Operand::Move(place<'tcx>) => {
+                Operand::Copy(place) | Operand::Move(place) => {
                     Ok(place)
                 },
                 _ => { Err("Can't get place from operand") },
@@ -181,6 +208,8 @@ mod inner {
 
         fn analyze(mut self) -> BrokenLayoutStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
+
+            progress_info!("BrokenLayoutBodyAnalyzer::analyze()");
 
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
@@ -191,12 +220,12 @@ mod inner {
                             Rvalue::Cast(cast_kind, op, to_ty) => {
                                 match cast_kind {
                                     CastKind::PtrToPtr => {
-                                        let from_ty = get_ty_from_op(op).expect("Can't get ty info from place");
+                                        let from_ty = Self::get_ty_from_op(op).expect("Can't get ty info from place");
 
                                         let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                         let align_status = lc.get_align_status();
 
-                                        let place = get_place_from_op(op).expect("Can't get place info from operand");
+                                        let place = Self::get_place_from_op(op).expect("Can't get place info from operand");
                                         let id = place.local.as_u32();
 
                                         // if A's align < B's align, taint as source
@@ -210,12 +239,12 @@ mod inner {
                                         }
                                     },
                                     CastKind::Transmute => {
-                                        let from_ty = get_ty_from_op(op).expect("Can't get ty info from place");
+                                        let from_ty = Self::get_ty_from_op(op).expect("Can't get ty info from place");
 
                                         let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                         let align_status = lc.get_align_status();
 
-                                        let place = get_place_from_op(op).expect("Can't get place info from operand");
+                                        let place = Self::get_place_from_op(op).expect("Can't get place info from operand");
                                         let id = place.local.as_u32();
 
                                         // if A's align < B's align, taint as source
@@ -377,34 +406,34 @@ mod inner {
             self.status
         }
 
-        fn fn_called_on_copy(
-            &self,
-            (callee_did, callee_args): (DefId, &Vec<Operand<'tcx>>),
-            paths: &[&[&str]],
-        ) -> bool {
-            let tcx = self.rcx.tcx();
-            let ext = tcx.ext();
-            for path in paths.iter() {
-                if ext.match_def_path(callee_did, path) {
-                    for arg in callee_args.iter() {
-                        if_chain! {
-                            if let Operand::Move(place) = arg;
-                            let place_ty = place.ty(self.body, tcx);
-                            if let TyKind::RawPtr(ty_and_mut) = place_ty.ty.kind();
-                            let pointed_ty = ty_and_mut.ty;
-                            if pointed_ty.is_copy_modulo_regions(tcx.at(DUMMY_SP), self.param_env);
-                            then {
-                                return true;
-                            }
-                        }
-                        // No need to inspect beyond first arg of the
-                        // target bypass functions.
-                        break;
-                    }
-                }
-            }
-            false
-        }
+        // fn fn_called_on_copy(
+        //     &self,
+        //     (callee_did, callee_args): (DefId, &Vec<Operand<'tcx>>),
+        //     paths: &[&[&str]],
+        // ) -> bool {
+        //     let tcx = self.rcx.tcx();
+        //     let ext = tcx.ext();
+        //     for path in paths.iter() {
+        //         if ext.match_def_path(callee_did, path) {
+        //             for arg in callee_args.iter() {
+        //                 if_chain! {
+        //                     if let Operand::Move(place) = arg;
+        //                     let place_ty = place.ty(self.body, tcx);
+        //                     if let TyKind::RawPtr(ty_and_mut) = place_ty.ty.kind();
+        //                     let pointed_ty = ty_and_mut.ty;
+        //                     if pointed_ty.is_copy_modulo_regions(tcx.at(DUMMY_SP), self.param_env);
+        //                     then {
+        //                         return true;
+        //                     }
+        //                 }
+        //                 // No need to inspect beyond first arg of the
+        //                 // target bypass functions.
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     false
+        // }
     }
 
     fn trace_calls_in_body<'tcx>(rcx: RuMorphCtxt<'tcx>, body_def_id: DefId) {
@@ -427,29 +456,29 @@ mod inner {
         }
     }
 
-    // Check if the argument of `Vec::set_len()` is 0_usize.
-    fn vec_set_len_to_0<'tcx>(
-        rcx: RuMorphCtxt<'tcx>,
-        callee_did: DefId,
-        args: &Vec<Operand<'tcx>>,
-    ) -> bool {
-        let tcx = rcx.tcx();
-        for arg in args.iter() {
-            if_chain! {
-                if let Operand::Constant(c) = arg;
-                if let Some(c_val) = c.literal.try_eval_usize(
-                    tcx,
-                    tcx.param_env(callee_did),
-                );
-                if c_val == 0;
-                then {
-                    // Leaking(`vec.set_len(0);`) is safe.
-                    return true;
-                }
-            }
-        }
-        false
-    }
+    // // Check if the argument of `Vec::set_len()` is 0_usize.
+    // fn vec_set_len_to_0<'tcx>(
+    //     rcx: RuMorphCtxt<'tcx>,
+    //     callee_did: DefId,
+    //     args: &Vec<Operand<'tcx>>,
+    // ) -> bool {
+    //     let tcx = rcx.tcx();
+    //     for arg in args.iter() {
+    //         if_chain! {
+    //             if let Operand::Constant(c) = arg;
+    //             if let Some(c_val) = c.literal.try_eval_usize(
+    //                 tcx,
+    //                 tcx.param_env(callee_did),
+    //             );
+    //             if c_val == 0;
+    //             then {
+    //                 // Leaking(`vec.set_len(0);`) is safe.
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     false
+    // }
 }
 
 // Type Conversion Kind.
@@ -463,7 +492,7 @@ bitflags! {
 }
 
 impl GraphTaint for BehaviorFlag {
-    fn is_empy(&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.is_all()
     }
 

@@ -98,7 +98,10 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             .map(|basic_block| self.translate_basic_block(basic_block))
             .collect::<Result<Vec<_>, _>>()?;
 
-        let mut v: [Vec<usize>; local_decls.len()] = Default::default();
+        let mut v = Vec::new();
+        for _ in 0..local_decls.len() {
+            v.push(vec![]);
+        }
 
         Ok(ir::Body {
             local_decls,
