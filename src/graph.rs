@@ -13,7 +13,7 @@ impl<'tcx> Graph for ir::Body<'tcx> {
         self.local_decls.len()
     }
 
-    fn next(&self, id: usize) -> Vec<u32> {
+    fn next(&self, id: usize) -> Vec<usize> {
         // next places of current place id
         self.place_neighbor_list[id]
     }

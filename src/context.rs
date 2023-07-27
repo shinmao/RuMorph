@@ -93,7 +93,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             .collect::<Vec<_>>();
 
         let basic_blocks: Vec<_> = body
-            .basic_blocks()
+            .basic_blocks_mut()
             .iter()
             .map(|basic_block| self.translate_basic_block(basic_block))
             .collect::<Result<Vec<_>, _>>()?;
@@ -147,14 +147,8 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                 TerminatorKind::Call {
                     func: func_operand,
                     args,
-                    destination,
-                    cleanup,
                     ..
                 } => {
-                    let cleanup = cleanup.clone().map(|block| block.index());
-                    let destination = destination
-                        .clone()
-                        .map(|(place, block)| (place, block.index()));
 
                     if let mir::Operand::Constant(box func) = func_operand {
                         let func_ty = func.literal.ty();
@@ -164,8 +158,6 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                                     callee_did: *def_id,
                                     callee_substs,
                                     args: args.clone(),
-                                    cleanup,
-                                    destination,
                                 }
                             }
                             TyKind::FnPtr(_) => ir::TerminatorKind::FnPtr {
@@ -177,7 +169,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                         ir::TerminatorKind::Unimplemented("non-constant function call".into())
                     }
                 }
-                TerminatorKind::Drop { .. } | TerminatorKind::DropAndReplace { .. } => {
+                TerminatorKind::Drop { .. } => {
                     // TODO: implement Drop and DropAndReplace terminators
                     ir::TerminatorKind::Unimplemented(
                         format!("TODO terminator: {:?}", terminator).into(),

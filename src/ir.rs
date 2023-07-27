@@ -25,8 +25,6 @@ pub enum TerminatorKind<'tcx> {
         callee_did: DefId,
         callee_substs: SubstsRef<'tcx>,
         args: Vec<mir::Operand<'tcx>>,
-        cleanup: Option<usize>,
-        destination: Option<(mir::Place<'tcx>, usize)>,
     },
     FnPtr {
         value: mir::ConstantKind<'tcx>,
@@ -52,7 +50,7 @@ pub struct Body<'tcx> {
     pub original_decls: IndexVec<mir::Local, mir::LocalDecl<'tcx>>,
     pub basic_blocks: Vec<BasicBlock<'tcx>>,
     pub original: mir::Body<'tcx>,
-    pub place_neighbor_list: Vec<Vec<u32>>,
+    pub place_neighbor_list: Vec<Vec<usize>>,
 }
 
 impl<'tcx> mir::HasLocalDecls<'tcx> for Body<'tcx> {

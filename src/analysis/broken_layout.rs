@@ -61,7 +61,7 @@ impl<'tcx> BrokenLayoutChecker<'tcx> {
                 if !behavior_flag.is_empty()
                     //&& behavior_flag.report_level() >= self.rcx.report_level()
                 {
-                    progress_info!("find the bug with behavior_flag: {}", behavior_flag);
+                    progress_info!("find the bug with behavior_flag: {:?}", behavior_flag);
                     // let mut color_span = unwrap_or!(
                     //     utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
                     // );
@@ -226,16 +226,19 @@ mod inner {
                                         let align_status = lc.get_align_status();
 
                                         let place = Self::get_place_from_op(op).expect("Can't get place info from operand");
-                                        let id = place.local.as_u32();
+                                        let id = place.local.index();
 
                                         // if A's align < B's align, taint as source
-                                        if align_status == Comparison::Less {
-                                            taint_analyzer.mark_source(id, BehaviorFlag::CAST);
-                                            self.status
-                                                .ty_convs
-                                                .push(statement.source_info.span);
-                                            // no matter cast legal or not, dataflow exists from rvalue to lplace
-                                            self.body.place_neighbor_list[id].push(lplace.local.as_u32());
+                                        match align_status {
+                                            Comparison::Less => {
+                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                self.status
+                                                    .ty_convs
+                                                    .push(statement.source_info.span);
+                                                // no matter cast legal or not, dataflow exists from rvalue to lplace
+                                                self.body.place_neighbor_list[id].push(lplace.local.index());
+                                            },
+                                            _ => {},
                                         }
                                     },
                                     CastKind::Transmute => {
@@ -245,17 +248,20 @@ mod inner {
                                         let align_status = lc.get_align_status();
 
                                         let place = Self::get_place_from_op(op).expect("Can't get place info from operand");
-                                        let id = place.local.as_u32();
+                                        let id = place.local.index();
 
                                         // if A's align < B's align, taint as source
-                                        if align_status == Comparison::Less {
-                                            taint_analyzer.mark_source(id, BehaviorFlag::TRANSMUTE);
-                                            self.status
-                                                .ty_convs
-                                                .push(statement.source_info.span);
+                                        match align_status {
+                                            Comparison::Less => {
+                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                self.status
+                                                    .ty_convs
+                                                    .push(statement.source_info.span);
+                                            },
+                                            _ => {},
                                         }
                                         // no matter transmute legal or not, dataflow exists from rvalue to lplace
-                                        self.body.place_neighbor_list[id].push(lplace.local.as_u32());
+                                        self.body.place_neighbor_list[id].push(lplace.local.index());
                                     },
                                     _ => (),
                                 }
@@ -265,7 +271,7 @@ mod inner {
                             | Rvalue::ShallowInitBox(op, _) => {
                                 match op {
                                     Operand::Copy(pl) | Operand::Move(pl) => {
-                                        let id = pl.local.as_u32();
+                                        let id = pl.local.index();
                                         if pl.is_indirect() {
                                             // contains deref projection
                                             taint_analyzer.mark_sink(id);
@@ -274,7 +280,7 @@ mod inner {
                                                 .push(statement.source_info.span);
                                         }
                                         // no matter deref or not, dataflow exists from rvalue to lplace
-                                        self.body.place_neighbor_list[id].push(lplace.local.as_u32());
+                                        self.body.place_neighbor_list[id].push(lplace.local.index());
                                     },
                                     _ => {},
                                 }
@@ -284,7 +290,7 @@ mod inner {
                             | Rvalue::Len(pl)
                             | Rvalue::Discriminant(pl)
                             | Rvalue::CopyForDeref(pl) => {
-                                let id = pl.local.as_u32();
+                                let id = pl.local.index();
                                 if pl.is_indirect() {
                                     // contains deref projection
                                     taint_analyzer.mark_sink(id);
@@ -293,7 +299,7 @@ mod inner {
                                         .push(statement.source_info.span);
                                 }
                                 // no matter deref or not, dataflow exists from rvalue to lplace
-                                self.body.place_neighbor_list[id].push(lplace.local.as_u32());
+                                self.body.place_neighbor_list[id].push(lplace.local.index());
                             },
                             _ => {},
                         }
@@ -355,7 +361,7 @@ mod inner {
                                 // arg: mir::Operand
                                 match arg {
                                     Operand::Copy(pl) | Operand::Move(pl) => {
-                                        let id = pl.local.as_u32();
+                                        let id = pl.local.index();
                                         taint_analyzer.mark_sink(id);
                                         self.status
                                             .unresolvable_generic_functions
@@ -385,7 +391,7 @@ mod inner {
                                         // arg: mir::Operand
                                         match arg {
                                             Operand::Copy(pl) | Operand::Move(pl) => {
-                                                let id = pl.local.as_u32();
+                                                let id = pl.local.index();
                                                 taint_analyzer.mark_sink(id);
                                                 self.status
                                                     .unresolvable_generic_functions
