@@ -4,7 +4,7 @@
 use std::borrow::Cow;
 
 use rustc_hir::def_id::DefId;
-use rustc_index::IndexVec;
+use rustc_index::{IndexVec, IndexSlice};
 use rustc_middle::{
     mir,
     ty::{subst::SubstsRef, Ty},
@@ -54,14 +54,14 @@ pub struct Body<'tcx> {
 }
 
 impl<'tcx> mir::HasLocalDecls<'tcx> for Body<'tcx> {
-    fn local_decls(&self) -> &IndexVec<mir::Local, mir::LocalDecl<'tcx>> {
-        &self.original_decls
+    fn local_decls(&self) -> &IndexSlice<mir::Local, mir::LocalDecl<'tcx>> {
+        &self.original_decls.as_slice()
     }
 }
 
 impl<'tcx> Body<'tcx> {
     pub fn statements(&self) -> Vec<mir::Statement<'tcx>> {
-        let statement_list: Vec<mir::Statement<'tcx>> = Vec::new();
+        let mut statement_list: Vec<mir::Statement<'tcx>> = Vec::new();
         for block in self.basic_blocks {
             for st in block.statements {
                 statement_list.push(st);

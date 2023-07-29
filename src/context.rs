@@ -73,8 +73,8 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
         let result = self.translation_cache.entry(def_id).or_insert_with(|| {
             Rc::new(
                 try {
-                    let mir_body = Self::find_fn(tcx, def_id)?;
-                    self.translate_body_impl(mir_body)?
+                    let mut mir_body = Self::find_fn(tcx, def_id)?;
+                    self.translate_body_impl(&mut mir_body)?
                 },
             )
         });
@@ -84,7 +84,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
 
     fn translate_body_impl(
         &self,
-        body: &mir::Body<'tcx>,
+        body: &mut mir::Body<'tcx>,
     ) -> TranslationResult<'tcx, ir::Body<'tcx>> {
         let local_decls = body
             .local_decls
@@ -100,7 +100,8 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
 
         let mut v = Vec::new();
         for _ in 0..local_decls.len() {
-            v.push(vec![]);
+            let mut vv = Vec::new();
+            v.push(vv);
         }
 
         Ok(ir::Body {

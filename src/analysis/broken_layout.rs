@@ -185,27 +185,6 @@ mod inner {
             }
         }
 
-        fn get_ty_from_op(&self, op: Operand<'tcx>) -> Result<Ty<'tcx>, &'static str> {
-            match op {
-                Operand::Copy(place) | Operand::Move(place) => {
-                    Ok(place.ty(self.body, self.rcx.tcx()).ty)
-                },
-                Operand::Constant(box cnst) => {
-                    Ok(cnst.ty())
-                },
-                _ => { Err("Can't get ty from place") },
-            }
-        }
-
-        fn get_place_from_op(&self, op: Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
-            match op {
-                Operand::Copy(place) | Operand::Move(place) => {
-                    Ok(place)
-                },
-                _ => { Err("Can't get place from operand") },
-            }
-        }
-
         fn analyze(mut self) -> BrokenLayoutStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
@@ -220,48 +199,74 @@ mod inner {
                             Rvalue::Cast(cast_kind, op, to_ty) => {
                                 match cast_kind {
                                     CastKind::PtrToPtr => {
-                                        let from_ty = Self::get_ty_from_op(op).expect("Can't get ty info from place");
+                                        let f_ty = get_ty_from_op(self.body, self.rcx, &op);
+                                        match f_ty {
+                                            Ok(from_ty) => {
+                                                let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                                let align_status = lc.get_align_status();
 
-                                        let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
-                                        let align_status = lc.get_align_status();
+                                                let pl = get_place_from_op(&op);
+                                                match pl {
+                                                    Ok(place) => {
+                                                        let id = place.local.index();
 
-                                        let place = Self::get_place_from_op(op).expect("Can't get place info from operand");
-                                        let id = place.local.index();
-
-                                        // if A's align < B's align, taint as source
-                                        match align_status {
-                                            Comparison::Less => {
-                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                self.status
-                                                    .ty_convs
-                                                    .push(statement.source_info.span);
-                                                // no matter cast legal or not, dataflow exists from rvalue to lplace
-                                                self.body.place_neighbor_list[id].push(lplace.local.index());
+                                                        // if A's align < B's align, taint as source
+                                                        match align_status {
+                                                            Comparison::Less => {
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                                // no matter cast legal or not, dataflow exists from rvalue to lplace
+                                                                self.body.place_neighbor_list[id].push(lplace.local.index());
+                                                            },
+                                                            _ => {},
+                                                        }
+                                                    },
+                                                    Err(_e) => {
+                                                        progress_info!("Can't get place from the cast operand");
+                                                    },
+                                                }
                                             },
-                                            _ => {},
+                                            Err(_e) => {
+                                                progress_info!("Can't get ty from the cast place");
+                                            },
                                         }
                                     },
                                     CastKind::Transmute => {
-                                        let from_ty = Self::get_ty_from_op(op).expect("Can't get ty info from place");
+                                        let f_ty = get_ty_from_op(self.body, self.rcx, &op);
+                                        match f_ty {
+                                            Ok(from_ty) => {
+                                                let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                                let align_status = lc.get_align_status();
 
-                                        let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
-                                        let align_status = lc.get_align_status();
+                                                let pl = get_place_from_op(&op);
+                                                match pl {
+                                                    Ok(place) => {
+                                                        let id = place.local.index();
 
-                                        let place = Self::get_place_from_op(op).expect("Can't get place info from operand");
-                                        let id = place.local.index();
-
-                                        // if A's align < B's align, taint as source
-                                        match align_status {
-                                            Comparison::Less => {
-                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                self.status
-                                                    .ty_convs
-                                                    .push(statement.source_info.span);
+                                                        // if A's align < B's align, taint as source
+                                                        match align_status {
+                                                            Comparison::Less => {
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            },
+                                                            _ => {},
+                                                        }
+                                                        // no matter transmute legal or not, dataflow exists from rvalue to lplace
+                                                        self.body.place_neighbor_list[id].push(lplace.local.index());
+                                                    },
+                                                    Err(_e) => {
+                                                        progress_info!("Can't get place from the transmute operand");
+                                                    },
+                                                }
                                             },
-                                            _ => {},
+                                            Err(_e) => {
+                                                progress_info!("Can't get ty from the transmute place");
+                                            },
                                         }
-                                        // no matter transmute legal or not, dataflow exists from rvalue to lplace
-                                        self.body.place_neighbor_list[id].push(lplace.local.index());
                                     },
                                     _ => (),
                                 }
@@ -308,7 +313,7 @@ mod inner {
                 }
             }
 
-            for (id, terminator) in self.body.terminators().enumerate() {
+            for (_id, terminator) in self.body.terminators().enumerate() {
                 match terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
@@ -485,6 +490,27 @@ mod inner {
     //     }
     //     false
     // }
+}
+
+fn get_place_from_op<'tcx>(op: &Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
+    match op {
+        Operand::Copy(place) | Operand::Move(place) => {
+            Ok(*place)
+        },
+        _ => { Err("Can't get place from operand") },
+    }
+}
+
+fn get_ty_from_op<'tcx>(bd: &ir::Body<'tcx>, rcx: RuMorphCtxt<'tcx>, op: &Operand<'tcx>) -> Result<Ty<'tcx>, &'static str> {
+    match op {
+        Operand::Copy(place) | Operand::Move(place) => {
+            Ok(place.ty(bd, rcx.tcx()).ty)
+        },
+        Operand::Constant(box cnst) => {
+            Ok(cnst.ty())
+        },
+        _ => { Err("Can't get ty from place") },
+    }
 }
 
 // Type Conversion Kind.

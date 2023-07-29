@@ -118,7 +118,7 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     // Broken layout analysis
     if config.broken_layout_enabled {
         run_analysis("BrokenLayout", || {
-            let mut checker = BrokenLayoutChecker::new(rcx);
+            let checker = BrokenLayoutChecker::new(rcx);
             checker.analyze();
         })
     }

@@ -126,10 +126,10 @@ pub struct LayoutChecker<'tcx> {
 }
 
 impl<'tcx> LayoutChecker<'tcx> {
-    pub fn new(&self, rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
+    pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
         // rustc_middle::ty::TyCtxt
-        let tcx = self.rcx.tcx();
-        let (f_ty_, t_ty_) = (Self::get_pointee(f_ty), Self::get_pointee(t_ty));
+        let tcx = rc.tcx();
+        let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
         // from_ty_and_layout = rustc_target::abi::TyAndLayout
         // (align_status, size_status)
         let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_))
@@ -171,17 +171,6 @@ impl<'tcx> LayoutChecker<'tcx> {
         }
     }
 
-    pub fn get_pointee(matched_ty: Ty) -> Ty {
-        let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
-            Self::get_pointee(ty_mut.ty)
-        } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {
-            Self::get_pointee(referred_ty)
-        } else {
-            matched_ty
-        };
-        pointee
-    }
-
     pub fn get_align_status(&self) -> Comparison {
         self.align_status
     }
@@ -189,4 +178,15 @@ impl<'tcx> LayoutChecker<'tcx> {
     pub fn get_size_status(&self) -> Comparison {
         self.size_status
     }
+}
+
+fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
+    let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
+        get_pointee(ty_mut.ty)
+    } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {
+        get_pointee(*referred_ty)
+    } else {
+        matched_ty
+    };
+    pointee
 }

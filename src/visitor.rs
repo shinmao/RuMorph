@@ -140,12 +140,14 @@ pub type AdtImplMap<'tcx> = FxHashMap<DefId, Vec<(LocalDefId, Ty<'tcx>)>>;
 pub fn create_adt_impl_map<'tcx>(tcx: TyCtxt<'tcx>) -> AdtImplMap<'tcx> {
     let mut map = FxHashMap::default();
 
-    for item in tcx.hir().items() {
+    let item_map = tcx.hir();
+    for item_id in item_map.items() {
+        let item = item_map.item(item_id);
         if let ItemKind::Impl(Impl { self_ty, .. }) = item.kind {
             // `Self` type of the given impl block.
             let impl_self_ty = tcx.type_of(self_ty.hir_id.owner);
 
-            if let TyKind::Adt(impl_self_adt_def, _impl_substs) = impl_self_ty.kind() {
+            if let TyKind::Adt(impl_self_adt_def, _impl_substs) = impl_self_ty.skip_binder().kind() {
                 // We use `AdtDef.did` as key for `AdtImplMap`.
                 // For any crazy instantiation of the same generic ADT (Foo<i32>, Foo<String>, etc..),
                 // `AdtDef.did` refers to the original ADT definition.
@@ -153,7 +155,7 @@ pub fn create_adt_impl_map<'tcx>(tcx: TyCtxt<'tcx>) -> AdtImplMap<'tcx> {
 
                 map.entry(impl_self_adt_def.did())
                     .or_insert_with(|| Vec::new())
-                    .push((item.def_id, impl_self_ty));
+                    .push((item.owner_id.def_id, impl_self_ty.skip_binder()));
             }
         }
     }
