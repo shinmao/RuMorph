@@ -4,7 +4,7 @@ use rustc_hir::{
     def_id::{DefId, LocalDefId},
     BodyId, ConstContext, HirId,
 };
-use rustc_middle::mir::{self, TerminatorKind};
+use rustc_middle::mir::{self, TerminatorKind, StatementKind, Rvalue, Operand};
 use rustc_middle::ty::{Ty, TyCtxt, TyKind};
 use rustc_span::Span;
 
@@ -73,8 +73,8 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
         let result = self.translation_cache.entry(def_id).or_insert_with(|| {
             Rc::new(
                 try {
-                    let mut mir_body = Self::find_fn(tcx, def_id)?;
-                    self.translate_body_impl(&mut mir_body)?
+                    let mir_body = Self::find_fn(tcx, def_id)?;
+                    self.translate_body_impl(mir_body)?
                 },
             )
         });
@@ -84,7 +84,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
 
     fn translate_body_impl(
         &self,
-        body: &mut mir::Body<'tcx>,
+        body: &mir::Body<'tcx>,
     ) -> TranslationResult<'tcx, ir::Body<'tcx>> {
         let local_decls = body
             .local_decls
@@ -93,7 +93,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             .collect::<Vec<_>>();
 
         let basic_blocks: Vec<_> = body
-            .basic_blocks_mut()
+            .basic_blocks
             .iter()
             .map(|basic_block| self.translate_basic_block(basic_block))
             .collect::<Result<Vec<_>, _>>()?;
@@ -102,6 +102,40 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
         for _ in 0..local_decls.len() {
             let mut vv = Vec::new();
             v.push(vv);
+        }
+
+        for bb in &basic_blocks {
+            for statement in &bb.statements {
+                // statement: mir::Statement
+                match &statement.kind {
+                    StatementKind::Assign(box (lplace, rval)) => {
+                        match rval {
+                            Rvalue::Cast(_, op, _)
+                            | Rvalue::Use(op)
+                            | Rvalue::Repeat(op, _)
+                            | Rvalue::ShallowInitBox(op, _) => {
+                                match op {
+                                    Operand::Copy(rplace) | Operand::Move(rplace) => {
+                                        let id = rplace.local.index();
+                                        v[id].push(lplace.local.index());
+                                    },
+                                    _ => {},
+                                }
+                            },
+                            Rvalue::Ref(_, _, rplace)
+                            | Rvalue::AddressOf(_, rplace)
+                            | Rvalue::Len(rplace)
+                            | Rvalue::Discriminant(rplace)
+                            | Rvalue::CopyForDeref(rplace) => {
+                                let id = rplace.local.index();
+                                v[id].push(lplace.local.index());
+                            },
+                            _ => {},
+                        }
+                    },
+                    _ => {},
+                }
+            }
         }
 
         Ok(ir::Body {
@@ -209,9 +243,9 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
         }
     }
 
-    pub fn index_adt_cache(&self, adt_did: &DefId) -> Option<&Vec<(LocalDefId, Ty)>> {
-        self.adt_impl_cache.get(adt_did)
-    }
+    // pub fn index_adt_cache(&self, adt_did: &DefId) -> Option<&Vec<(LocalDefId, Ty)>> {
+    //     self.adt_impl_cache.get(adt_did)
+    // }
 
     pub fn report_level(&self) -> ReportLevel {
         self.report_level

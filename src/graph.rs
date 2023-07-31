@@ -15,7 +15,7 @@ impl<'tcx> Graph for ir::Body<'tcx> {
 
     fn next(&self, id: usize) -> Vec<usize> {
         // next places of current place id
-        self.place_neighbor_list[id]
+        unsafe { self.place_neighbor_list.get_unchecked(id).to_owned() }
     }
 }
 

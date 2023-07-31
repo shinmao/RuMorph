@@ -62,9 +62,9 @@ impl<'tcx> mir::HasLocalDecls<'tcx> for Body<'tcx> {
 impl<'tcx> Body<'tcx> {
     pub fn statements(&self) -> Vec<mir::Statement<'tcx>> {
         let mut statement_list: Vec<mir::Statement<'tcx>> = Vec::new();
-        for block in self.basic_blocks {
-            for st in block.statements {
-                statement_list.push(st);
+        for block in &self.basic_blocks {
+            for st in &block.statements {
+                statement_list.push(st.clone());
             }
         }
         statement_list

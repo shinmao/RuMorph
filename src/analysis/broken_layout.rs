@@ -199,6 +199,7 @@ mod inner {
                             Rvalue::Cast(cast_kind, op, to_ty) => {
                                 match cast_kind {
                                     CastKind::PtrToPtr => {
+                                        progress_info!("cast::ptr-ptr");
                                         let f_ty = get_ty_from_op(self.body, self.rcx, &op);
                                         match f_ty {
                                             Ok(from_ty) => {
@@ -213,12 +214,11 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less => {
+                                                                progress_info!("warn::align");
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                 self.status
                                                                     .ty_convs
                                                                     .push(statement.source_info.span);
-                                                                // no matter cast legal or not, dataflow exists from rvalue to lplace
-                                                                self.body.place_neighbor_list[id].push(lplace.local.index());
                                                             },
                                                             _ => {},
                                                         }
@@ -234,6 +234,7 @@ mod inner {
                                         }
                                     },
                                     CastKind::Transmute => {
+                                        progress_info!("transmute");
                                         let f_ty = get_ty_from_op(self.body, self.rcx, &op);
                                         match f_ty {
                                             Ok(from_ty) => {
@@ -248,6 +249,7 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less => {
+                                                                progress_info!("warn::align");
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                 self.status
                                                                     .ty_convs
@@ -255,8 +257,6 @@ mod inner {
                                                             },
                                                             _ => {},
                                                         }
-                                                        // no matter transmute legal or not, dataflow exists from rvalue to lplace
-                                                        self.body.place_neighbor_list[id].push(lplace.local.index());
                                                     },
                                                     Err(_e) => {
                                                         progress_info!("Can't get place from the transmute operand");
@@ -279,13 +279,12 @@ mod inner {
                                         let id = pl.local.index();
                                         if pl.is_indirect() {
                                             // contains deref projection
+                                            progress_info!("warn::deref");
                                             taint_analyzer.mark_sink(id);
                                             self.status
                                                 .plain_deref
                                                 .push(statement.source_info.span);
                                         }
-                                        // no matter deref or not, dataflow exists from rvalue to lplace
-                                        self.body.place_neighbor_list[id].push(lplace.local.index());
                                     },
                                     _ => {},
                                 }
@@ -298,13 +297,12 @@ mod inner {
                                 let id = pl.local.index();
                                 if pl.is_indirect() {
                                     // contains deref projection
+                                    progress_info!("warn::deref");
                                     taint_analyzer.mark_sink(id);
                                     self.status
                                         .plain_deref
                                         .push(statement.source_info.span);
                                 }
-                                // no matter deref or not, dataflow exists from rvalue to lplace
-                                self.body.place_neighbor_list[id].push(lplace.local.index());
                             },
                             _ => {},
                         }
