@@ -52,10 +52,15 @@ impl<'tcx> BrokenLayoutChecker<'tcx> {
         let tcx = self.rcx.tcx();
         let hir_map = tcx.hir();
 
-        progress_info!("BrokenLayoutChecker::analyze()");
-
         // Iterates all (type, related function) pairs
         for (_ty_hir_id, (body_id, related_item_span)) in self.rcx.types_with_related_items() {
+
+            // print the funciton name of current body
+            progress_info!("BrokenLayoutChecker::analyze({})", 
+                        tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
+            );
+
+
             if let Some(status) = inner::BrokenLayoutBodyAnalyzer::analyze_body(self.rcx, body_id)
             {
                 let behavior_flag = status.behavior_flag();
@@ -160,8 +165,6 @@ mod inner {
         pub fn analyze_body(rcx: RuMorphCtxt<'tcx>, body_id: BodyId) -> Option<BrokenLayoutStatus> {
             let hir_map = rcx.tcx().hir();
             let body_did = hir_map.body_owner_def_id(body_id).to_def_id();
-
-            progress_info!("BrokenLayoutBodyAnalyzer::analyze_body()");
 
             if rcx.tcx().ext().match_def_path(
                 body_did,
