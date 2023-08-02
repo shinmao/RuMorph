@@ -1,5 +1,6 @@
 use rustc_hir::{def_id::DefId, BodyId};
-use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place};
+use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls};
+use rustc_middle::mir::RETURN_PLACE;
 use rustc_middle::ty::{Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
 
@@ -62,9 +63,9 @@ impl<'tcx> BrokenLayoutChecker<'tcx> {
                     //&& behavior_flag.report_level() >= self.rcx.report_level()
                 {
                     progress_info!("find the bug with behavior_flag: {:?}", behavior_flag);
-                    // let mut color_span = unwrap_or!(
-                    //     utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
-                    // );
+                    let mut color_span = unwrap_or!(
+                        utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
+                    );
 
                     // for &span in status.strong_bypass_spans() {
                     //     color_span.add_sub_span(Color::Red, span);
@@ -78,16 +79,20 @@ impl<'tcx> BrokenLayoutChecker<'tcx> {
                     //     color_span.add_sub_span(Color::Cyan, span);
                     // }
 
-                    // rudra_report(Report::with_color_span(
-                    //     tcx,
-                    //     behavior_flag.report_level(),
-                    //     AnalysisKind::BrokenLayout(behavior_flag),
-                    //     format!(
-                    //         "Potential unsafe dataflow issue in `{}`",
-                    //         tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
-                    //     ),
-                    //     &color_span,
-                    // ))
+                    for &span in status.plain_deref_spans() {
+                        color_span.add_sub_span(Color::Blue, span);
+                    }
+
+                    rumorph_report(Report::with_color_span(
+                        tcx,
+                        behavior_flag.report_level(),
+                        AnalysisKind::BrokenLayout(behavior_flag),
+                        format!(
+                            "Potential broken layout issue in `{}`",
+                            tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
+                        ),
+                        &color_span,
+                    ))
                 } else {
                     progress_info!("bug not found");
                 }
@@ -406,8 +411,23 @@ mod inner {
                                 }
                             }
                         }
-                    }
-                    _ => (),
+                    },
+                    ir::TerminatorKind::Return => {
+                        // _0 is always considered as return value
+                        let return_pl0 = self.body.local_decls().get(RETURN_PLACE);
+                        if return_pl0.is_some() {
+                            match return_pl0.unwrap().ty.kind() {
+                                TyKind::Ref(..) => {
+                                    taint_analyzer.mark_sink(0);
+                                    self.status
+                                        .plain_deref
+                                        .push(terminator.original.source_info.span);
+                                },
+                                _ => {},
+                            }
+                        }
+                    },
+                    _ => {},
                 }
             }
 
@@ -518,6 +538,24 @@ bitflags! {
     pub struct BehaviorFlag: u16 {
         const CAST = 0b00000001;
         const TRANSMUTE = 0b00000010;
+    }
+}
+
+impl IntoReportLevel for BehaviorFlag {
+    fn report_level(&self) -> ReportLevel {
+        use BehaviorFlag as Flag;
+
+        let high = Flag::CAST | Flag::TRANSMUTE;
+        //let med = Flag::READ_FLOW | Flag::COPY_FLOW | Flag::WRITE_FLOW;
+
+        // if !(*self & high).is_empty() {
+        //     ReportLevel::Error
+        // } else if !(*self & med).is_empty() {
+        //     ReportLevel::Warning
+        // } else {
+        //     ReportLevel::Info
+        // }
+        ReportLevel::Error
     }
 }
 

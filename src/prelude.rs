@@ -10,6 +10,8 @@ use snafu::{Backtrace, Snafu};
 pub use snafu::{Error, ErrorCompat, IntoError, OptionExt, ResultExt};
 
 pub use crate::analysis::{AnalysisError, AnalysisErrorKind, AnalysisResult};
+pub use crate::context::RuMorphCtxt;
+pub use crate::report::rumorph_report;
 
 #[derive(Debug, Snafu)]
 pub enum ExtError {
