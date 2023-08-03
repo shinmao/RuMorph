@@ -98,6 +98,8 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             .map(|basic_block| self.translate_basic_block(basic_block))
             .collect::<Result<Vec<_>, _>>()?;
 
+        // we only locate local rather than place
+        // e.g., (*_3).field: we would only locate _3
         let mut v = Vec::new();
         for _ in 0..local_decls.len() {
             let mut vv = Vec::new();

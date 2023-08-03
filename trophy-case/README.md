@@ -33,7 +33,7 @@ In the column of Conv, it shows the method of type conversion:
 
 ## Ground Truth
 1. Positive cases for SLR
-	- [ ] [Possible soundness bug: alignment not checked](https://github.com/softprops/atty/issues/50)
+	- [x] [Possible soundness bug: alignment not checked](https://github.com/softprops/atty/issues/50): True Negative because the function is declared as `unsafe`.
 2. Positive cases for APB
 	- [ ] [Can the pointer alignment situation be improved?](https://github.com/TimelyDataflow/abomonation/issues/23)
 	- [ ] [ComponentBytes is unsound](https://github.com/kornelski/rust-rgb/issues/35)

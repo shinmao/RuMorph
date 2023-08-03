@@ -84,8 +84,12 @@ impl<'tcx> BrokenLayoutChecker<'tcx> {
                     //     color_span.add_sub_span(Color::Cyan, span);
                     // }
 
-                    for &span in status.plain_deref_spans() {
-                        color_span.add_sub_span(Color::Blue, span);
+                    // for &span in status.plain_deref_spans() {
+                    //     color_span.add_sub_span(Color::Blue, span);
+                    // }
+                    
+                    for &span in status.ty_conv_spans() {
+                        color_span.add_sub_span(Color::Green, span);
                     }
 
                     rumorph_report(Report::with_color_span(
