@@ -25,6 +25,7 @@ pub enum TerminatorKind<'tcx> {
         callee_did: DefId,
         callee_substs: SubstsRef<'tcx>,
         args: Vec<mir::Operand<'tcx>>,
+        dest: mir::Place<'tcx>,
     },
     FnPtr {
         value: mir::ConstantKind<'tcx>,

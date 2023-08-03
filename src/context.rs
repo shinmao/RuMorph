@@ -136,6 +136,28 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                     _ => {},
                 }
             }
+            // we also need to handle terminator case
+            match &bb.terminator.kind {
+                // ir::Terminator
+                ir::TerminatorKind::StaticCall {
+                    callee_did,
+                    callee_substs,
+                    ref args,
+                    dest,
+                } => {
+                    for arg in args {
+                        // arg: mir::Operand
+                        match arg {
+                            Operand::Copy(pl) | Operand::Move(pl) => {
+                                let id = pl.local.index();
+                                v[id].push(dest.local.index());
+                            },
+                            _ => {},
+                        }
+                    }
+                },
+                _ => {},
+            }
         }
 
         Ok(ir::Body {
@@ -182,6 +204,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                 TerminatorKind::Call {
                     func: func_operand,
                     args,
+                    destination: dest,
                     ..
                 } => {
 
@@ -193,6 +216,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                                     callee_did: *def_id,
                                     callee_substs,
                                     args: args.clone(),
+                                    dest: *dest,
                                 }
                             }
                             TyKind::FnPtr(_) => ir::TerminatorKind::FnPtr {

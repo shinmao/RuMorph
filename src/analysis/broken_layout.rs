@@ -196,13 +196,24 @@ mod inner {
         fn analyze(mut self) -> BrokenLayoutStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
-            progress_info!("BrokenLayoutBodyAnalyzer::analyze()");
+            progress_info!("The body has {} places", self.body.place_neighbor_list.len());
 
             for statement in self.body.statements() {
+                progress_info!("statement: {:?}, kind:{:?}, info:{:?}", statement, statement.kind, statement.source_info);
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
+                        // lhs could also contains deref operation
+                        if lplace.is_indirect() {
+                            // contains deref projection
+                            progress_info!("warn::deref on place:{}", lplace.local.index());
+                            taint_analyzer.mark_sink(lplace.local.index());
+                            self.status
+                                .plain_deref
+                                .push(statement.source_info.span);
+                        }
+                        // rhs
                         match rval {
                             Rvalue::Cast(cast_kind, op, to_ty) => {
                                 match cast_kind {
@@ -222,7 +233,7 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less => {
-                                                                progress_info!("warn::align");
+                                                                progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                 self.status
                                                                     .ty_convs
@@ -285,9 +296,10 @@ mod inner {
                                 match op {
                                     Operand::Copy(pl) | Operand::Move(pl) => {
                                         let id = pl.local.index();
+                                        progress_info!("[dbg] lplace: {}, rplace: {}", lplace.local.index(), pl.local.index());
                                         if pl.is_indirect() {
                                             // contains deref projection
-                                            progress_info!("warn::deref");
+                                            progress_info!("warn::deref on place:{}", id);
                                             taint_analyzer.mark_sink(id);
                                             self.status
                                                 .plain_deref
@@ -305,7 +317,7 @@ mod inner {
                                 let id = pl.local.index();
                                 if pl.is_indirect() {
                                     // contains deref projection
-                                    progress_info!("warn::deref");
+                                    progress_info!("warn::deref on place:{}", id);
                                     taint_analyzer.mark_sink(id);
                                     self.status
                                         .plain_deref
@@ -320,11 +332,13 @@ mod inner {
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
+                progress_info!("terminator: {:?}", terminator);
                 match terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
                         callee_substs,
                         ref args,
+                        dest,
                         ..
                     } => {
                         let tcx = self.rcx.tcx();
