@@ -1,5 +1,5 @@
 use rustc_hir::{def_id::DefId, BodyId};
-use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls};
+use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls, AggregateKind};
 use rustc_middle::mir::RETURN_PLACE;
 use rustc_middle::ty::{Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
@@ -174,10 +174,12 @@ mod inner {
                 body_did,
                 &["rumorph_paths_discovery", "PathsDiscovery", "discover"],
             ) {
+                progress_info!("special case required");
                 // Special case for paths discovery
                 trace_calls_in_body(rcx, body_did);
                 None
             } else if ContainsUnsafe::contains_unsafe(rcx.tcx(), body_id) {
+                progress_info!("This function contains unsafe block");
                 match rcx.translate_body(body_did).as_ref() {
                     Err(e) => {
                         // MIR is not available for def - log it and continue
@@ -191,6 +193,7 @@ mod inner {
                     }
                 }
             } else {
+                progress_info!("interprocedural analysis required");
                 // We don't perform interprocedural analysis,
                 // thus safe functions are considered safe
                 Some(Default::default())
@@ -199,8 +202,6 @@ mod inner {
 
         fn analyze(mut self) -> BrokenLayoutStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
-
-            progress_info!("The body has {} places", self.body.place_neighbor_list.len());
 
             for statement in self.body.statements() {
                 progress_info!("statement: {:?}, kind:{:?}, info:{:?}", statement, statement.kind, statement.source_info);
@@ -236,12 +237,28 @@ mod inner {
 
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
-                                                            Comparison::Less => {
+                                                            Comparison::Less | Comparison::NoideaL => {
+                                                                // in the case of NoideaL, we assume that to_ty is aligned to larger bytes than from_ty
                                                                 progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                 self.status
                                                                     .ty_convs
                                                                     .push(statement.source_info.span);
+                                                            },
+                                                            Comparison::Noidea => {
+                                                                // check whether from_ty is generic type
+                                                                match lc.get_from_ty().kind() {
+                                                                    TyKind::Param(_) => {
+                                                                        progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
+                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                        self.status
+                                                                            .ty_convs
+                                                                            .push(statement.source_info.span);
+                                                                    },
+                                                                    _ => {
+                                                                        progress_info!("Not able to get type information");
+                                                                    },
+                                                                }
                                                             },
                                                             _ => {},
                                                         }
@@ -271,12 +288,25 @@ mod inner {
 
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
-                                                            Comparison::Less => {
+                                                            Comparison::Less | Comparison::NoideaL => {
                                                                 progress_info!("warn::align");
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                 self.status
                                                                     .ty_convs
                                                                     .push(statement.source_info.span);
+                                                            },
+                                                            Comparison::Noidea => {
+                                                                // check whether from_ty is generic type
+                                                                match lc.get_from_ty().kind() {
+                                                                    TyKind::Param(_) => {
+                                                                        progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
+                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                        self.status
+                                                                            .ty_convs
+                                                                            .push(statement.source_info.span);
+                                                                    },
+                                                                    _ => {},
+                                                                }
                                                             },
                                                             _ => {},
                                                         }

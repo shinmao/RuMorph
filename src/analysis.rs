@@ -6,6 +6,7 @@ use snafu::{Error, ErrorCompat};
 
 use crate::report::ReportLevel;
 use crate::context::RuMorphCtxt;
+use crate::progress_info;
 
 pub use broken_layout::{BehaviorFlag as BrokenLayoutBehaviorFlag, BrokenLayoutChecker};
 
@@ -109,12 +110,16 @@ impl Into<Cow<'static, str>> for AnalysisKind {
 // e.g., A is less than B
 // A is equal to B
 // A is greater than B
+// In the case of NoideaG, A >= B
+// In the case of NoideaL, A <= B
 #[derive(Debug, Copy, Clone)]
 pub enum Comparison {
     Less,
     Equal,
     Greater,
     Noidea,
+    NoideaG,
+    NoideaL,
 }
 
 pub struct LayoutChecker<'tcx> {
@@ -139,6 +144,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let (from_align, to_align) = (from_layout.align(), to_layout.align());
             let (from_size, to_size) = (from_layout.size(), to_layout.size());
             // for align_status
+            progress_info!("LayoutChecker- from_align:{}, to_align:{}", from_align.abi.bytes(), to_align.abi.bytes());
             let ag_status = if from_align.abi.bytes() < to_align.abi.bytes() {
                 Comparison::Less
             } else if from_align.abi.bytes() == to_align.abi.bytes() {
@@ -148,6 +154,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             } else {
                 Comparison::Noidea
             };
+            progress_info!("LayoutChecker- from_size:{}, to_size:{}", from_size.bytes(), to_size.bytes());
             // for size_status
             let sz_status = if from_size.bytes() < to_size.bytes() {
                 Comparison::Less
@@ -160,12 +167,47 @@ impl<'tcx> LayoutChecker<'tcx> {
             };
 
             (ag_status, sz_status)
+        } else if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_)) {
+            // we can only identify from_ty's layout
+            let from_layout = from_ty_and_layout.layout;
+            let from_align = from_layout.align();
+            let from_size = from_layout.size();
+            let ag_status = if from_align.abi.bytes() == 1 {
+                Comparison::NoideaL
+            } else {
+                Comparison::Noidea
+            };
+            let sz_status = if from_size.bytes() == 1 {
+                Comparison::NoideaL
+            } else {
+                Comparison::Noidea
+            };
+
+            (ag_status, sz_status)
+        } else if let Ok(to_ty_and_layout) = tcx.layout_of(p_env.and(t_ty_)) {
+            // we can only identify to_ty's layout
+            // from_ty might be generic type, check whether to_ty is u8
+            let to_layout = to_ty_and_layout.layout;
+            let to_align = to_layout.align();
+            let to_size = to_layout.size();
+            let ag_status = if to_align.abi.bytes() == 1 {
+                Comparison::NoideaG
+            } else {
+                Comparison::Noidea
+            };
+            let sz_status = if to_size.bytes() == 1 {
+                Comparison::NoideaG
+            } else {
+                Comparison::Noidea
+            };
+
+            (ag_status, sz_status)
         } else {
             (Comparison::Noidea, Comparison::Noidea)
         };
         LayoutChecker { rcx: rc, 
-            from_ty: f_ty, 
-            to_ty: t_ty,
+            from_ty: f_ty_, 
+            to_ty: t_ty_,
             align_status: layout_res.0,
             size_status: layout_res.1,
         }
@@ -177,6 +219,14 @@ impl<'tcx> LayoutChecker<'tcx> {
 
     pub fn get_size_status(&self) -> Comparison {
         self.size_status
+    }
+
+    pub fn get_from_ty(&self) -> Ty<'tcx> {
+        self.from_ty
+    }
+
+    pub fn get_to_ty(&self) -> Ty<'tcx> {
+        self.to_ty
     }
 }
 
