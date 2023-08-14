@@ -25,3 +25,5 @@ crates/
 rumorph-home/
 
 tests/realworld_cases/
+
+test_for_bug1.py
