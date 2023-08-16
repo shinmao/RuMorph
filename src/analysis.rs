@@ -1,6 +1,7 @@
 mod broken_layout;
+mod uninit_exposure;
 
-use rustc_middle::ty::{self, Ty, ParamEnv, TypeAndMut};
+use rustc_middle::ty::{self, Ty, ParamEnv, TypeAndMut, TyKind};
 
 use snafu::{Error, ErrorCompat};
 
@@ -9,6 +10,7 @@ use crate::context::RuMorphCtxt;
 use crate::progress_info;
 
 pub use broken_layout::{BehaviorFlag as BrokenLayoutBehaviorFlag, BrokenLayoutChecker};
+pub use uninit_exposure::{BehaviorFlag as UninitExposureBehaviorFlag, UninitExposureChecker};
 
 pub type AnalysisResult<'tcx, T> = Result<T, Box<dyn AnalysisError + 'tcx>>;
 
@@ -63,6 +65,7 @@ pub enum AnalysisErrorKind {
 #[derive(Debug, Copy, Clone)]
 pub enum AnalysisKind {
     BrokenLayout(BrokenLayoutBehaviorFlag),
+    UninitExposure(UninitExposureBehaviorFlag),
 }
 
 trait IntoReportLevel {
@@ -102,6 +105,10 @@ impl Into<Cow<'static, str>> for AnalysisKind {
                 //     v.push("VecSetLen")
                 // }
                 v.join("/").into()
+            },
+            AnalysisKind::UninitExposure(bypass_kinds) => {
+                let mut v = vec!["UninitExposure:"];
+                v.join("/").into()
             }
         }
     }
@@ -132,6 +139,7 @@ pub struct LayoutChecker<'tcx> {
 
 impl<'tcx> LayoutChecker<'tcx> {
     pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
+        progress_info!("LayoutChecker- from_ty:{:?}, to_ty:{:?}", f_ty, t_ty);
         // rustc_middle::ty::TyCtxt
         let tcx = rc.tcx();
         let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
@@ -228,9 +236,34 @@ impl<'tcx> LayoutChecker<'tcx> {
     pub fn get_to_ty(&self) -> Ty<'tcx> {
         self.to_ty
     }
+
+    pub fn is_from_to_primitive(&self) -> (bool, bool) {
+        (self.from_ty.is_primitive_ty(), self.to_ty.is_primitive_ty())
+    }
+
+    pub fn is_from_to_adt(&self) -> (bool, bool) {
+        (self.from_ty.is_adt(), self.to_ty.is_adt())
+    }
+
+    pub fn is_from_to_generic(&self) -> (bool, bool) {
+        let is_from_generic = match self.from_ty.kind() {
+            TyKind::Param(_) => {
+                true
+            },
+            _ => { false },
+        };
+        let is_to_generic = match self.to_ty.kind() {
+            TyKind::Param(_) => {
+                true
+            },
+            _ => { false },
+        };
+        (is_from_generic, is_to_generic)
+    }
 }
 
 fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
+    progress_info!("get_pointee: > {:?}", matched_ty);
     let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
         get_pointee(ty_mut.ty)
     } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {

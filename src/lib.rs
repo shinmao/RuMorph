@@ -41,7 +41,7 @@ pub mod prelude;
 
 use rustc_middle::ty::TyCtxt;
 
-use crate::analysis::{BrokenLayoutChecker};
+use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker};
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
 use crate::context::RuMorphCtxtOwner;
@@ -123,13 +123,13 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
         })
     }
 
-    // // Uninit Exposure analysis
-    // if config.uninit_exposure_enabled {
-    //     run_analysis("UninitExposure", || {
-    //         let checker = UninitExposureChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
+    // Uninit Exposure analysis
+    if config.uninit_exposure_enabled {
+        run_analysis("UninitExposure", || {
+            let checker = UninitExposureChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 
     // // Alloc Dealloc Inconsistency analysis
     // if config.alloc_inconsistency_enabled {
