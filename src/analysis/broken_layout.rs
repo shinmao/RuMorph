@@ -240,6 +240,7 @@ mod inner {
                                                             Comparison::Less | Comparison::NoideaL => {
                                                                 // in the case of NoideaL, we assume that to_ty is aligned to larger bytes than from_ty
                                                                 progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
+                                                                progress_info!("to_ty info?{}, {}", lc.is_from_to_adt().1, lc.is_from_to_generic().1);
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                 self.status
                                                                     .ty_convs
@@ -249,11 +250,19 @@ mod inner {
                                                                 // check whether from_ty is generic type
                                                                 match lc.get_from_ty().kind() {
                                                                     TyKind::Param(_) => {
-                                                                        progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
-                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                        self.status
-                                                                            .ty_convs
-                                                                            .push(statement.source_info.span);
+                                                                        match lc.get_to_ty().kind() {
+                                                                            TyKind::Param(_) => {
+                                                                                // we assume that use case of generic->generic isn't error-prone
+                                                                            },
+                                                                            _ => {
+                                                                                // in this case, generic->concrete is error-prone
+                                                                                progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
+                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                                self.status
+                                                                                    .ty_convs
+                                                                                    .push(statement.source_info.span);
+                                                                            },
+                                                                        }
                                                                     },
                                                                     _ => {
                                                                         progress_info!("Not able to get type information");
@@ -299,13 +308,16 @@ mod inner {
                                                                 // check whether from_ty is generic type
                                                                 match lc.get_from_ty().kind() {
                                                                     TyKind::Param(_) => {
+                                                                        // we assume that use case of generic->generic isn't error-prone
+                                                                    },
+                                                                    _ => {
+                                                                        // in this case, generic->concrete is error-prone
                                                                         progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
                                                                         taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                         self.status
                                                                             .ty_convs
                                                                             .push(statement.source_info.span);
                                                                     },
-                                                                    _ => {},
                                                                 }
                                                             },
                                                             _ => {},

@@ -1,7 +1,7 @@
 mod broken_layout;
 mod uninit_exposure;
 
-use rustc_middle::ty::{self, Ty, ParamEnv, TypeAndMut, TyKind};
+use rustc_middle::ty::{self, Ty, ParamEnv, TypeAndMut, TyKind, TyCtxt, IntTy, UintTy, FloatTy};
 
 use snafu::{Error, ErrorCompat};
 
@@ -137,12 +137,34 @@ pub struct LayoutChecker<'tcx> {
     size_status: Comparison,
 }
 
+// LayoutChecker can help us get the align/size status of type conversion
+// take one exception case for target into consideration
+// on x86 u64 and f64 are only aligned to 4 bytes
 impl<'tcx> LayoutChecker<'tcx> {
     pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
         progress_info!("LayoutChecker- from_ty:{:?}, to_ty:{:?}", f_ty, t_ty);
         // rustc_middle::ty::TyCtxt
         let tcx = rc.tcx();
         let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
+        // try to handle external type if we can't get type information
+        let mut ext_fty_info: u64 = 0;
+        let mut ext_tty_info: u64 = 0;
+        if let Err(_) = tcx.layout_of(p_env.and(f_ty_)) {
+            match get_external(tcx, f_ty_) {
+                Some(external_ty) => {
+                    ext_fty_info = external_ty;
+                },
+                None => {},
+            }
+        }
+        if let Err(_) = tcx.layout_of(p_env.and(t_ty_)) {
+            match get_external(tcx, t_ty_) {
+                Some(external_ty) => {
+                    ext_tty_info = external_ty;
+                },
+                None => {},
+            }
+        }
         // from_ty_and_layout = rustc_target::abi::TyAndLayout
         // (align_status, size_status)
         let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_))
@@ -153,7 +175,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let (from_size, to_size) = (from_layout.size(), to_layout.size());
             // for align_status
             progress_info!("LayoutChecker- from_align:{}, to_align:{}", from_align.abi.bytes(), to_align.abi.bytes());
-            let ag_status = if from_align.abi.bytes() < to_align.abi.bytes() {
+            let mut ag_status = if from_align.abi.bytes() < to_align.abi.bytes() {
                 Comparison::Less
             } else if from_align.abi.bytes() == to_align.abi.bytes() {
                 Comparison::Equal
@@ -162,6 +184,30 @@ impl<'tcx> LayoutChecker<'tcx> {
             } else {
                 Comparison::Noidea
             };
+            // exception cases for u64 and f64
+            match ag_status {
+                Comparison::Less => {},
+                _ => {
+                    // check type kind of from_ty
+                    match f_ty_.kind() {
+                        TyKind::Uint(uint_ty) => {
+                            // u64
+                            if (uint_ty.name_str() == "u64") && (4 < to_align.abi.bytes()) {
+                                progress_info!("from_align could be :{} on x86", 4);
+                                ag_status = Comparison::Less;
+                            }
+                        },
+                        TyKind::Float(float_ty) => {
+                            // f64
+                            if (float_ty.name_str() == "f64") && (4 < to_align.abi.bytes()) {
+                                progress_info!("from_align could be :{} on x86", 4);
+                                ag_status = Comparison::Less;
+                            }
+                        },
+                        _ => {},
+                    }
+                },
+            }
             progress_info!("LayoutChecker- from_size:{}, to_size:{}", from_size.bytes(), to_size.bytes());
             // for size_status
             let sz_status = if from_size.bytes() < to_size.bytes() {
@@ -180,7 +226,16 @@ impl<'tcx> LayoutChecker<'tcx> {
             let from_layout = from_ty_and_layout.layout;
             let from_align = from_layout.align();
             let from_size = from_layout.size();
-            let ag_status = if from_align.abi.bytes() == 1 {
+            let ag_status = if ext_tty_info != 0 {
+                // we have some type info of to_ty
+                if from_align.abi.bytes() < ext_tty_info {
+                    Comparison::Less
+                } else if from_align.abi.bytes() == ext_tty_info {
+                    Comparison::Equal
+                } else {
+                    Comparison::Greater
+                }
+            } else if from_align.abi.bytes() == 1 {
                 Comparison::NoideaL
             } else {
                 Comparison::Noidea
@@ -198,7 +253,16 @@ impl<'tcx> LayoutChecker<'tcx> {
             let to_layout = to_ty_and_layout.layout;
             let to_align = to_layout.align();
             let to_size = to_layout.size();
-            let ag_status = if to_align.abi.bytes() == 1 {
+            let ag_status = if ext_fty_info != 0 {
+                // we have some type info of from_ty
+                if ext_fty_info < to_align.abi.bytes() {
+                    Comparison::Less
+                } else if ext_fty_info == to_align.abi.bytes() {
+                    Comparison::Equal
+                } else {
+                    Comparison::Greater
+                }
+            } else if to_align.abi.bytes() == 1 {
                 Comparison::NoideaG
             } else {
                 Comparison::Noidea
@@ -262,6 +326,7 @@ impl<'tcx> LayoutChecker<'tcx> {
     }
 }
 
+// get the pointee or wrapped type
 fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
     progress_info!("get_pointee: > {:?}", matched_ty);
     let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
@@ -272,4 +337,23 @@ fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
         matched_ty
     };
     pointee
+}
+
+// try to get external type
+// only try to handle primitive type
+fn get_external<'tcx>(tcx: TyCtxt<'tcx>, matched_ty: Ty<'tcx>) -> Option<u64>{
+    let ty_symbol = matched_ty.to_string();
+    if ty_symbol.contains("bool") || ty_symbol.contains("i8") || ty_symbol.contains("u8") {
+        Some(1)
+    } else if ty_symbol.contains("i16") || ty_symbol.contains("u16") {
+        Some(2)
+    } else if ty_symbol.contains("i32") || ty_symbol.contains("u32") || ty_symbol.contains("f32") || ty_symbol.contains("char") {
+        Some(4)
+    } else if ty_symbol.contains("u64") || ty_symbol.contains("i64") || ty_symbol.contains("f64") {
+        Some(8)
+    } else if ty_symbol.contains("u128") || ty_symbol.contains("i128") {
+        Some(16)
+    } else {
+        None
+    }
 }
