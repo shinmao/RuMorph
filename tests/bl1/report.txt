@@ -1,0 +1,308 @@
+2023-08-22 21:34:40.810199 |INFO | [rumorph-progress] Running cargo rumorph
+2023-08-22 21:34:41.062000 |INFO | [rumorph-progress] Running rumorph for target bin:bl1
+warning: unused variable: `t`
+  --> src/main.rs:11:9
+   |
+11 |     let t: &i64 = unsafe { core::mem::transmute(val) };
+   |         ^ help: if this is intentional, prefix it with an underscore: `_t`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `a`
+  --> src/main.rs:27:9
+   |
+27 |     let a: i32 = 3;
+   |         ^ help: if this is intentional, prefix it with an underscore: `_a`
+
+warning: function `risky_cast_II` is never used
+ --> src/main.rs:1:4
+  |
+1 | fn risky_cast_II(val: *const i32) -> *const i64 {
+  |    ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` on by default
+
+warning: function `risky_cast` is never used
+ --> src/main.rs:5:4
+  |
+5 | fn risky_cast(val: &i32) -> &i64 {
+  |    ^^^^^^^^^^
+
+warning: function `risky_transmute_II` is never used
+  --> src/main.rs:10:4
+   |
+10 | fn risky_transmute_II<'a>(val: &'a i32, val2: &'a i64) -> &'a i64 {
+   |    ^^^^^^^^^^^^^^^^^^
+
+warning: function `risky_transmute` is never used
+  --> src/main.rs:15:4
+   |
+15 | fn risky_transmute(val: *const i32) -> *const i64{
+   |    ^^^^^^^^^^^^^^^
+
+warning: function `safe_transmute` is never used
+  --> src/main.rs:22:4
+   |
+22 | fn safe_transmute(val: &i64) -> &i32 {
+   |    ^^^^^^^^^^^^^^
+
+warning: function `risky_cast_II` should have a snake case name
+ --> src/main.rs:1:4
+  |
+1 | fn risky_cast_II(val: *const i32) -> *const i64 {
+  |    ^^^^^^^^^^^^^ help: convert the identifier to snake case (notice the capitalization): `risky_cast_ii`
+  |
+  = note: `#[warn(non_snake_case)]` on by default
+
+warning: function `risky_transmute_II` should have a snake case name
+  --> src/main.rs:10:4
+   |
+10 | fn risky_transmute_II<'a>(val: &'a i32, val2: &'a i64) -> &'a i64 {
+   |    ^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case (notice the capitalization): `risky_transmute_ii`
+
+2023-08-22 21:34:41.402343 |INFO | [rumorph-progress] RuMorph started
+2023-08-22 21:34:41.402568 |INFO | [rumorph-progress] BrokenLayout analysis started
+2023-08-22 21:34:41.402587 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(risky_cast_II)
+2023-08-22 21:34:41.402598 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-22 21:34:41.402603 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.402608 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(risky_cast)
+2023-08-22 21:34:41.402613 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.402937 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:6:9: 6:10 (#0), scope: scope[0] }
+2023-08-22 21:34:41.402951 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:6:13: 6:30 (#0), scope: scope[0] }
+2023-08-22 21:34:41.402957 |INFO | [rumorph-progress] statement: _3 = &raw const (*_1), kind:Assign((_3, &raw const (*_1))), info:SourceInfo { span: src/main.rs:6:13: 6:16 (#0), scope: scope[0] }
+2023-08-22 21:34:41.402971 |INFO | [rumorph-progress] warn::deref on place:1
+2023-08-22 21:34:41.402976 |INFO | [rumorph-progress] statement: _2 = move _3 as *const i64 (PtrToPtr), kind:Assign((_2, move _3 as *const i64 (PtrToPtr))), info:SourceInfo { span: src/main.rs:6:13: 6:44 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403000 |INFO | [rumorph-progress] cast::ptr-ptr
+2023-08-22 21:34:41.403005 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const i32, to_ty:*const i64
+2023-08-22 21:34:41.403011 |INFO | [rumorph-progress] get_pointee: > *const i32
+2023-08-22 21:34:41.403015 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.403020 |INFO | [rumorph-progress] get_pointee: > *const i64
+2023-08-22 21:34:41.403024 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.403038 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:8
+2023-08-22 21:34:41.403043 |INFO | [rumorph-progress] LayoutChecker- from_size:4, to_size:8
+2023-08-22 21:34:41.403047 |INFO | [rumorph-progress] warn::align from id3 to lplace2
+2023-08-22 21:34:41.403051 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:6:43: 6:44 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403058 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403064 |INFO | [rumorph-progress] statement: _5 = _2 as *const () (PtrToPtr), kind:Assign((_5, _2 as *const () (PtrToPtr))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403073 |INFO | [rumorph-progress] cast::ptr-ptr
+2023-08-22 21:34:41.403078 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const i64, to_ty:*const ()
+2023-08-22 21:34:41.403082 |INFO | [rumorph-progress] get_pointee: > *const i64
+2023-08-22 21:34:41.403086 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.403090 |INFO | [rumorph-progress] get_pointee: > *const ()
+2023-08-22 21:34:41.403095 |INFO | [rumorph-progress] get_pointee: > ()
+2023-08-22 21:34:41.403121 |INFO | [rumorph-progress] LayoutChecker- from_align:8, to_align:1
+2023-08-22 21:34:41.403127 |INFO | [rumorph-progress] LayoutChecker- from_size:8, to_size:0
+2023-08-22 21:34:41.403132 |INFO | [rumorph-progress] statement: _6 = _5 as usize (Transmute), kind:Assign((_6, _5 as usize (Transmute))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403142 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.403146 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const (), to_ty:usize
+2023-08-22 21:34:41.403151 |INFO | [rumorph-progress] get_pointee: > *const ()
+2023-08-22 21:34:41.403155 |INFO | [rumorph-progress] get_pointee: > ()
+2023-08-22 21:34:41.403160 |INFO | [rumorph-progress] get_pointee: > usize
+2023-08-22 21:34:41.403166 |INFO | [rumorph-progress] LayoutChecker- from_align:1, to_align:8
+2023-08-22 21:34:41.403171 |INFO | [rumorph-progress] LayoutChecker- from_size:0, to_size:8
+2023-08-22 21:34:41.403175 |INFO | [rumorph-progress] warn::align
+2023-08-22 21:34:41.403179 |INFO | [rumorph-progress] statement: _7 = AlignOf(i64), kind:Assign((_7, AlignOf(i64))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403187 |INFO | [rumorph-progress] statement: _8 = Sub(_7, const 1_usize), kind:Assign((_8, Sub(_7, const 1_usize))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403204 |INFO | [rumorph-progress] statement: _9 = BitAnd(_6, _8), kind:Assign((_9, BitAnd(_6, _8))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403213 |INFO | [rumorph-progress] statement: _10 = Eq(_9, const 0_usize), kind:Assign((_10, Eq(_9, const 0_usize))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403222 |INFO | [rumorph-progress] statement: _4 = &(*_2), kind:Assign((_4, &(*_2))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403230 |INFO | [rumorph-progress] warn::deref on place:2
+2023-08-22 21:34:41.403233 |INFO | [rumorph-progress] statement: _0 = &(*_4), kind:Assign((_0, &(*_4))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403241 |INFO | [rumorph-progress] warn::deref on place:4
+2023-08-22 21:34:41.403245 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:8:1: 8:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403252 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: src/main.rs:8:1: 8:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403259 |INFO | [rumorph-progress] terminator: Terminator { kind: Unimplemented("Unknown terminator: Terminator { source_info: SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }, kind: assert(_10, \"misaligned pointer dereference: address must be a multiple of {} but is {}\", _7, _6) -> [success: bb1, unwind terminate] }"), original: Terminator { source_info: SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }, kind: assert(_10, "misaligned pointer dereference: address must be a multiple of {} but is {}", _7, _6) -> [success: bb1, unwind terminate] } }
+2023-08-22 21:34:41.403276 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:8:2: 8:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.403285 |INFO | [rumorph-progress] find the bug with behavior_flag: CAST
+2023-08-22 21:34:41.403306 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(risky_transmute_II)
+2023-08-22 21:34:41.403313 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.403402 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:11:9: 11:10 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403415 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: src/main.rs:11:49: 11:52 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403423 |INFO | [rumorph-progress] statement: _4 = _1, kind:Assign((_4, _1)), info:SourceInfo { span: src/main.rs:11:49: 11:52 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403431 |INFO | [rumorph-progress] [dbg] lplace: 4, rplace: 1
+2023-08-22 21:34:41.403435 |INFO | [rumorph-progress] statement: _3 = move _4 as &i64 (Transmute), kind:Assign((_3, move _4 as &i64 (Transmute))), info:SourceInfo { span: src/main.rs:11:28: 11:53 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403446 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.403450 |INFO | [rumorph-progress] LayoutChecker- from_ty:&i32, to_ty:&i64
+2023-08-22 21:34:41.403454 |INFO | [rumorph-progress] get_pointee: > &i32
+2023-08-22 21:34:41.403459 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.403463 |INFO | [rumorph-progress] get_pointee: > &i64
+2023-08-22 21:34:41.403468 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.403472 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:8
+2023-08-22 21:34:41.403478 |INFO | [rumorph-progress] LayoutChecker- from_size:4, to_size:8
+2023-08-22 21:34:41.403482 |INFO | [rumorph-progress] warn::align
+2023-08-22 21:34:41.403486 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: src/main.rs:11:52: 11:53 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403492 |INFO | [rumorph-progress] statement: _0 = _2, kind:Assign((_0, _2)), info:SourceInfo { span: src/main.rs:12:5: 12:9 (#0), scope: scope[1] }
+2023-08-22 21:34:41.403500 |INFO | [rumorph-progress] [dbg] lplace: 0, rplace: 2
+2023-08-22 21:34:41.403504 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:13:1: 13:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403511 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:13:2: 13:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.403519 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.403525 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(risky_transmute)
+2023-08-22 21:34:41.403531 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.403594 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:16:9: 16:10 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403605 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:17:29: 17:32 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403612 |INFO | [rumorph-progress] statement: _3 = _1, kind:Assign((_3, _1)), info:SourceInfo { span: src/main.rs:17:29: 17:32 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403620 |INFO | [rumorph-progress] [dbg] lplace: 3, rplace: 1
+2023-08-22 21:34:41.403625 |INFO | [rumorph-progress] statement: _2 = move _3 as *const i64 (Transmute), kind:Assign((_2, move _3 as *const i64 (Transmute))), info:SourceInfo { span: src/main.rs:17:9: 17:33 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403635 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.403639 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const i32, to_ty:*const i64
+2023-08-22 21:34:41.403644 |INFO | [rumorph-progress] get_pointee: > *const i32
+2023-08-22 21:34:41.403648 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.403653 |INFO | [rumorph-progress] get_pointee: > *const i64
+2023-08-22 21:34:41.403657 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.403662 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:8
+2023-08-22 21:34:41.403666 |INFO | [rumorph-progress] LayoutChecker- from_size:4, to_size:8
+2023-08-22 21:34:41.403670 |INFO | [rumorph-progress] warn::align
+2023-08-22 21:34:41.403674 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:17:32: 17:33 (#0), scope: scope[2] }
+2023-08-22 21:34:41.403681 |INFO | [rumorph-progress] statement: _0 = _2, kind:Assign((_0, _2)), info:SourceInfo { span: src/main.rs:19:5: 19:6 (#0), scope: scope[1] }
+2023-08-22 21:34:41.403688 |INFO | [rumorph-progress] [dbg] lplace: 0, rplace: 2
+2023-08-22 21:34:41.403692 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:20:1: 20:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403698 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:20:2: 20:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.403707 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.403712 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(safe_transmute)
+2023-08-22 21:34:41.403718 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.403783 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:23:35: 23:38 (#0), scope: scope[1] }
+2023-08-22 21:34:41.403795 |INFO | [rumorph-progress] statement: _2 = _1, kind:Assign((_2, _1)), info:SourceInfo { span: src/main.rs:23:35: 23:38 (#0), scope: scope[1] }
+2023-08-22 21:34:41.403804 |INFO | [rumorph-progress] [dbg] lplace: 2, rplace: 1
+2023-08-22 21:34:41.403808 |INFO | [rumorph-progress] statement: _0 = move _2 as &i32 (Transmute), kind:Assign((_0, move _2 as &i32 (Transmute))), info:SourceInfo { span: src/main.rs:23:14: 23:39 (#0), scope: scope[1] }
+2023-08-22 21:34:41.403818 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.403822 |INFO | [rumorph-progress] LayoutChecker- from_ty:&i64, to_ty:&i32
+2023-08-22 21:34:41.403827 |INFO | [rumorph-progress] get_pointee: > &i64
+2023-08-22 21:34:41.403832 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.403836 |INFO | [rumorph-progress] get_pointee: > &i32
+2023-08-22 21:34:41.403841 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.403845 |INFO | [rumorph-progress] LayoutChecker- from_align:8, to_align:4
+2023-08-22 21:34:41.403850 |INFO | [rumorph-progress] LayoutChecker- from_size:8, to_size:4
+2023-08-22 21:34:41.403854 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:23:38: 23:39 (#0), scope: scope[1] }
+2023-08-22 21:34:41.403861 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:24:2: 24:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.403869 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.403874 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(main)
+2023-08-22 21:34:41.403880 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-22 21:34:41.403885 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.403889 |INFO | [rumorph-progress] BrokenLayout analysis finished
+2023-08-22 21:34:41.403894 |INFO | [rumorph-progress] UninitExposure analysis started
+2023-08-22 21:34:41.403898 |INFO | [rumorph-progress] UninitExposureChecker::analyze(risky_cast_II)
+2023-08-22 21:34:41.403905 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-22 21:34:41.403910 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.403915 |INFO | [rumorph-progress] UninitExposureChecker::analyze(risky_cast)
+2023-08-22 21:34:41.403920 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.403927 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:6:9: 6:10 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403935 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:6:13: 6:30 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403941 |INFO | [rumorph-progress] statement: _3 = &raw const (*_1), kind:Assign((_3, &raw const (*_1))), info:SourceInfo { span: src/main.rs:6:13: 6:16 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403950 |INFO | [rumorph-progress] warn::deref on place:1
+2023-08-22 21:34:41.403954 |INFO | [rumorph-progress] statement: _2 = move _3 as *const i64 (PtrToPtr), kind:Assign((_2, move _3 as *const i64 (PtrToPtr))), info:SourceInfo { span: src/main.rs:6:13: 6:44 (#0), scope: scope[0] }
+2023-08-22 21:34:41.403963 |INFO | [rumorph-progress] cast::ptr-ptr
+2023-08-22 21:34:41.403968 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const i32, to_ty:*const i64
+2023-08-22 21:34:41.403972 |INFO | [rumorph-progress] get_pointee: > *const i32
+2023-08-22 21:34:41.403977 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.403981 |INFO | [rumorph-progress] get_pointee: > *const i64
+2023-08-22 21:34:41.403985 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.403989 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:8
+2023-08-22 21:34:41.403993 |INFO | [rumorph-progress] LayoutChecker- from_size:4, to_size:8
+2023-08-22 21:34:41.403997 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:6:43: 6:44 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404003 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404010 |INFO | [rumorph-progress] statement: _5 = _2 as *const () (PtrToPtr), kind:Assign((_5, _2 as *const () (PtrToPtr))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404018 |INFO | [rumorph-progress] cast::ptr-ptr
+2023-08-22 21:34:41.404022 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const i64, to_ty:*const ()
+2023-08-22 21:34:41.404027 |INFO | [rumorph-progress] get_pointee: > *const i64
+2023-08-22 21:34:41.404032 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.404036 |INFO | [rumorph-progress] get_pointee: > *const ()
+2023-08-22 21:34:41.404041 |INFO | [rumorph-progress] get_pointee: > ()
+2023-08-22 21:34:41.404045 |INFO | [rumorph-progress] LayoutChecker- from_align:8, to_align:1
+2023-08-22 21:34:41.404049 |INFO | [rumorph-progress] LayoutChecker- from_size:8, to_size:0
+2023-08-22 21:34:41.404053 |INFO | [rumorph-progress] from_prime: true, from_adt: false, from_gen: false
+2023-08-22 21:34:41.404057 |INFO | [rumorph-progress] to_prime: false, to_adt: false, to_gen: false
+2023-08-22 21:34:41.404061 |INFO | [rumorph-progress] statement: _6 = _5 as usize (Transmute), kind:Assign((_6, _5 as usize (Transmute))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404070 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.404074 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const (), to_ty:usize
+2023-08-22 21:34:41.404078 |INFO | [rumorph-progress] get_pointee: > *const ()
+2023-08-22 21:34:41.404083 |INFO | [rumorph-progress] get_pointee: > ()
+2023-08-22 21:34:41.404088 |INFO | [rumorph-progress] get_pointee: > usize
+2023-08-22 21:34:41.404092 |INFO | [rumorph-progress] LayoutChecker- from_align:1, to_align:8
+2023-08-22 21:34:41.404097 |INFO | [rumorph-progress] LayoutChecker- from_size:0, to_size:8
+2023-08-22 21:34:41.404101 |INFO | [rumorph-progress] statement: _7 = AlignOf(i64), kind:Assign((_7, AlignOf(i64))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404109 |INFO | [rumorph-progress] statement: _8 = Sub(_7, const 1_usize), kind:Assign((_8, Sub(_7, const 1_usize))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404119 |INFO | [rumorph-progress] statement: _9 = BitAnd(_6, _8), kind:Assign((_9, BitAnd(_6, _8))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404127 |INFO | [rumorph-progress] statement: _10 = Eq(_9, const 0_usize), kind:Assign((_10, Eq(_9, const 0_usize))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404136 |INFO | [rumorph-progress] statement: _4 = &(*_2), kind:Assign((_4, &(*_2))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404144 |INFO | [rumorph-progress] warn::deref on place:2
+2023-08-22 21:34:41.404148 |INFO | [rumorph-progress] statement: _0 = &(*_4), kind:Assign((_0, &(*_4))), info:SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404156 |INFO | [rumorph-progress] warn::deref on place:4
+2023-08-22 21:34:41.404160 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:8:1: 8:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404166 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: src/main.rs:8:1: 8:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404173 |INFO | [rumorph-progress] terminator: Terminator { kind: Unimplemented("Unknown terminator: Terminator { source_info: SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }, kind: assert(_10, \"misaligned pointer dereference: address must be a multiple of {} but is {}\", _7, _6) -> [success: bb1, unwind terminate] }"), original: Terminator { source_info: SourceInfo { span: src/main.rs:7:14: 7:17 (#0), scope: scope[2] }, kind: assert(_10, "misaligned pointer dereference: address must be a multiple of {} but is {}", _7, _6) -> [success: bb1, unwind terminate] } }
+2023-08-22 21:34:41.404188 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:8:2: 8:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.404197 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.404202 |INFO | [rumorph-progress] UninitExposureChecker::analyze(risky_transmute_II)
+2023-08-22 21:34:41.404208 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.404213 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:11:9: 11:10 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404220 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: src/main.rs:11:49: 11:52 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404227 |INFO | [rumorph-progress] statement: _4 = _1, kind:Assign((_4, _1)), info:SourceInfo { span: src/main.rs:11:49: 11:52 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404235 |INFO | [rumorph-progress] [dbg] lplace: 4, rplace: 1
+2023-08-22 21:34:41.404239 |INFO | [rumorph-progress] statement: _3 = move _4 as &i64 (Transmute), kind:Assign((_3, move _4 as &i64 (Transmute))), info:SourceInfo { span: src/main.rs:11:28: 11:53 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404248 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.404252 |INFO | [rumorph-progress] LayoutChecker- from_ty:&i32, to_ty:&i64
+2023-08-22 21:34:41.404257 |INFO | [rumorph-progress] get_pointee: > &i32
+2023-08-22 21:34:41.404261 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.404266 |INFO | [rumorph-progress] get_pointee: > &i64
+2023-08-22 21:34:41.404270 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.404274 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:8
+2023-08-22 21:34:41.404278 |INFO | [rumorph-progress] LayoutChecker- from_size:4, to_size:8
+2023-08-22 21:34:41.404283 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: src/main.rs:11:52: 11:53 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404290 |INFO | [rumorph-progress] statement: _0 = _2, kind:Assign((_0, _2)), info:SourceInfo { span: src/main.rs:12:5: 12:9 (#0), scope: scope[1] }
+2023-08-22 21:34:41.404297 |INFO | [rumorph-progress] [dbg] lplace: 0, rplace: 2
+2023-08-22 21:34:41.404301 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:13:1: 13:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404308 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:13:2: 13:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.404316 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.404320 |INFO | [rumorph-progress] UninitExposureChecker::analyze(risky_transmute)
+2023-08-22 21:34:41.404326 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.404330 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:16:9: 16:10 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404338 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:17:29: 17:32 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404344 |INFO | [rumorph-progress] statement: _3 = _1, kind:Assign((_3, _1)), info:SourceInfo { span: src/main.rs:17:29: 17:32 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404352 |INFO | [rumorph-progress] [dbg] lplace: 3, rplace: 1
+2023-08-22 21:34:41.404356 |INFO | [rumorph-progress] statement: _2 = move _3 as *const i64 (Transmute), kind:Assign((_2, move _3 as *const i64 (Transmute))), info:SourceInfo { span: src/main.rs:17:9: 17:33 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404365 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.404369 |INFO | [rumorph-progress] LayoutChecker- from_ty:*const i32, to_ty:*const i64
+2023-08-22 21:34:41.404373 |INFO | [rumorph-progress] get_pointee: > *const i32
+2023-08-22 21:34:41.404379 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.404383 |INFO | [rumorph-progress] get_pointee: > *const i64
+2023-08-22 21:34:41.404387 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.404391 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:8
+2023-08-22 21:34:41.404396 |INFO | [rumorph-progress] LayoutChecker- from_size:4, to_size:8
+2023-08-22 21:34:41.404400 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:17:32: 17:33 (#0), scope: scope[2] }
+2023-08-22 21:34:41.404407 |INFO | [rumorph-progress] statement: _0 = _2, kind:Assign((_0, _2)), info:SourceInfo { span: src/main.rs:19:5: 19:6 (#0), scope: scope[1] }
+2023-08-22 21:34:41.404414 |INFO | [rumorph-progress] [dbg] lplace: 0, rplace: 2
+2023-08-22 21:34:41.404418 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:20:1: 20:2 (#0), scope: scope[0] }
+2023-08-22 21:34:41.404425 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:20:2: 20:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.404432 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.404436 |INFO | [rumorph-progress] UninitExposureChecker::analyze(safe_transmute)
+2023-08-22 21:34:41.404442 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-22 21:34:41.404447 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:23:35: 23:38 (#0), scope: scope[1] }
+2023-08-22 21:34:41.404454 |INFO | [rumorph-progress] statement: _2 = _1, kind:Assign((_2, _1)), info:SourceInfo { span: src/main.rs:23:35: 23:38 (#0), scope: scope[1] }
+2023-08-22 21:34:41.404461 |INFO | [rumorph-progress] [dbg] lplace: 2, rplace: 1
+2023-08-22 21:34:41.404465 |INFO | [rumorph-progress] statement: _0 = move _2 as &i32 (Transmute), kind:Assign((_0, move _2 as &i32 (Transmute))), info:SourceInfo { span: src/main.rs:23:14: 23:39 (#0), scope: scope[1] }
+2023-08-22 21:34:41.404474 |INFO | [rumorph-progress] transmute
+2023-08-22 21:34:41.404478 |INFO | [rumorph-progress] LayoutChecker- from_ty:&i64, to_ty:&i32
+2023-08-22 21:34:41.404483 |INFO | [rumorph-progress] get_pointee: > &i64
+2023-08-22 21:34:41.404487 |INFO | [rumorph-progress] get_pointee: > i64
+2023-08-22 21:34:41.404491 |INFO | [rumorph-progress] get_pointee: > &i32
+2023-08-22 21:34:41.404496 |INFO | [rumorph-progress] get_pointee: > i32
+2023-08-22 21:34:41.404500 |INFO | [rumorph-progress] LayoutChecker- from_align:8, to_align:4
+2023-08-22 21:34:41.404504 |INFO | [rumorph-progress] LayoutChecker- from_size:8, to_size:4
+2023-08-22 21:34:41.404508 |INFO | [rumorph-progress] from_prime: true, from_adt: false, from_gen: false
+2023-08-22 21:34:41.404513 |INFO | [rumorph-progress] to_prime: true, to_adt: false, to_gen: false
+2023-08-22 21:34:41.404517 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:23:38: 23:39 (#0), scope: scope[1] }
+2023-08-22 21:34:41.404524 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:24:2: 24:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-22 21:34:41.404532 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.404536 |INFO | [rumorph-progress] UninitExposureChecker::analyze(main)
+2023-08-22 21:34:41.404541 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-22 21:34:41.404546 |INFO | [rumorph-progress] bug not found
+2023-08-22 21:34:41.404550 |INFO | [rumorph-progress] UninitExposure analysis finished
+2023-08-22 21:34:41.404554 |INFO | [rumorph-progress] RuMorph finished
+Error (BrokenLayout:): Potential broken layout issue in `risky_cast`
+-> src/main.rs:5:1: 8:2
+fn risky_cast(val: &i32) -> &i64 {
+    let t = [0m[32mval as *const i32 as *const i64[0m;
+    unsafe { [0m[32m&*t[0m }
+}
+[0m
+2023-08-22 21:34:41.413341 |INFO | [rumorph-progress] cargo rumorph finished
