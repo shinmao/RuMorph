@@ -243,35 +243,25 @@ mod inner {
                                                             | Comparison::Greater 
                                                             | Comparison::Noidea 
                                                             | Comparison::NoideaG => {
-                                                                match size_status {
-                                                                    Comparison::Less | Comparison::NoideaL => {
-                                                                        // in this case, from_ty is not generic type
-                                                                        progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
+                                                                // check
+                                                                // (gen > prim) (adt > prim)
+                                                                // (gen > adt) (adt > adt)
+                                                                let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
+                                                                let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
+                                                                let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
+                                                                progress_info!("from_prime: {}, from_adt: {}, from_gen: {}", is_from_prime, is_from_adt, is_from_gen);
+                                                                progress_info!("to_prime: {}, to_adt: {}, to_gen: {}", is_to_prime, is_to_adt, is_to_gen);
+                                                                if is_to_prime | is_to_adt {
+                                                                    if is_from_gen | is_from_adt {
+                                                                        progress_info!("warn::size from id{} to lplace{}", id, lplace.local.index());
                                                                         taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                         self.status
                                                                             .ty_convs
                                                                             .push(statement.source_info.span);
-                                                                    },
-                                                                    _ => {
-                                                                        // check
-                                                                        // (gen > prim) (adt > prim)
-                                                                        // (gen > adt) (adt > adt)
-                                                                        let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
-                                                                        let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
-                                                                        let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
-                                                                        if is_to_prime | is_to_adt {
-                                                                            if is_from_gen | is_from_adt {
-                                                                                progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            }
-                                                                        } else if is_from_gen && is_to_gen {
-                                                                            // check whether it is same generic type
-                                                                            // if yes, they could have same layout
-                                                                        }
-                                                                    },
+                                                                    }
+                                                                } else if is_from_gen && is_to_gen {
+                                                                    // check whether it is same generic type
+                                                                    // if yes, they could have same layout
                                                                 }
                                                             },
                                                             _ => {},
@@ -307,35 +297,25 @@ mod inner {
                                                             | Comparison::Greater 
                                                             | Comparison::Noidea 
                                                             | Comparison::NoideaG => {
-                                                                match size_status {
-                                                                    Comparison::Less | Comparison::NoideaL => {
-                                                                        // in this case, from_ty is not generic type
-                                                                        progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
+                                                                // check
+                                                                // (gen > prim) (adt > prim)
+                                                                // (gen > adt) (adt > adt)
+                                                                let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
+                                                                let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
+                                                                let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
+                                                                progress_info!("from_prime: {}, from_adt: {}, from_gen: {}", is_from_prime, is_from_adt, is_from_gen);
+                                                                progress_info!("to_prime: {}, to_adt: {}, to_gen: {}", is_to_prime, is_to_adt, is_to_gen);
+                                                                if is_to_prime | is_to_adt {
+                                                                    if is_from_gen | is_from_adt {
+                                                                        progress_info!("warn::size from id{} to lplace{}", id, lplace.local.index());
                                                                         taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                         self.status
                                                                             .ty_convs
                                                                             .push(statement.source_info.span);
-                                                                    },
-                                                                    _ => {
-                                                                        // check
-                                                                        // (gen > prim) (adt > prim)
-                                                                        // (gen > adt) (adt > adt)
-                                                                        let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
-                                                                        let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
-                                                                        let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
-                                                                        if is_to_prime | is_to_adt {
-                                                                            if is_from_gen | is_from_adt {
-                                                                                progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            }
-                                                                        } else if is_from_gen && is_to_gen {
-                                                                            // check whether it is same generic type
-                                                                            // if yes, they could have same layout
-                                                                        }
-                                                                    },
+                                                                    }
+                                                                } else if is_from_gen && is_to_gen {
+                                                                    // check whether it is same generic type
+                                                                    // if yes, they could have same layout
                                                                 }
                                                             },
                                                             _ => {},
