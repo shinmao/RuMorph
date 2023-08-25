@@ -238,35 +238,27 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less | Comparison::NoideaL => {
-                                                                // in the case of NoideaL, we assume that to_ty is aligned to larger bytes than from_ty
-                                                                progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
-                                                                progress_info!("to_ty info?{}, {}", lc.is_from_to_adt().1, lc.is_from_to_generic().1);
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                self.status
-                                                                    .ty_convs
-                                                                    .push(statement.source_info.span);
+                                                                // we assume conversion to usize is always used for check
+                                                                // ignore the conversion from c_void
+                                                                if (lc.get_to_ty_name() != "usize") && (!lc.get_from_ty().is_c_void(self.rcx.tcx())) {
+                                                                    // in the case of NoideaL, we assume that to_ty is aligned to larger bytes than from_ty
+                                                                    progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
+                                                                    progress_info!("to_ty info?{}, {}", lc.is_from_to_adt().1, lc.is_from_to_generic().1);
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
+                                                                }
                                                             },
                                                             Comparison::Noidea => {
-                                                                // check whether from_ty is generic type
-                                                                match lc.get_from_ty().kind() {
-                                                                    TyKind::Param(_) => {
-                                                                        match lc.get_to_ty().kind() {
-                                                                            TyKind::Param(_) => {
-                                                                                // we assume that use case of generic->generic isn't error-prone
-                                                                            },
-                                                                            _ => {
-                                                                                // in this case, generic->concrete is error-prone
-                                                                                progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            },
-                                                                        }
-                                                                    },
-                                                                    _ => {
-                                                                        progress_info!("Not able to get type information");
-                                                                    },
+                                                                // check whether generic->concrete
+                                                                if (lc.is_fty_layout_spec() == false) && (lc.is_tty_layout_spec() == true) {
+                                                                    // in this case, generic->concrete is error-prone
+                                                                    progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
                                                                 }
                                                             },
                                                             _ => {},
@@ -298,26 +290,25 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less | Comparison::NoideaL => {
-                                                                progress_info!("warn::align");
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                self.status
-                                                                    .ty_convs
-                                                                    .push(statement.source_info.span);
+                                                                // we assume conversion to usize is always used for check
+                                                                // ignore conversion from c_void
+                                                                if (lc.get_to_ty_name() != "usize") && (!lc.get_from_ty().is_c_void(self.rcx.tcx())) {
+                                                                    progress_info!("warn::align");
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
+                                                                }
                                                             },
                                                             Comparison::Noidea => {
-                                                                // check whether from_ty is generic type
-                                                                match lc.get_from_ty().kind() {
-                                                                    TyKind::Param(_) => {
-                                                                        // we assume that use case of generic->generic isn't error-prone
-                                                                    },
-                                                                    _ => {
-                                                                        // in this case, generic->concrete is error-prone
-                                                                        progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
-                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                        self.status
-                                                                            .ty_convs
-                                                                            .push(statement.source_info.span);
-                                                                    },
+                                                                // check whether generic->concrete
+                                                                if (lc.is_fty_layout_spec() == false) && (lc.is_tty_layout_spec() == true) {
+                                                                    // in this case, generic->concrete is error-prone
+                                                                    progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
                                                                 }
                                                             },
                                                             _ => {},

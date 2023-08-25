@@ -133,6 +133,8 @@ pub struct LayoutChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
     from_ty: Ty<'tcx>,
     to_ty: Ty<'tcx>,
+    fty_layout: bool,
+    tty_layout: bool,
     align_status: Comparison,
     size_status: Comparison,
 }
@@ -143,6 +145,7 @@ pub struct LayoutChecker<'tcx> {
 impl<'tcx> LayoutChecker<'tcx> {
     pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
         progress_info!("LayoutChecker- from_ty:{:?}, to_ty:{:?}", f_ty, t_ty);
+        let (mut f_layout, mut t_layout) = (false, false);
         // rustc_middle::ty::TyCtxt
         let tcx = rc.tcx();
         let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
@@ -170,6 +173,8 @@ impl<'tcx> LayoutChecker<'tcx> {
         let layout_res = if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_))
             && let Ok(to_ty_and_layout) = tcx.layout_of(p_env.and(t_ty_))
         {
+            f_layout = true;
+            t_layout = true;
             let (from_layout, to_layout) = (from_ty_and_layout.layout, to_ty_and_layout.layout);
             let (from_align, to_align) = (from_layout.align(), to_layout.align());
             let (from_size, to_size) = (from_layout.size(), to_layout.size());
@@ -222,6 +227,7 @@ impl<'tcx> LayoutChecker<'tcx> {
 
             (ag_status, sz_status)
         } else if let Ok(from_ty_and_layout) = tcx.layout_of(p_env.and(f_ty_)) {
+            f_layout = true;
             // we can only identify from_ty's layout
             let from_layout = from_ty_and_layout.layout;
             let from_align = from_layout.align();
@@ -248,6 +254,7 @@ impl<'tcx> LayoutChecker<'tcx> {
 
             (ag_status, sz_status)
         } else if let Ok(to_ty_and_layout) = tcx.layout_of(p_env.and(t_ty_)) {
+            t_layout = true;
             // we can only identify to_ty's layout
             // from_ty might be generic type, check whether to_ty is u8
             let to_layout = to_ty_and_layout.layout;
@@ -280,6 +287,8 @@ impl<'tcx> LayoutChecker<'tcx> {
         LayoutChecker { rcx: rc, 
             from_ty: f_ty_, 
             to_ty: t_ty_,
+            fty_layout: f_layout,
+            tty_layout: t_layout,
             align_status: layout_res.0,
             size_status: layout_res.1,
         }
@@ -299,6 +308,22 @@ impl<'tcx> LayoutChecker<'tcx> {
 
     pub fn get_to_ty(&self) -> Ty<'tcx> {
         self.to_ty
+    }
+
+    pub fn is_fty_layout_spec(&self) -> bool {
+        self.fty_layout
+    }
+
+    pub fn is_tty_layout_spec(&self) -> bool {
+        self.tty_layout
+    }
+
+    pub fn get_from_ty_name(&self) -> String {
+        self.from_ty.to_string()
+    }
+
+    pub fn get_to_ty_name(&self) -> String {
+        self.to_ty.to_string()
     }
 
     pub fn is_from_to_primitive(&self) -> (bool, bool) {
@@ -328,7 +353,7 @@ impl<'tcx> LayoutChecker<'tcx> {
 
 // get the pointee or wrapped type
 fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
-    progress_info!("get_pointee: > {:?}", matched_ty);
+    progress_info!("get_pointee: > {:?} as type: {:?}", matched_ty, matched_ty.kind());
     let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
         get_pointee(ty_mut.ty)
     } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {
