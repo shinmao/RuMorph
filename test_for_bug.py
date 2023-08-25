@@ -10,7 +10,7 @@ header1 = "Error (BrokenLayout:):"
 header2 = "Error (UninitExposure:):"
 report_path = "/home/RuMorph/report.txt"
 
-def report_analyzer(header, filename, crate):
+def report_analyzer(filename, crate):
     record = ""
     record_list = list()
     CAPTURED = False
@@ -18,9 +18,13 @@ def report_analyzer(header, filename, crate):
     if os.path.exists(filename):
         with open(filename, 'r', encoding='utf-8') as f:
             for l_num, line in enumerate(f):
-                if header in line:
+                if header1 in line:
                     func = line.split("`")[1]
-                    record = crate + "," + func + ","
+                    record = crate + "," + func + ",bug1,"
+                    CAPTURED = True
+                elif header2 in line:
+                    func = line.split("`")[1]
+                    record = crate + "," + func + ",bug2,"
                     CAPTURED = True
                 elif CAPTURED == True:
                     loc = line[3:]
@@ -49,7 +53,7 @@ if __name__ == '__main__':
     with open(report_path, "a+") as output:
         for src in src_path:
             path = os.path.join(base_path, src) + "/report.txt"
-            for r in report_analyzer(header1, path, src):
+            for r in report_analyzer(path, src):
                 output.write(r)
                 print(r)
     output.close()
