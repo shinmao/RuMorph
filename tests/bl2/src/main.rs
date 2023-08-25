@@ -13,7 +13,11 @@ struct B {
 }
 
 fn main() {
-    let a = A { a: 10, b: 11, c: 12};
-    let b: &B = unsafe { std::mem::transmute(&a) };
-    println!("{}", b.a);
+    // let a = A { a: 10, b: 11, c: 12};
+    // let b: &B = unsafe { std::mem::transmute(&a) };
+    // println!("{}", b.a);
+
+    let a: u16 = 0;
+    let b: [u8; 2] = unsafe { std::mem::transmute(a) };
+    println!("{}", b[1]);
 }

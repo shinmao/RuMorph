@@ -1,5 +1,5 @@
-2023-08-23 05:15:49.603795 |INFO | [rumorph-progress] Running cargo rumorph
-2023-08-23 05:15:49.770263 |INFO | [rumorph-progress] Running rumorph for target bin:bl2
+2023-08-25 01:05:18.211361 |INFO | [rumorph-progress] Running cargo rumorph
+2023-08-25 01:05:18.334774 |INFO | [rumorph-progress] Running rumorph for target bin:bl2
 warning: fields `a`, `b`, and `c` are never read
  --> src/main.rs:3:5
   |
@@ -15,12 +15,13 @@ warning: fields `a`, `b`, and `c` are never read
   = note: `A` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
   = note: `#[warn(dead_code)]` on by default
 
-warning: fields `b` and `c` are never read
-  --> src/main.rs:11:5
+warning: fields `a`, `b`, and `c` are never read
+  --> src/main.rs:10:5
    |
 9  | struct B {
    |        - fields in this struct
 10 |     a: i8,
+   |     ^
 11 |     b: i32,
    |     ^
 12 |     c: i8,
@@ -28,167 +29,166 @@ warning: fields `b` and `c` are never read
    |
    = note: `B` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
 
-2023-08-23 05:15:50.120151 |INFO | [rumorph-progress] RuMorph started
-2023-08-23 05:15:50.120375 |INFO | [rumorph-progress] BrokenLayout analysis started
-2023-08-23 05:15:50.120393 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(main)
-2023-08-23 05:15:50.120405 |INFO | [rumorph-progress] This function contains unsafe block
-2023-08-23 05:15:50.121134 |INFO | [rumorph-progress] statement: StorageLive(_1), kind:StorageLive(_1), info:SourceInfo { span: src/main.rs:16:9: 16:10 (#0), scope: scope[0] }
-2023-08-23 05:15:50.121201 |INFO | [rumorph-progress] statement: _1 = A { a: const 10_i8, b: const 11_i32, c: const 12_i8 }, kind:Assign((_1, A { a: const 10_i8, b: const 11_i32, c: const 12_i8 })), info:SourceInfo { span: src/main.rs:16:13: 16:37 (#0), scope: scope[0] }
-2023-08-23 05:15:50.121245 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:17:9: 17:10 (#0), scope: scope[1] }
-2023-08-23 05:15:50.121252 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:17:46: 17:48 (#0), scope: scope[3] }
-2023-08-23 05:15:50.121259 |INFO | [rumorph-progress] statement: _3 = &_1, kind:Assign((_3, &_1)), info:SourceInfo { span: src/main.rs:17:46: 17:48 (#0), scope: scope[3] }
-2023-08-23 05:15:50.121267 |INFO | [rumorph-progress] statement: _2 = move _3 as &B (Transmute), kind:Assign((_2, move _3 as &B (Transmute))), info:SourceInfo { span: src/main.rs:17:26: 17:49 (#0), scope: scope[3] }
-2023-08-23 05:15:50.121288 |INFO | [rumorph-progress] transmute
-2023-08-23 05:15:50.121293 |INFO | [rumorph-progress] LayoutChecker- from_ty:&A, to_ty:&B
-2023-08-23 05:15:50.121298 |INFO | [rumorph-progress] get_pointee: > &A
-2023-08-23 05:15:50.121303 |INFO | [rumorph-progress] get_pointee: > A
-2023-08-23 05:15:50.121308 |INFO | [rumorph-progress] get_pointee: > &B
-2023-08-23 05:15:50.121312 |INFO | [rumorph-progress] get_pointee: > B
-2023-08-23 05:15:50.121334 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:4
-2023-08-23 05:15:50.121339 |INFO | [rumorph-progress] LayoutChecker- from_size:8, to_size:8
-2023-08-23 05:15:50.121344 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:17:48: 17:49 (#0), scope: scope[3] }
-2023-08-23 05:15:50.121351 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
-2023-08-23 05:15:50.121359 |INFO | [rumorph-progress] statement: StorageLive(_5), kind:StorageLive(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }
-2023-08-23 05:15:50.121373 |INFO | [rumorph-progress] statement: StorageLive(_6), kind:StorageLive(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121381 |INFO | [rumorph-progress] statement: StorageLive(_7), kind:StorageLive(_7), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121387 |INFO | [rumorph-progress] statement: StorageLive(_8), kind:StorageLive(_8), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121394 |INFO | [rumorph-progress] statement: StorageLive(_9), kind:StorageLive(_9), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121400 |INFO | [rumorph-progress] statement: _18 = const _, kind:Assign((_18, const _)), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121408 |INFO | [rumorph-progress] statement: _9 = &(*_18), kind:Assign((_9, &(*_18))), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121417 |INFO | [rumorph-progress] warn::deref on place:18
-2023-08-23 05:15:50.121421 |INFO | [rumorph-progress] statement: _8 = &(*_9), kind:Assign((_8, &(*_9))), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121429 |INFO | [rumorph-progress] warn::deref on place:9
-2023-08-23 05:15:50.121434 |INFO | [rumorph-progress] statement: _7 = move _8 as &[&str] (Pointer(Unsize)), kind:Assign((_7, move _8 as &[&str] (Pointer(Unsize)))), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121445 |INFO | [rumorph-progress] statement: StorageDead(_8), kind:StorageDead(_8), info:SourceInfo { span: src/main.rs:18:17: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.121451 |INFO | [rumorph-progress] statement: StorageLive(_11), kind:StorageLive(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121459 |INFO | [rumorph-progress] statement: StorageLive(_12), kind:StorageLive(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121466 |INFO | [rumorph-progress] statement: StorageLive(_13), kind:StorageLive(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121473 |INFO | [rumorph-progress] statement: StorageLive(_14), kind:StorageLive(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121479 |INFO | [rumorph-progress] statement: StorageLive(_15), kind:StorageLive(_15), info:SourceInfo { span: src/main.rs:18:15: 18:17 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121486 |INFO | [rumorph-progress] statement: StorageLive(_16), kind:StorageLive(_16), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121492 |INFO | [rumorph-progress] statement: StorageLive(_17), kind:StorageLive(_17), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121498 |INFO | [rumorph-progress] statement: _17 = &((*_2).0: i8), kind:Assign((_17, &((*_2).0: i8))), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121513 |INFO | [rumorph-progress] warn::deref on place:2
-2023-08-23 05:15:50.121518 |INFO | [rumorph-progress] statement: _16 = &(*_17), kind:Assign((_16, &(*_17))), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121525 |INFO | [rumorph-progress] warn::deref on place:17
-2023-08-23 05:15:50.121530 |INFO | [rumorph-progress] statement: StorageDead(_16), kind:StorageDead(_16), info:SourceInfo { span: src/main.rs:18:16: 18:17 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121536 |INFO | [rumorph-progress] statement: _14 = [move _15], kind:Assign((_14, [move _15])), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121554 |INFO | [rumorph-progress] statement: StorageDead(_15), kind:StorageDead(_15), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121561 |INFO | [rumorph-progress] statement: _13 = &_14, kind:Assign((_13, &_14)), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121568 |INFO | [rumorph-progress] statement: _12 = &(*_13), kind:Assign((_12, &(*_13))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.121576 |INFO | [rumorph-progress] warn::deref on place:13
-2023-08-23 05:15:50.121581 |INFO | [rumorph-progress] statement: _11 = move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)), kind:Assign((_11, move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.131931 |INFO | [rumorph-progress] statement: StorageDead(_12), kind:StorageDead(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.131942 |INFO | [rumorph-progress] statement: StorageDead(_11), kind:StorageDead(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.131950 |INFO | [rumorph-progress] statement: StorageDead(_7), kind:StorageDead(_7), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.131957 |INFO | [rumorph-progress] statement: StorageDead(_6), kind:StorageDead(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:61: 137:62 (#8), scope: scope[2] }
-2023-08-23 05:15:50.131964 |INFO | [rumorph-progress] statement: StorageDead(_17), kind:StorageDead(_17), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.131971 |INFO | [rumorph-progress] statement: StorageDead(_14), kind:StorageDead(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.131978 |INFO | [rumorph-progress] statement: StorageDead(_13), kind:StorageDead(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.131984 |INFO | [rumorph-progress] statement: StorageDead(_9), kind:StorageDead(_9), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.131991 |INFO | [rumorph-progress] statement: StorageDead(_5), kind:StorageDead(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.131998 |INFO | [rumorph-progress] statement: _4 = const (), kind:Assign((_4, const ())), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132028 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:138:5: 138:6 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132036 |INFO | [rumorph-progress] statement: _0 = const (), kind:Assign((_0, const ())), info:SourceInfo { span: src/main.rs:15:11: 19:2 (#0), scope: scope[0] }
-2023-08-23 05:15:50.132045 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:19:1: 19:2 (#0), scope: scope[1] }
-2023-08-23 05:15:50.132052 |INFO | [rumorph-progress] statement: StorageDead(_1), kind:StorageDead(_1), info:SourceInfo { span: src/main.rs:19:1: 19:2 (#0), scope: scope[0] }
-2023-08-23 05:15:50.132058 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9057 ~ core[6c80]::fmt::rt::{impl#1}::new_display), callee_substs: [ReErased, i8], args: [move _16], dest: _15 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:18:15: 18:17 (#9), scope: scope[2] }, kind: _15 = core::fmt::rt::Argument::<'_>::new_display::<i8>(move _16) -> bb1 } }
-2023-08-23 05:15:50.132128 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9128 ~ core[6c80]::fmt::{impl#2}::new_v1), callee_substs: [ReErased], args: [move _7, move _11], dest: _6 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }, kind: _6 = std::fmt::Arguments::<'_>::new_v1(move _7, move _11) -> bb2 } }
-2023-08-23 05:15:50.132154 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _6], dest: _5 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }, kind: _5 = std::io::_print(move _6) -> bb3 } }
-2023-08-23 05:15:50.132172 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:19:2: 19:2 (#0), scope: scope[0] }, kind: return } }
-2023-08-23 05:15:50.132183 |INFO | [rumorph-progress] bug not found
-2023-08-23 05:15:50.132191 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(<A as std::clone::Clone>::clone)
-2023-08-23 05:15:50.132207 |INFO | [rumorph-progress] interprocedural analysis required
-2023-08-23 05:15:50.132212 |INFO | [rumorph-progress] bug not found
-2023-08-23 05:15:50.132218 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(<B as std::clone::Clone>::clone)
-2023-08-23 05:15:50.132225 |INFO | [rumorph-progress] interprocedural analysis required
-2023-08-23 05:15:50.132230 |INFO | [rumorph-progress] bug not found
-2023-08-23 05:15:50.132234 |INFO | [rumorph-progress] BrokenLayout analysis finished
-2023-08-23 05:15:50.132239 |INFO | [rumorph-progress] UninitExposure analysis started
-2023-08-23 05:15:50.132244 |INFO | [rumorph-progress] UninitExposureChecker::analyze(main)
-2023-08-23 05:15:50.132251 |INFO | [rumorph-progress] This function contains unsafe block
-2023-08-23 05:15:50.132261 |INFO | [rumorph-progress] statement: StorageLive(_1), kind:StorageLive(_1), info:SourceInfo { span: src/main.rs:16:9: 16:10 (#0), scope: scope[0] }
-2023-08-23 05:15:50.132270 |INFO | [rumorph-progress] statement: _1 = A { a: const 10_i8, b: const 11_i32, c: const 12_i8 }, kind:Assign((_1, A { a: const 10_i8, b: const 11_i32, c: const 12_i8 })), info:SourceInfo { span: src/main.rs:16:13: 16:37 (#0), scope: scope[0] }
-2023-08-23 05:15:50.132285 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:17:9: 17:10 (#0), scope: scope[1] }
-2023-08-23 05:15:50.132292 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:17:46: 17:48 (#0), scope: scope[3] }
-2023-08-23 05:15:50.132299 |INFO | [rumorph-progress] statement: _3 = &_1, kind:Assign((_3, &_1)), info:SourceInfo { span: src/main.rs:17:46: 17:48 (#0), scope: scope[3] }
-2023-08-23 05:15:50.132307 |INFO | [rumorph-progress] statement: _2 = move _3 as &B (Transmute), kind:Assign((_2, move _3 as &B (Transmute))), info:SourceInfo { span: src/main.rs:17:26: 17:49 (#0), scope: scope[3] }
-2023-08-23 05:15:50.132316 |INFO | [rumorph-progress] transmute
-2023-08-23 05:15:50.132321 |INFO | [rumorph-progress] LayoutChecker- from_ty:&A, to_ty:&B
-2023-08-23 05:15:50.132326 |INFO | [rumorph-progress] get_pointee: > &A
-2023-08-23 05:15:50.132330 |INFO | [rumorph-progress] get_pointee: > A
-2023-08-23 05:15:50.132335 |INFO | [rumorph-progress] get_pointee: > &B
-2023-08-23 05:15:50.132339 |INFO | [rumorph-progress] get_pointee: > B
-2023-08-23 05:15:50.132344 |INFO | [rumorph-progress] LayoutChecker- from_align:4, to_align:4
-2023-08-23 05:15:50.132348 |INFO | [rumorph-progress] LayoutChecker- from_size:8, to_size:8
-2023-08-23 05:15:50.132353 |INFO | [rumorph-progress] from_prime: false, from_adt: true, from_gen: false
-2023-08-23 05:15:50.132358 |INFO | [rumorph-progress] to_prime: false, to_adt: true, to_gen: false
-2023-08-23 05:15:50.132362 |INFO | [rumorph-progress] warn::size from id3 to lplace2
-2023-08-23 05:15:50.132368 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:17:48: 17:49 (#0), scope: scope[3] }
-2023-08-23 05:15:50.132375 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132382 |INFO | [rumorph-progress] statement: StorageLive(_5), kind:StorageLive(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132389 |INFO | [rumorph-progress] statement: StorageLive(_6), kind:StorageLive(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132396 |INFO | [rumorph-progress] statement: StorageLive(_7), kind:StorageLive(_7), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132402 |INFO | [rumorph-progress] statement: StorageLive(_8), kind:StorageLive(_8), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132409 |INFO | [rumorph-progress] statement: StorageLive(_9), kind:StorageLive(_9), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132415 |INFO | [rumorph-progress] statement: _18 = const _, kind:Assign((_18, const _)), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132423 |INFO | [rumorph-progress] statement: _9 = &(*_18), kind:Assign((_9, &(*_18))), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132432 |INFO | [rumorph-progress] warn::deref on place:18
-2023-08-23 05:15:50.132436 |INFO | [rumorph-progress] statement: _8 = &(*_9), kind:Assign((_8, &(*_9))), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132444 |INFO | [rumorph-progress] warn::deref on place:9
-2023-08-23 05:15:50.132448 |INFO | [rumorph-progress] statement: _7 = move _8 as &[&str] (Pointer(Unsize)), kind:Assign((_7, move _8 as &[&str] (Pointer(Unsize)))), info:SourceInfo { span: src/main.rs:18:14: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132458 |INFO | [rumorph-progress] statement: StorageDead(_8), kind:StorageDead(_8), info:SourceInfo { span: src/main.rs:18:17: 18:18 (#0), scope: scope[2] }
-2023-08-23 05:15:50.132465 |INFO | [rumorph-progress] statement: StorageLive(_11), kind:StorageLive(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132472 |INFO | [rumorph-progress] statement: StorageLive(_12), kind:StorageLive(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132479 |INFO | [rumorph-progress] statement: StorageLive(_13), kind:StorageLive(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132486 |INFO | [rumorph-progress] statement: StorageLive(_14), kind:StorageLive(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132492 |INFO | [rumorph-progress] statement: StorageLive(_15), kind:StorageLive(_15), info:SourceInfo { span: src/main.rs:18:15: 18:17 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132499 |INFO | [rumorph-progress] statement: StorageLive(_16), kind:StorageLive(_16), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132505 |INFO | [rumorph-progress] statement: StorageLive(_17), kind:StorageLive(_17), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132511 |INFO | [rumorph-progress] statement: _17 = &((*_2).0: i8), kind:Assign((_17, &((*_2).0: i8))), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132520 |INFO | [rumorph-progress] warn::deref on place:2
-2023-08-23 05:15:50.132525 |INFO | [rumorph-progress] statement: _16 = &(*_17), kind:Assign((_16, &(*_17))), info:SourceInfo { span: src/main.rs:18:20: 18:23 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132533 |INFO | [rumorph-progress] warn::deref on place:17
-2023-08-23 05:15:50.132537 |INFO | [rumorph-progress] statement: StorageDead(_16), kind:StorageDead(_16), info:SourceInfo { span: src/main.rs:18:16: 18:17 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132543 |INFO | [rumorph-progress] statement: _14 = [move _15], kind:Assign((_14, [move _15])), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132552 |INFO | [rumorph-progress] statement: StorageDead(_15), kind:StorageDead(_15), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132559 |INFO | [rumorph-progress] statement: _13 = &_14, kind:Assign((_13, &_14)), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132567 |INFO | [rumorph-progress] statement: _12 = &(*_13), kind:Assign((_12, &(*_13))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132575 |INFO | [rumorph-progress] warn::deref on place:13
-2023-08-23 05:15:50.132579 |INFO | [rumorph-progress] statement: _11 = move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)), kind:Assign((_11, move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132591 |INFO | [rumorph-progress] statement: StorageDead(_12), kind:StorageDead(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132598 |INFO | [rumorph-progress] statement: StorageDead(_11), kind:StorageDead(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132605 |INFO | [rumorph-progress] statement: StorageDead(_7), kind:StorageDead(_7), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
-2023-08-23 05:15:50.132611 |INFO | [rumorph-progress] statement: StorageDead(_6), kind:StorageDead(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:61: 137:62 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132618 |INFO | [rumorph-progress] statement: StorageDead(_17), kind:StorageDead(_17), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132625 |INFO | [rumorph-progress] statement: StorageDead(_14), kind:StorageDead(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132632 |INFO | [rumorph-progress] statement: StorageDead(_13), kind:StorageDead(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132639 |INFO | [rumorph-progress] statement: StorageDead(_9), kind:StorageDead(_9), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132645 |INFO | [rumorph-progress] statement: StorageDead(_5), kind:StorageDead(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132652 |INFO | [rumorph-progress] statement: _4 = const (), kind:Assign((_4, const ())), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132661 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:138:5: 138:6 (#8), scope: scope[2] }
-2023-08-23 05:15:50.132668 |INFO | [rumorph-progress] statement: _0 = const (), kind:Assign((_0, const ())), info:SourceInfo { span: src/main.rs:15:11: 19:2 (#0), scope: scope[0] }
-2023-08-23 05:15:50.132676 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:19:1: 19:2 (#0), scope: scope[1] }
-2023-08-23 05:15:50.132683 |INFO | [rumorph-progress] statement: StorageDead(_1), kind:StorageDead(_1), info:SourceInfo { span: src/main.rs:19:1: 19:2 (#0), scope: scope[0] }
-2023-08-23 05:15:50.132690 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9057 ~ core[6c80]::fmt::rt::{impl#1}::new_display), callee_substs: [ReErased, i8], args: [move _16], dest: _15 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:18:15: 18:17 (#9), scope: scope[2] }, kind: _15 = core::fmt::rt::Argument::<'_>::new_display::<i8>(move _16) -> bb1 } }
-2023-08-23 05:15:50.132707 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9128 ~ core[6c80]::fmt::{impl#2}::new_v1), callee_substs: [ReErased], args: [move _7, move _11], dest: _6 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }, kind: _6 = std::fmt::Arguments::<'_>::new_v1(move _7, move _11) -> bb2 } }
-2023-08-23 05:15:50.132724 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _6], dest: _5 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }, kind: _5 = std::io::_print(move _6) -> bb3 } }
-2023-08-23 05:15:50.132738 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:19:2: 19:2 (#0), scope: scope[0] }, kind: return } }
-2023-08-23 05:15:50.132748 |INFO | [rumorph-progress] find the bug with behavior_flag: CAST
-2023-08-23 05:15:50.132773 |INFO | [rumorph-progress] UninitExposureChecker::analyze(<A as std::clone::Clone>::clone)
-2023-08-23 05:15:50.132782 |INFO | [rumorph-progress] interprocedural analysis required
-2023-08-23 05:15:50.132786 |INFO | [rumorph-progress] bug not found
-2023-08-23 05:15:50.132792 |INFO | [rumorph-progress] UninitExposureChecker::analyze(<B as std::clone::Clone>::clone)
-2023-08-23 05:15:50.132799 |INFO | [rumorph-progress] interprocedural analysis required
-2023-08-23 05:15:50.132804 |INFO | [rumorph-progress] bug not found
-2023-08-23 05:15:50.132808 |INFO | [rumorph-progress] UninitExposure analysis finished
-2023-08-23 05:15:50.132812 |INFO | [rumorph-progress] RuMorph finished
-Error (UninitExposure:): Potential uninit exposure issue in `main`
--> src/main.rs:15:1: 19:2
-fn main() {
-    let a = A { a: 10, b: 11, c: 12};
-    let b: &B = unsafe { [0m[32mstd::mem::transmute(&a)[0m };
-    println!("{}", b.a);
-}
-[0m
-2023-08-23 05:15:50.143765 |INFO | [rumorph-progress] cargo rumorph finished
+2023-08-25 01:05:18.677531 |INFO | [rumorph-progress] RuMorph started
+2023-08-25 01:05:18.677729 |INFO | [rumorph-progress] BrokenLayout analysis started
+2023-08-25 01:05:18.677746 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(main)
+2023-08-25 01:05:18.677756 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-25 01:05:18.678392 |INFO | [rumorph-progress] statement: StorageLive(_1), kind:StorageLive(_1), info:SourceInfo { span: src/main.rs:20:9: 20:10 (#0), scope: scope[0] }
+2023-08-25 01:05:18.678407 |INFO | [rumorph-progress] statement: _1 = const 0_u16, kind:Assign((_1, const 0_u16)), info:SourceInfo { span: src/main.rs:20:18: 20:19 (#0), scope: scope[0] }
+2023-08-25 01:05:18.678433 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:21:9: 21:10 (#0), scope: scope[1] }
+2023-08-25 01:05:18.678440 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:21:51: 21:52 (#0), scope: scope[3] }
+2023-08-25 01:05:18.678449 |INFO | [rumorph-progress] statement: _3 = _1, kind:Assign((_3, _1)), info:SourceInfo { span: src/main.rs:21:51: 21:52 (#0), scope: scope[3] }
+2023-08-25 01:05:18.678456 |INFO | [rumorph-progress] [dbg] lplace: 3, rplace: 1
+2023-08-25 01:05:18.678461 |INFO | [rumorph-progress] statement: _2 = move _3 as [u8; 2] (Transmute), kind:Assign((_2, move _3 as [u8; 2] (Transmute))), info:SourceInfo { span: src/main.rs:21:31: 21:53 (#0), scope: scope[3] }
+2023-08-25 01:05:18.678477 |INFO | [rumorph-progress] transmute
+2023-08-25 01:05:18.678483 |INFO | [rumorph-progress] LayoutChecker- from_ty:u16, to_ty:[u8; 2]
+2023-08-25 01:05:18.678488 |INFO | [rumorph-progress] get_pointee: > u16
+2023-08-25 01:05:18.678492 |INFO | [rumorph-progress] get_pointee: > [u8; 2]
+2023-08-25 01:05:18.678501 |INFO | [rumorph-progress] LayoutChecker- from_align:2, to_align:1
+2023-08-25 01:05:18.678506 |INFO | [rumorph-progress] LayoutChecker- from_size:2, to_size:2
+2023-08-25 01:05:18.678511 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:21:52: 21:53 (#0), scope: scope[3] }
+2023-08-25 01:05:18.678519 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
+2023-08-25 01:05:18.678527 |INFO | [rumorph-progress] statement: StorageLive(_5), kind:StorageLive(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }
+2023-08-25 01:05:18.678539 |INFO | [rumorph-progress] statement: StorageLive(_6), kind:StorageLive(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678546 |INFO | [rumorph-progress] statement: StorageLive(_7), kind:StorageLive(_7), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678553 |INFO | [rumorph-progress] statement: StorageLive(_8), kind:StorageLive(_8), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678559 |INFO | [rumorph-progress] statement: StorageLive(_9), kind:StorageLive(_9), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678568 |INFO | [rumorph-progress] statement: _21 = const _, kind:Assign((_21, const _)), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678575 |INFO | [rumorph-progress] statement: _9 = &(*_21), kind:Assign((_9, &(*_21))), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678584 |INFO | [rumorph-progress] warn::deref on place:21
+2023-08-25 01:05:18.678589 |INFO | [rumorph-progress] statement: _8 = &(*_9), kind:Assign((_8, &(*_9))), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678596 |INFO | [rumorph-progress] warn::deref on place:9
+2023-08-25 01:05:18.678600 |INFO | [rumorph-progress] statement: _7 = move _8 as &[&str] (Pointer(Unsize)), kind:Assign((_7, move _8 as &[&str] (Pointer(Unsize)))), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678610 |INFO | [rumorph-progress] statement: StorageDead(_8), kind:StorageDead(_8), info:SourceInfo { span: src/main.rs:22:17: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678617 |INFO | [rumorph-progress] statement: StorageLive(_11), kind:StorageLive(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678624 |INFO | [rumorph-progress] statement: StorageLive(_12), kind:StorageLive(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678631 |INFO | [rumorph-progress] statement: StorageLive(_13), kind:StorageLive(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678637 |INFO | [rumorph-progress] statement: StorageLive(_14), kind:StorageLive(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678644 |INFO | [rumorph-progress] statement: StorageLive(_15), kind:StorageLive(_15), info:SourceInfo { span: src/main.rs:22:15: 22:17 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678650 |INFO | [rumorph-progress] statement: StorageLive(_16), kind:StorageLive(_16), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678657 |INFO | [rumorph-progress] statement: StorageLive(_17), kind:StorageLive(_17), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678663 |INFO | [rumorph-progress] statement: StorageLive(_18), kind:StorageLive(_18), info:SourceInfo { span: src/main.rs:22:22: 22:23 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678669 |INFO | [rumorph-progress] statement: _18 = const 1_usize, kind:Assign((_18, const 1_usize)), info:SourceInfo { span: src/main.rs:22:22: 22:23 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678678 |INFO | [rumorph-progress] statement: _19 = Len(_2), kind:Assign((_19, Len(_2))), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678685 |INFO | [rumorph-progress] statement: _20 = Lt(_18, _19), kind:Assign((_20, Lt(_18, _19))), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }
+2023-08-25 01:05:18.678695 |INFO | [rumorph-progress] statement: _17 = &_2[_18], kind:Assign((_17, &_2[_18])), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678703 |INFO | [rumorph-progress] statement: _16 = &(*_17), kind:Assign((_16, &(*_17))), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678712 |INFO | [rumorph-progress] warn::deref on place:17
+2023-08-25 01:05:18.678716 |INFO | [rumorph-progress] statement: StorageDead(_16), kind:StorageDead(_16), info:SourceInfo { span: src/main.rs:22:16: 22:17 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678723 |INFO | [rumorph-progress] statement: _14 = [move _15], kind:Assign((_14, [move _15])), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678736 |INFO | [rumorph-progress] statement: StorageDead(_15), kind:StorageDead(_15), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678742 |INFO | [rumorph-progress] statement: _13 = &_14, kind:Assign((_13, &_14)), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678752 |INFO | [rumorph-progress] statement: _12 = &(*_13), kind:Assign((_12, &(*_13))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.678760 |INFO | [rumorph-progress] warn::deref on place:13
+2023-08-25 01:05:18.678764 |INFO | [rumorph-progress] statement: _11 = move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)), kind:Assign((_11, move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.688818 |INFO | [rumorph-progress] statement: StorageDead(_12), kind:StorageDead(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.688830 |INFO | [rumorph-progress] statement: StorageDead(_11), kind:StorageDead(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.688838 |INFO | [rumorph-progress] statement: StorageDead(_7), kind:StorageDead(_7), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.688845 |INFO | [rumorph-progress] statement: StorageDead(_6), kind:StorageDead(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:61: 137:62 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688852 |INFO | [rumorph-progress] statement: StorageDead(_18), kind:StorageDead(_18), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688859 |INFO | [rumorph-progress] statement: StorageDead(_17), kind:StorageDead(_17), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688866 |INFO | [rumorph-progress] statement: StorageDead(_14), kind:StorageDead(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688874 |INFO | [rumorph-progress] statement: StorageDead(_13), kind:StorageDead(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688881 |INFO | [rumorph-progress] statement: StorageDead(_9), kind:StorageDead(_9), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688887 |INFO | [rumorph-progress] statement: StorageDead(_5), kind:StorageDead(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688894 |INFO | [rumorph-progress] statement: _4 = const (), kind:Assign((_4, const ())), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688919 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:138:5: 138:6 (#8), scope: scope[2] }
+2023-08-25 01:05:18.688927 |INFO | [rumorph-progress] statement: _0 = const (), kind:Assign((_0, const ())), info:SourceInfo { span: src/main.rs:15:11: 23:2 (#0), scope: scope[0] }
+2023-08-25 01:05:18.688936 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:23:1: 23:2 (#0), scope: scope[1] }
+2023-08-25 01:05:18.688943 |INFO | [rumorph-progress] statement: StorageDead(_1), kind:StorageDead(_1), info:SourceInfo { span: src/main.rs:23:1: 23:2 (#0), scope: scope[0] }
+2023-08-25 01:05:18.688950 |INFO | [rumorph-progress] terminator: Terminator { kind: Unimplemented("Unknown terminator: Terminator { source_info: SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }, kind: assert(move _20, \"index out of bounds: the length is {} but the index is {}\", move _19, _18) -> bb1 }"), original: Terminator { source_info: SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }, kind: assert(move _20, "index out of bounds: the length is {} but the index is {}", move _19, _18) -> bb1 } }
+2023-08-25 01:05:18.688970 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9057 ~ core[6c80]::fmt::rt::{impl#1}::new_display), callee_substs: [ReErased, u8], args: [move _16], dest: _15 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:22:15: 22:17 (#9), scope: scope[2] }, kind: _15 = core::fmt::rt::Argument::<'_>::new_display::<u8>(move _16) -> bb2 } }
+2023-08-25 01:05:18.689037 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9128 ~ core[6c80]::fmt::{impl#2}::new_v1), callee_substs: [ReErased], args: [move _7, move _11], dest: _6 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }, kind: _6 = std::fmt::Arguments::<'_>::new_v1(move _7, move _11) -> bb3 } }
+2023-08-25 01:05:18.689065 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _6], dest: _5 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }, kind: _5 = std::io::_print(move _6) -> bb4 } }
+2023-08-25 01:05:18.689083 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:23:2: 23:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-25 01:05:18.689095 |INFO | [rumorph-progress] bug not found
+2023-08-25 01:05:18.689103 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(<A as std::clone::Clone>::clone)
+2023-08-25 01:05:18.689119 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-25 01:05:18.689124 |INFO | [rumorph-progress] bug not found
+2023-08-25 01:05:18.689130 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(<B as std::clone::Clone>::clone)
+2023-08-25 01:05:18.689138 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-25 01:05:18.689143 |INFO | [rumorph-progress] bug not found
+2023-08-25 01:05:18.689147 |INFO | [rumorph-progress] BrokenLayout analysis finished
+2023-08-25 01:05:18.689157 |INFO | [rumorph-progress] UninitExposure analysis started
+2023-08-25 01:05:18.689162 |INFO | [rumorph-progress] UninitExposureChecker::analyze(main)
+2023-08-25 01:05:18.689169 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-25 01:05:18.689180 |INFO | [rumorph-progress] statement: StorageLive(_1), kind:StorageLive(_1), info:SourceInfo { span: src/main.rs:20:9: 20:10 (#0), scope: scope[0] }
+2023-08-25 01:05:18.689189 |INFO | [rumorph-progress] statement: _1 = const 0_u16, kind:Assign((_1, const 0_u16)), info:SourceInfo { span: src/main.rs:20:18: 20:19 (#0), scope: scope[0] }
+2023-08-25 01:05:18.689200 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:21:9: 21:10 (#0), scope: scope[1] }
+2023-08-25 01:05:18.689207 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/main.rs:21:51: 21:52 (#0), scope: scope[3] }
+2023-08-25 01:05:18.689213 |INFO | [rumorph-progress] statement: _3 = _1, kind:Assign((_3, _1)), info:SourceInfo { span: src/main.rs:21:51: 21:52 (#0), scope: scope[3] }
+2023-08-25 01:05:18.689221 |INFO | [rumorph-progress] [dbg] lplace: 3, rplace: 1
+2023-08-25 01:05:18.689226 |INFO | [rumorph-progress] statement: _2 = move _3 as [u8; 2] (Transmute), kind:Assign((_2, move _3 as [u8; 2] (Transmute))), info:SourceInfo { span: src/main.rs:21:31: 21:53 (#0), scope: scope[3] }
+2023-08-25 01:05:18.689236 |INFO | [rumorph-progress] transmute
+2023-08-25 01:05:18.689240 |INFO | [rumorph-progress] LayoutChecker- from_ty:u16, to_ty:[u8; 2]
+2023-08-25 01:05:18.689245 |INFO | [rumorph-progress] get_pointee: > u16
+2023-08-25 01:05:18.689250 |INFO | [rumorph-progress] get_pointee: > [u8; 2]
+2023-08-25 01:05:18.689255 |INFO | [rumorph-progress] LayoutChecker- from_align:2, to_align:1
+2023-08-25 01:05:18.689259 |INFO | [rumorph-progress] LayoutChecker- from_size:2, to_size:2
+2023-08-25 01:05:18.689263 |INFO | [rumorph-progress] from_prime: true, from_adt: false, from_gen: false
+2023-08-25 01:05:18.689267 |INFO | [rumorph-progress] to_prime: false, to_adt: false, to_gen: false
+2023-08-25 01:05:18.689271 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/main.rs:21:52: 21:53 (#0), scope: scope[3] }
+2023-08-25 01:05:18.689278 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689285 |INFO | [rumorph-progress] statement: StorageLive(_5), kind:StorageLive(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689293 |INFO | [rumorph-progress] statement: StorageLive(_6), kind:StorageLive(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689300 |INFO | [rumorph-progress] statement: StorageLive(_7), kind:StorageLive(_7), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689306 |INFO | [rumorph-progress] statement: StorageLive(_8), kind:StorageLive(_8), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689313 |INFO | [rumorph-progress] statement: StorageLive(_9), kind:StorageLive(_9), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689320 |INFO | [rumorph-progress] statement: _21 = const _, kind:Assign((_21, const _)), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689328 |INFO | [rumorph-progress] statement: _9 = &(*_21), kind:Assign((_9, &(*_21))), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689336 |INFO | [rumorph-progress] warn::deref on place:21
+2023-08-25 01:05:18.689341 |INFO | [rumorph-progress] statement: _8 = &(*_9), kind:Assign((_8, &(*_9))), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689349 |INFO | [rumorph-progress] warn::deref on place:9
+2023-08-25 01:05:18.689353 |INFO | [rumorph-progress] statement: _7 = move _8 as &[&str] (Pointer(Unsize)), kind:Assign((_7, move _8 as &[&str] (Pointer(Unsize)))), info:SourceInfo { span: src/main.rs:22:14: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689363 |INFO | [rumorph-progress] statement: StorageDead(_8), kind:StorageDead(_8), info:SourceInfo { span: src/main.rs:22:17: 22:18 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689369 |INFO | [rumorph-progress] statement: StorageLive(_11), kind:StorageLive(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689376 |INFO | [rumorph-progress] statement: StorageLive(_12), kind:StorageLive(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689382 |INFO | [rumorph-progress] statement: StorageLive(_13), kind:StorageLive(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689389 |INFO | [rumorph-progress] statement: StorageLive(_14), kind:StorageLive(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689395 |INFO | [rumorph-progress] statement: StorageLive(_15), kind:StorageLive(_15), info:SourceInfo { span: src/main.rs:22:15: 22:17 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689402 |INFO | [rumorph-progress] statement: StorageLive(_16), kind:StorageLive(_16), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689408 |INFO | [rumorph-progress] statement: StorageLive(_17), kind:StorageLive(_17), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689415 |INFO | [rumorph-progress] statement: StorageLive(_18), kind:StorageLive(_18), info:SourceInfo { span: src/main.rs:22:22: 22:23 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689422 |INFO | [rumorph-progress] statement: _18 = const 1_usize, kind:Assign((_18, const 1_usize)), info:SourceInfo { span: src/main.rs:22:22: 22:23 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689431 |INFO | [rumorph-progress] statement: _19 = Len(_2), kind:Assign((_19, Len(_2))), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689438 |INFO | [rumorph-progress] statement: _20 = Lt(_18, _19), kind:Assign((_20, Lt(_18, _19))), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }
+2023-08-25 01:05:18.689447 |INFO | [rumorph-progress] statement: _17 = &_2[_18], kind:Assign((_17, &_2[_18])), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689457 |INFO | [rumorph-progress] statement: _16 = &(*_17), kind:Assign((_16, &(*_17))), info:SourceInfo { span: src/main.rs:22:20: 22:24 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689465 |INFO | [rumorph-progress] warn::deref on place:17
+2023-08-25 01:05:18.689469 |INFO | [rumorph-progress] statement: StorageDead(_16), kind:StorageDead(_16), info:SourceInfo { span: src/main.rs:22:16: 22:17 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689476 |INFO | [rumorph-progress] statement: _14 = [move _15], kind:Assign((_14, [move _15])), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689485 |INFO | [rumorph-progress] statement: StorageDead(_15), kind:StorageDead(_15), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689491 |INFO | [rumorph-progress] statement: _13 = &_14, kind:Assign((_13, &_14)), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689499 |INFO | [rumorph-progress] statement: _12 = &(*_13), kind:Assign((_12, &(*_13))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689507 |INFO | [rumorph-progress] warn::deref on place:13
+2023-08-25 01:05:18.689512 |INFO | [rumorph-progress] statement: _11 = move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)), kind:Assign((_11, move _12 as &[core::fmt::rt::Argument<'_>] (Pointer(Unsize)))), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689524 |INFO | [rumorph-progress] statement: StorageDead(_12), kind:StorageDead(_12), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689531 |INFO | [rumorph-progress] statement: StorageDead(_11), kind:StorageDead(_11), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689537 |INFO | [rumorph-progress] statement: StorageDead(_7), kind:StorageDead(_7), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:60: 137:61 (#9), scope: scope[2] }
+2023-08-25 01:05:18.689544 |INFO | [rumorph-progress] statement: StorageDead(_6), kind:StorageDead(_6), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:61: 137:62 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689551 |INFO | [rumorph-progress] statement: StorageDead(_18), kind:StorageDead(_18), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689558 |INFO | [rumorph-progress] statement: StorageDead(_17), kind:StorageDead(_17), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689564 |INFO | [rumorph-progress] statement: StorageDead(_14), kind:StorageDead(_14), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689571 |INFO | [rumorph-progress] statement: StorageDead(_13), kind:StorageDead(_13), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689578 |INFO | [rumorph-progress] statement: StorageDead(_9), kind:StorageDead(_9), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689585 |INFO | [rumorph-progress] statement: StorageDead(_5), kind:StorageDead(_5), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:62: 137:63 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689591 |INFO | [rumorph-progress] statement: _4 = const (), kind:Assign((_4, const ())), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:136:23: 138:6 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689600 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:138:5: 138:6 (#8), scope: scope[2] }
+2023-08-25 01:05:18.689608 |INFO | [rumorph-progress] statement: _0 = const (), kind:Assign((_0, const ())), info:SourceInfo { span: src/main.rs:15:11: 23:2 (#0), scope: scope[0] }
+2023-08-25 01:05:18.689616 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:23:1: 23:2 (#0), scope: scope[1] }
+2023-08-25 01:05:18.689623 |INFO | [rumorph-progress] statement: StorageDead(_1), kind:StorageDead(_1), info:SourceInfo { span: src/main.rs:23:1: 23:2 (#0), scope: scope[0] }
+2023-08-25 01:05:18.689630 |INFO | [rumorph-progress] terminator: Terminator { kind: Unimplemented("Unknown terminator: Terminator { source_info: SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }, kind: assert(move _20, \"index out of bounds: the length is {} but the index is {}\", move _19, _18) -> bb1 }"), original: Terminator { source_info: SourceInfo { span: src/main.rs:22:20: 22:24 (#0), scope: scope[2] }, kind: assert(move _20, "index out of bounds: the length is {} but the index is {}", move _19, _18) -> bb1 } }
+2023-08-25 01:05:18.689644 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9057 ~ core[6c80]::fmt::rt::{impl#1}::new_display), callee_substs: [ReErased, u8], args: [move _16], dest: _15 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:22:15: 22:17 (#9), scope: scope[2] }, kind: _15 = core::fmt::rt::Argument::<'_>::new_display::<u8>(move _16) -> bb2 } }
+2023-08-25 01:05:18.689663 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(2:9128 ~ core[6c80]::fmt::{impl#2}::new_v1), callee_substs: [ReErased], args: [move _7, move _11], dest: _6 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[2] }, kind: _6 = std::fmt::Arguments::<'_>::new_v1(move _7, move _11) -> bb3 } }
+2023-08-25 01:05:18.689681 |INFO | [rumorph-progress] terminator: Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _6], dest: _5 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[2] }, kind: _5 = std::io::_print(move _6) -> bb4 } }
+2023-08-25 01:05:18.689695 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:23:2: 23:2 (#0), scope: scope[0] }, kind: return } }
+2023-08-25 01:05:18.689705 |INFO | [rumorph-progress] bug not found
+2023-08-25 01:05:18.689713 |INFO | [rumorph-progress] UninitExposureChecker::analyze(<A as std::clone::Clone>::clone)
+2023-08-25 01:05:18.689722 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-25 01:05:18.689726 |INFO | [rumorph-progress] bug not found
+2023-08-25 01:05:18.689732 |INFO | [rumorph-progress] UninitExposureChecker::analyze(<B as std::clone::Clone>::clone)
+2023-08-25 01:05:18.689741 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-25 01:05:18.689745 |INFO | [rumorph-progress] bug not found
+2023-08-25 01:05:18.689749 |INFO | [rumorph-progress] UninitExposure analysis finished
+2023-08-25 01:05:18.689754 |INFO | [rumorph-progress] RuMorph finished
+2023-08-25 01:05:18.700311 |INFO | [rumorph-progress] cargo rumorph finished
