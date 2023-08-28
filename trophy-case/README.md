@@ -32,7 +32,12 @@ In the column of Conv, it shows the method of type conversion:
 | [endian-type-rs](https://crates.io/crates/endian-type-rs) | D-BL 2 | ptr-as | dereference | [issue](https://gitlab.com/ertos/endian-type-rs/-/issues/1) |
 | [burst](https://crates.io/crates/burst) | D-BL 2 | ptr-as | dereference | [issue](https://github.com/endoli/burst.rs/issues/8) |
 | [sfmt](https://crates.io/crates/sfmt) | D-BL 1 | ptr-as | dereference | [issue](https://github.com/rust-math/sfmt/issues/37) |
-| [dtb](https://crates.io/crates/dtb) | D-BL 5 / O | ptr | dereference | [issue](https://github.com/ababo/dtb/issues/11) |
+| [dtb](https://crates.io/crates/dtb) | D-BL 5 / O | ptr-as | dereference | [issue](https://github.com/ababo/dtb/issues/11) |
+| [odbc-rs](https://github.com/ababo/dtb/issues/11) | D-BL 1 |  ptr-as | dereference | [issue](https://github.com/Koka/odbc-rs/issues/174) |
+| [netstat2](https://crates.io/crates/netstat2) | D-BL 1 | ptr-as | dereference | [issue](https://github.com/ohadravid/netstat2-rs/issues/9) |
+| [radixt](https://crates.io/crates/radixt) | D-BL 4 | ptr-as | dereference | [issue](https://github.com/marekgalovic/radixt/issues/1) |
+| [aws\_auth](https://github.com/golddranks/aws_auth/tree/main) | D-BL | ptr-as | dereference | [issue](https://github.com/golddranks/aws_auth/issues/1) |
+| [journal](https://crates.io/crates/journal) | D-BL 2 | ptr-as | dereference | [issue](https://github.com/polygonhell/rusttests/issues/1) |
 
 
 ## Ground Truth
