@@ -38,6 +38,7 @@ In the column of Conv, it shows the method of type conversion:
 | [radixt](https://crates.io/crates/radixt) | D-BL 4 | ptr-as | dereference | [issue](https://github.com/marekgalovic/radixt/issues/1) |
 | [aws\_auth](https://github.com/golddranks/aws_auth/tree/main) | D-BL | ptr-as | dereference | [issue](https://github.com/golddranks/aws_auth/issues/1) |
 | [journal](https://crates.io/crates/journal) | D-BL 2 | ptr-as | dereference | [issue](https://github.com/polygonhell/rusttests/issues/1) |
+| [unicode\_converter](https://crates.io/crates/unicode_converter) | D-BL | ptr-as | dereference | [issue](https://github.com/Arkaeriit/unicode_converter/issues/1) |
 
 
 ## Ground Truth
