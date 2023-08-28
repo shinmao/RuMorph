@@ -29,6 +29,10 @@ In the column of Conv, it shows the method of type conversion:
 | [lonlat-bng](https://crates.io/crates/lonlat_bng) | D-BL 1 / UM 1 | ptr-as | `std::slice::from_raw_parts_mut` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/urschrei/lonlat_bng/19?logo=github)](https://github.com/urschrei/lonlat_bng/issues/19#issuecomment-1618461663) |
 | [preserves](https://crates.io/crates/preserves) | D-BL 1 / UM 1 | ptr-as | dereference | [![GitLab all issues](https://img.shields.io/gitlab/issues/all/preserves%2Fpreserves?logo=gitlab&label=issue%2042)](https://gitlab.com/preserves/preserves/-/issues/42) |
 | [byte-conv](https://crates.io/crates/byte_conv) | D-UM 1 | ptr-as | `std::slice::from_raw_parts` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/Lolirofle/byte_conv/1?logo=github)](https://github.com/Lolirofle/byte_conv/issues/1) |
+| [endian-type-rs](https://crates.io/crates/endian-type-rs) | D-BL 2 | ptr-as | dereference | [issue](https://gitlab.com/ertos/endian-type-rs/-/issues/1) |
+| [burst](https://crates.io/crates/burst) | D-BL 2 | ptr-as | dereference | [issue](https://github.com/endoli/burst.rs/issues/8) |
+| [sfmt](https://crates.io/crates/sfmt) | D-BL 1 | ptr-as | dereference | [issue](https://github.com/rust-math/sfmt/issues/37) |
+| [dtb](https://crates.io/crates/dtb) | D-BL 5 / O | ptr | dereference | [issue](https://github.com/ababo/dtb/issues/11) |
 
 
 ## Ground Truth
