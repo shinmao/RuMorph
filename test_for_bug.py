@@ -5,10 +5,10 @@ import os
 
 src_path = os.listdir("/home/RuMorph/crates/source")
 base_path = "/home/RuMorph/crates/source/"
-test_cmd = "cargo rumorph > report.txt 2>&1"
+test_cmd = "cargo rumorph > reportII.txt 2>&1"
 header1 = "Error (BrokenLayout:):"
 header2 = "Error (UninitExposure:):"
-report_path = "/home/RuMorph/report.txt"
+report_path = "/home/RuMorph/reportII.txt"
 
 def report_analyzer(filename, crate):
     record = ""
@@ -46,13 +46,13 @@ def tester(path):
     print(f"tester log for {path} has been created")
 
 if __name__ == '__main__':
-    # with Pool(processes=20) as pool:
-    #     pool.map(tester, src_path)
-    # pool.close()
-    # pool.join()
+    #with Pool(processes=20) as pool:
+    #    pool.map(tester, src_path)
+    #pool.close()
+    #pool.join()
     with open(report_path, "a+") as output:
         for src in src_path:
-            path = os.path.join(base_path, src) + "/report.txt"
+            path = os.path.join(base_path, src) + "/reportII.txt"
             for r in report_analyzer(path, src):
                 output.write(r)
                 print(r)
