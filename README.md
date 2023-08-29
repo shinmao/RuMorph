@@ -28,9 +28,12 @@ cargo install --path "$(dirname $0)" --force
 You should be able to see the message that `cargo-rumorph` and `rumorph` are intalled.
 
 ## Troubleshoot
+If you run into the following error message:
 ```
-error: failed to run `rustc` to learn about target-specific information
+|ERROR| [rumorph-progress] rumorph was built for a different sysroot than the rustc in your current toolchain.
+Make sure you use the same toolchain to run rumorph that you used to build it!
 ```
+The reason could be that the crate specified the different toolchain from the one used by RuMorph. In this case, you could change the `channel` specified in `rust-toolchain.toml` to the one we used if there is no breaking change between two rustc versions.
 
 
 ## Build up my clippy lints
