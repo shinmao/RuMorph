@@ -330,6 +330,10 @@ impl<'tcx> LayoutChecker<'tcx> {
         (self.from_ty.is_primitive_ty(), self.to_ty.is_primitive_ty())
     }
 
+    pub fn is_from_to_arr_slice(&self) -> (bool, bool) {
+        (self.from_ty.is_array_slice(), self.to_ty.is_array_slice())
+    }
+
     pub fn is_from_to_adt(&self) -> (bool, bool) {
         (self.from_ty.is_adt(), self.to_ty.is_adt())
     }

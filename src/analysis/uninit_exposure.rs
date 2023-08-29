@@ -237,23 +237,28 @@ mod inner {
                                                         let id = place.local.index();
 
                                                         // if A could be generic type or composite type, and B is primitive type, taint as source
-                                                        match align_status {
-                                                            // make sure it is not kind of bug 1
-                                                            Comparison::Equal 
-                                                            | Comparison::Greater 
-                                                            | Comparison::Noidea 
-                                                            | Comparison::NoideaG => {
+                                                        match size_status {
+                                                            Comparison::Less
+                                                            | Comparison::NoideaL => {
+                                                                progress_info!("warn::size (conc>conc/gen) from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            },
+                                                            _ => {
                                                                 // check
                                                                 // (gen > prim) (adt > prim)
                                                                 // (gen > adt) (adt > adt)
                                                                 let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
                                                                 let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
                                                                 let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
+                                                                let (is_from_arr_slice, is_to_arr_slice) = lc.is_from_to_arr_slice();
                                                                 progress_info!("from_prime: {}, from_adt: {}, from_gen: {}", is_from_prime, is_from_adt, is_from_gen);
                                                                 progress_info!("to_prime: {}, to_adt: {}, to_gen: {}", is_to_prime, is_to_adt, is_to_gen);
-                                                                if is_to_prime | is_to_adt {
+                                                                if is_to_prime | is_to_adt | is_to_arr_slice {
                                                                     if is_from_gen | is_from_adt {
-                                                                        progress_info!("warn::size from id{} to lplace{}", id, lplace.local.index());
+                                                                        progress_info!("warn::size (gen/adt>prim/adt) from id{} to lplace{}", id, lplace.local.index());
                                                                         taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                         self.status
                                                                             .ty_convs
@@ -264,7 +269,6 @@ mod inner {
                                                                     // if yes, they could have same layout
                                                                 }
                                                             },
-                                                            _ => {},
                                                         }
                                                     },
                                                     Err(_e) => {
@@ -291,24 +295,30 @@ mod inner {
                                                     Ok(place) => {
                                                         let id = place.local.index();
 
-                                                        match align_status {
+                                                        match size_status {
                                                             // make sure it is not kind of bug 1
-                                                            Comparison::Equal 
-                                                            | Comparison::Greater 
-                                                            | Comparison::Noidea 
-                                                            | Comparison::NoideaG => {
+                                                            Comparison::Less
+                                                            | Comparison::NoideaL => {
+                                                                progress_info!("warn::size (conc>conc/gen) from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            },
+                                                            _ => {
                                                                 // check
                                                                 // (gen > prim) (adt > prim)
                                                                 // (gen > adt) (adt > adt)
                                                                 let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
                                                                 let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
                                                                 let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
+                                                                let (is_from_arr_slice, is_to_arr_slice) = lc.is_from_to_arr_slice();
                                                                 progress_info!("from_prime: {}, from_adt: {}, from_gen: {}", is_from_prime, is_from_adt, is_from_gen);
                                                                 progress_info!("to_prime: {}, to_adt: {}, to_gen: {}", is_to_prime, is_to_adt, is_to_gen);
-                                                                if is_to_prime | is_to_adt {
+                                                                if is_to_prime | is_to_adt | is_to_arr_slice {
                                                                     if is_from_gen | is_from_adt {
-                                                                        progress_info!("warn::size from id{} to lplace{}", id, lplace.local.index());
-                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                        progress_info!("warn::size (gen/adt>prime/adt) from id{} to lplace{}", id, lplace.local.index());
+                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                         self.status
                                                                             .ty_convs
                                                                             .push(statement.source_info.span);
@@ -318,7 +328,6 @@ mod inner {
                                                                     // if yes, they could have same layout
                                                                 }
                                                             },
-                                                            _ => {},
                                                         }
                                                     },
                                                     Err(_e) => {

@@ -115,13 +115,13 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     #[allow(unused_variables)]
     let tcx = ();
 
-    // Broken layout analysis
-    if config.broken_layout_enabled {
-        run_analysis("BrokenLayout", || {
-            let checker = BrokenLayoutChecker::new(rcx);
-            checker.analyze();
-        })
-    }
+    // // Broken layout analysis
+    // if config.broken_layout_enabled {
+    //     run_analysis("BrokenLayout", || {
+    //         let checker = BrokenLayoutChecker::new(rcx);
+    //         checker.analyze();
+    //     })
+    // }
 
     // Uninit Exposure analysis
     if config.uninit_exposure_enabled {
