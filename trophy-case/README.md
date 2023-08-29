@@ -42,12 +42,12 @@ In the column of Conv, it shows the method of type conversion:
 
 
 ## Ground Truth
-1. Positive cases for SLR
-	- [x] [Possible soundness bug: alignment not checked](https://github.com/softprops/atty/issues/50): True Negative because the function is declared as `unsafe`.
-2. Positive cases for APB
+* Positive cases for APB
 	- [ ] [Can the pointer alignment situation be improved?](https://github.com/TimelyDataflow/abomonation/issues/23)
 	- [ ] [ComponentBytes is unsound](https://github.com/kornelski/rust-rgb/issues/35)
-3. Positive cases for IAD
+
+1. Cases for Uninitialized Memory Exposure bugs
+    * [MaybeUninit](https://github.com/alekseysidorov/static-box/issues/8)
 
 ## Tips for PoC
 1. [struct visibility](https://doc.rust-lang.org/rust-by-example/mod/struct_visibility.html)
