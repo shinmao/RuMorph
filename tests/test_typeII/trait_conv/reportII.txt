@@ -1,0 +1,53 @@
+2023-08-31 18:47:01.671272 |INFO | [rumorph-progress] Running cargo rumorph
+2023-08-31 18:47:01.963970 |INFO | [rumorph-progress] Running rumorph for target lib:trait_conv
+warning: method `downcast_unchecked` is never used
+  --> src/lib.rs:14:12
+   |
+13 | impl dyn Person {
+   | --------------- method in this implementation
+14 |     pub fn downcast_unchecked<T: Person>(self: Box<Self>) -> Box<T> {
+   |            ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+2023-08-31 18:47:02.306594 |INFO | [rumorph-progress] RuMorph started
+2023-08-31 18:47:02.306784 |INFO | [rumorph-progress] UninitExposure analysis started
+2023-08-31 18:47:02.317043 |INFO | [rumorph-progress] UninitExposureChecker::analyze(<TraitObject as std::clone::Clone>::clone)
+2023-08-31 18:47:02.317077 |INFO | [rumorph-progress] interprocedural analysis required
+2023-08-31 18:47:02.317084 |INFO | [rumorph-progress] bug not found
+2023-08-31 18:47:02.317099 |INFO | [rumorph-progress] UninitExposureChecker::analyze(<(dyn Person + 'static)>::downcast_unchecked)
+2023-08-31 18:47:02.317111 |INFO | [rumorph-progress] This function contains unsafe block
+2023-08-31 18:47:02.317351 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/lib.rs:16:17: 16:26 (#0), scope: scope[1] }
+2023-08-31 18:47:02.317380 |INFO | [rumorph-progress] statement: StorageLive(_3), kind:StorageLive(_3), info:SourceInfo { span: src/lib.rs:16:62: 16:66 (#0), scope: scope[1] }
+2023-08-31 18:47:02.317388 |INFO | [rumorph-progress] statement: _3 = move _1, kind:Assign((_3, move _1)), info:SourceInfo { span: src/lib.rs:16:62: 16:66 (#0), scope: scope[1] }
+2023-08-31 18:47:02.317409 |INFO | [rumorph-progress] [dbg] lplace: 3, rplace: 1
+2023-08-31 18:47:02.317414 |INFO | [rumorph-progress] statement: _2 = move _3 as TraitObject (Transmute), kind:Assign((_2, move _3 as TraitObject (Transmute))), info:SourceInfo { span: src/lib.rs:16:42: 16:67 (#0), scope: scope[1] }
+2023-08-31 18:47:02.317435 |INFO | [rumorph-progress] transmute
+2023-08-31 18:47:02.317439 |INFO | [rumorph-progress] LayoutChecker- from_ty:std::boxed::Box<dyn Person>, to_ty:TraitObject
+2023-08-31 18:47:02.317453 |INFO | [rumorph-progress] get_pointee: > std::boxed::Box<dyn Person> as type: Adt(std::boxed::Box, [dyn Person, std::alloc::Global])
+2023-08-31 18:47:02.317473 |INFO | [rumorph-progress] get_pointee: > TraitObject as type: Adt(TraitObject, [])
+2023-08-31 18:47:02.317483 |INFO | [rumorph-progress] LayoutChecker- from_align:8, to_align:8
+2023-08-31 18:47:02.317488 |INFO | [rumorph-progress] LayoutChecker- from_size:16, to_size:16
+2023-08-31 18:47:02.317492 |INFO | [rumorph-progress] from_prime: false, from_adt: true, from_gen: false
+2023-08-31 18:47:02.317496 |INFO | [rumorph-progress] to_prime: false, to_adt: true, to_gen: false
+2023-08-31 18:47:02.317501 |INFO | [rumorph-progress] warn::size (gen/adt>prime/adt) from id3 to lplace2
+2023-08-31 18:47:02.317506 |INFO | [rumorph-progress] statement: StorageDead(_3), kind:StorageDead(_3), info:SourceInfo { span: src/lib.rs:16:66: 16:67 (#0), scope: scope[1] }
+2023-08-31 18:47:02.317513 |INFO | [rumorph-progress] statement: StorageLive(_4), kind:StorageLive(_4), info:SourceInfo { span: src/lib.rs:17:33: 17:47 (#0), scope: scope[2] }
+2023-08-31 18:47:02.317519 |INFO | [rumorph-progress] statement: _4 = (_2.0: *mut ()), kind:Assign((_4, (_2.0: *mut ()))), info:SourceInfo { span: src/lib.rs:17:33: 17:47 (#0), scope: scope[2] }
+2023-08-31 18:47:02.317530 |INFO | [rumorph-progress] [dbg] lplace: 4, rplace: 2
+2023-08-31 18:47:02.317534 |INFO | [rumorph-progress] statement: _0 = move _4 as std::boxed::Box<T> (Transmute), kind:Assign((_0, move _4 as std::boxed::Box<T> (Transmute))), info:SourceInfo { span: src/lib.rs:17:13: 17:48 (#0), scope: scope[2] }
+2023-08-31 18:47:02.317544 |INFO | [rumorph-progress] transmute
+2023-08-31 18:47:02.317548 |INFO | [rumorph-progress] LayoutChecker- from_ty:*mut (), to_ty:std::boxed::Box<T>
+2023-08-31 18:47:02.317555 |INFO | [rumorph-progress] get_pointee: > *mut () as type: *mut ()
+2023-08-31 18:47:02.317565 |INFO | [rumorph-progress] get_pointee: > () as type: ()
+2023-08-31 18:47:02.317570 |INFO | [rumorph-progress] get_pointee: > std::boxed::Box<T> as type: Adt(std::boxed::Box, [T, std::alloc::Global])
+2023-08-31 18:47:02.317581 |INFO | [rumorph-progress] LayoutChecker- from_align:1, to_align:8
+2023-08-31 18:47:02.317585 |INFO | [rumorph-progress] LayoutChecker- from_size:0, to_size:8
+2023-08-31 18:47:02.317589 |INFO | [rumorph-progress] warn::size (conc>conc/gen) from id4 to lplace0
+2023-08-31 18:47:02.317594 |INFO | [rumorph-progress] statement: StorageDead(_4), kind:StorageDead(_4), info:SourceInfo { span: src/lib.rs:17:47: 17:48 (#0), scope: scope[2] }
+2023-08-31 18:47:02.317601 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/lib.rs:18:9: 18:10 (#0), scope: scope[1] }
+2023-08-31 18:47:02.317607 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/lib.rs:19:6: 19:6 (#0), scope: scope[0] }, kind: return } }
+2023-08-31 18:47:02.317618 |INFO | [rumorph-progress] bug not found
+2023-08-31 18:47:02.317622 |INFO | [rumorph-progress] UninitExposure analysis finished
+2023-08-31 18:47:02.317626 |INFO | [rumorph-progress] RuMorph finished
+2023-08-31 18:47:02.437273 |INFO | [rumorph-progress] cargo rumorph finished
