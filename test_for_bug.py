@@ -20,11 +20,11 @@ def report_analyzer(filename, crate):
             for l_num, line in enumerate(f):
                 if header1 in line:
                     func = line.split("`")[1]
-                    record = crate + "," + func + ",bug1,"
+                    record = crate + "," + func + ","
                     CAPTURED = True
                 elif header2 in line:
                     func = line.split("`")[1]
-                    record = crate + "," + func + ",bug2,"
+                    record = crate + "," + func + ","
                     CAPTURED = True
                 elif CAPTURED == True:
                     loc = line[3:]
