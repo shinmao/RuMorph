@@ -238,13 +238,14 @@ mod inner {
 
                                                         // if A could be generic type or composite type, and B is primitive type, taint as source
                                                         match size_status {
-                                                            Comparison::Less
-                                                            | Comparison::NoideaL => {
-                                                                progress_info!("warn::size (conc>conc/gen) from id{} to lplace{}", id, lplace.local.index());
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                self.status
-                                                                    .ty_convs
-                                                                    .push(statement.source_info.span);
+                                                            Comparison::Less => {
+                                                                if lc.get_to_ty_name() != "usize" {
+                                                                    progress_info!("warn::size (conc>conc) from id{} to lplace{}", id, lplace.local.index());
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
+                                                                }
                                                             },
                                                             _ => {
                                                                 // check
@@ -399,6 +400,7 @@ mod inner {
                         let ext = tcx.ext();
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
+                        progress_info!("terminator with symbol: {:?}", symbol_vec);
                         if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
                             // if self.fn_called_on_copy(
                             //     (callee_did, args),

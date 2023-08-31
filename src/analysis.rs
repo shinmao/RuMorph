@@ -353,6 +353,18 @@ impl<'tcx> LayoutChecker<'tcx> {
         };
         (is_from_generic, is_to_generic)
     }
+
+    pub fn is_from_to_foreign(&self) -> (bool, bool) {
+        let is_from_foreign = match self.from_ty.kind() {
+            TyKind::Foreign(_) => { true },
+            _ => { false },
+        };
+        let is_to_foreign = match self.to_ty.kind() {
+            TyKind::Foreign(_) => { true },
+            _ => { false },
+        };
+        (is_from_foreign, is_to_foreign)
+    }
 }
 
 // get the pointee or wrapped type

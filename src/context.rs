@@ -71,11 +71,11 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
 
     pub fn translate_body(&self, def_id: DefId) -> Rc<TranslationResult<'tcx, ir::Body<'tcx>>> {
         let tcx = self.tcx();
-        // let codegen_list = tcx.collect_and_partition_mono_items(()).1;
-        // for cg in codegen_list {
-        //     progress_info!("The name of codegen: {:?}", cg.name());
-        //     progress_info!("The items: {:?}", cg.items());
-        // }
+        //let codegen_list = tcx.collect_and_partition_mono_items(()).1;
+        //for cg in codegen_list {
+        //    progress_info!("The name of codegen: {:?}", cg.name());
+        //    progress_info!("The items: {:?}", cg.items());
+        //}
         let result = self.translation_cache.entry(def_id).or_insert_with(|| {
             Rc::new(
                 try {
