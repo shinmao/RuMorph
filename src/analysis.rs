@@ -338,6 +338,38 @@ impl<'tcx> LayoutChecker<'tcx> {
         (self.from_ty.is_adt(), self.to_ty.is_adt())
     }
 
+    pub fn is_from_to_transparent(&self) -> (bool, bool) {
+        let is_from = if let TyKind::Adt(def, _) = self.from_ty.kind() {
+            def.repr().transparent()
+        } else {
+            false
+        };
+
+        let is_to = if let TyKind::Adt(def, _) = self.to_ty.kind() {
+            def.repr().transparent()
+        } else {
+            false
+        };
+
+        (is_from, is_to)
+    }
+
+    pub fn is_from_to_c(&self) -> (bool, bool) {
+        let is_from = if let TyKind::Adt(def, _) = self.from_ty.kind() {
+            def.repr().c()
+        } else {
+            false
+        };
+
+        let is_to = if let TyKind::Adt(def, _) = self.to_ty.kind() {
+            def.repr().c()
+        } else {
+            false
+        };
+
+        (is_from, is_to)
+    }
+
     pub fn is_from_to_generic(&self) -> (bool, bool) {
         let is_from_generic = match self.from_ty.kind() {
             TyKind::Param(_) => {
