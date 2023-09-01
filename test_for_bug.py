@@ -46,10 +46,10 @@ def tester(path):
     print(f"tester log for {path} has been created")
 
 if __name__ == '__main__':
-    #with Pool(processes=20) as pool:
+    # with Pool(processes=20) as pool:
     #    pool.map(tester, src_path)
-    #pool.close()
-    #pool.join()
+    # pool.close()
+    # pool.join()
     with open(report_path, "a+") as output:
         for src in src_path:
             path = os.path.join(base_path, src) + "/reportII.txt"
