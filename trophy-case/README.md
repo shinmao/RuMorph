@@ -25,7 +25,7 @@ In the column of Conv, it shows the method of type conversion:
 | [hash-rs](https://crates.io/crates/hash-rs) | D-BL | ptr-as | dereference | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/asukharev/hash-rs/2?logo=github)](https://github.com/asukharev/hash-rs/issues/2) |
 | [lmdb-rs](https://crates.io/crates/lmdb-rs) | D-BL |  transmute | dereference | [![RUSTSEC-2023-0047](https://img.shields.io/badge/RUSTSEC-2023--0047-blue?style=flat-square&logo=rust)](https://rustsec.org/advisories/RUSTSEC-2023-0047.html) |
 | [rendy](https://crates.io/crates/rendy/) | D-UM 2 | ptr-as | `std::slice::from_raw_parts` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/amethyst/rendy/328?logo=github)](https://github.com/amethyst/rendy/issues/328) |
-| [data-buffer](https://crates.io/crates/data_buffer) | D-AI | ptr-as | `std::alloc::realloc` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/elrnv/buffer/2?logo=github)](https://github.com/elrnv/buffer/issues/2) |
+| [data-buffer](https://crates.io/crates/data_buffer) | D-UM 2 / O | ptr-as | `std::alloc::realloc` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/elrnv/buffer/2?logo=github)](https://github.com/elrnv/buffer/issues/2) |
 | [lonlat-bng](https://crates.io/crates/lonlat_bng) | D-BL 1 / UM 1 | ptr-as | `std::slice::from_raw_parts_mut` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/urschrei/lonlat_bng/19?logo=github)](https://github.com/urschrei/lonlat_bng/issues/19#issuecomment-1618461663) |
 | [preserves](https://crates.io/crates/preserves) | D-BL 1 / UM 1 | ptr-as | dereference | [![GitLab all issues](https://img.shields.io/gitlab/issues/all/preserves%2Fpreserves?logo=gitlab&label=issue%2042)](https://gitlab.com/preserves/preserves/-/issues/42) |
 | [byte-conv](https://crates.io/crates/byte_conv) | D-UM 1 | ptr-as | `std::slice::from_raw_parts` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/Lolirofle/byte_conv/1?logo=github)](https://github.com/Lolirofle/byte_conv/issues/1) |
@@ -42,6 +42,7 @@ In the column of Conv, it shows the method of type conversion:
 | [mpack](https://crates.io/crates/mpack) | D-UM | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/dradtke/mpack/issues/2) |
 | [rafx-base](https://crates.io/crates/rafx-base) | D-UM 2 | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/aclysma/rafx/issues/255) |
 | [runes](https://crates.io/crates/runes) | D-UM 2 | transmute | `std::slice::from_raw_parts_mut` | [issue](https://github.com/Determinant/runes/issues/2) |
+| [crayon](https://crates.io/crates/crayon) | D-UM 3 | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/shawnscode/crayon/issues/108) |
 
 
 
