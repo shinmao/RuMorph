@@ -43,6 +43,10 @@ In the column of Conv, it shows the method of type conversion:
 | [rafx-base](https://crates.io/crates/rafx-base) | D-UM 2 | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/aclysma/rafx/issues/255) |
 | [runes](https://crates.io/crates/runes) | D-UM 2 | transmute | `std::slice::from_raw_parts_mut` | [issue](https://github.com/Determinant/runes/issues/2) |
 | [crayon](https://crates.io/crates/crayon) | D-UM 3 | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/shawnscode/crayon/issues/108) |
+| [skyline](https://crates.io/crates/skyline) | D-UM | ptr-as | dereference | [issue](https://github.com/ultimate-research/skyline-rs/issues/32) |
+| [dream-go](https://github.com/Chicoryn/dream-go) | D-UM 2 | ptr-as | | [issue](https://github.com/Chicoryn/dream-go/issues/65) |
+| [pipe-channel](https://crates.io/crates/pipe-channel) | D-UM 2 | ptr-as | `std::slice::from_raw_parts_mut` | [issue](https://github.com/bugaevc/pipe-channel/issues/4) |
+| [granne](https://crates.io/crates/granne) | D-UM | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/granne/granne/issues/25) |
 
 
 
