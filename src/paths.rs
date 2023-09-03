@@ -52,6 +52,9 @@ pub const PTR_DROP_IN_PLACE: [&str; 3] = ["core", "ptr", "drop_in_place"];
 pub const PTR_DIRECT_DROP_IN_PLACE: [&str; 5] =
     ["core", "ptr", "mut_ptr", "<impl *mut T>", "drop_in_place"];
 
+// MaybeUninit function call
+pub const MAYBEUNINIT: [&str; 5] = ["core", "mem", "maybe_uninit", "MaybeUninit", "uninit"];
+
 pub struct PathSet {
     set: HashSet<Vec<Symbol>>,
 }
