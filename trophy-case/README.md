@@ -5,8 +5,8 @@ In the column of Bugs, there are two elements `Method-Bug`:
 * -`{Bug}`: Categories of Bugs  
     * **BL**: Broken Layout Bug
     * **UM**: Uninitialized Memory Exposure Bug
-    * **AI**: Alloc Inconsistenty Bug
-* -**O**: Others (e.g., **UT**: Unsound transmute, **IT**: Invalid type creation)  
+    * **BB**: Broken Bit Patterns Bug
+* -**O**: Others 
 
 In the column of Conv, it shows the method of type conversion:  
 * **ptr-as**: raw pointer casting  
@@ -23,7 +23,7 @@ In the column of Conv, it shows the method of type conversion:
 | [cyfs-base](https://crates.io/crates/cyfs-base) | D-BL |  transmute | dereference | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/buckyos/CYFS/274?logo=github)](https://github.com/buckyos/CYFS/issues/274) |
 | [d4](https://crates.io/crates/d4) | D-BL | transmute | dereference | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/38/d4-format/71?logo=github)](https://github.com/38/d4-format/issues/71) |
 | [hash-rs](https://crates.io/crates/hash-rs) | D-BL | ptr-as | dereference | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/asukharev/hash-rs/2?logo=github)](https://github.com/asukharev/hash-rs/issues/2) |
-| [lmdb-rs](https://crates.io/crates/lmdb-rs) | D-BL |  transmute | dereference | [![RUSTSEC-2023-0047](https://img.shields.io/badge/RUSTSEC-2023--0047-blue?style=flat-square&logo=rust)](https://rustsec.org/advisories/RUSTSEC-2023-0047.html) |
+| [lmdb-rs](https://crates.io/crates/lmdb-rs) | D-BL / BB |  transmute | dereference | [![RUSTSEC-2023-0047](https://img.shields.io/badge/RUSTSEC-2023--0047-blue?style=flat-square&logo=rust)](https://rustsec.org/advisories/RUSTSEC-2023-0047.html) |
 | [rendy](https://crates.io/crates/rendy/) | D-UM 2 | ptr-as | `std::slice::from_raw_parts` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/amethyst/rendy/328?logo=github)](https://github.com/amethyst/rendy/issues/328) |
 | [data-buffer](https://crates.io/crates/data_buffer) | D-UM 2 / O | ptr-as | `std::alloc::realloc` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/elrnv/buffer/2?logo=github)](https://github.com/elrnv/buffer/issues/2) |
 | [lonlat-bng](https://crates.io/crates/lonlat_bng) | D-BL 1 / UM 1 | ptr-as | `std::slice::from_raw_parts_mut` | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/urschrei/lonlat_bng/19?logo=github)](https://github.com/urschrei/lonlat_bng/issues/19#issuecomment-1618461663) |
