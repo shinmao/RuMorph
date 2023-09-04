@@ -41,7 +41,7 @@ pub mod prelude;
 
 use rustc_middle::ty::TyCtxt;
 
-use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker};
+use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker, BrokenBitPatternsChecker};
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
 use crate::context::RuMorphCtxtOwner;
@@ -57,7 +57,7 @@ pub struct RuMorphConfig {
     pub report_level: ReportLevel,
     pub broken_layout_enabled: bool,
     pub uninit_exposure_enabled: bool,
-    pub alloc_inconsistency_enabled: bool,
+    pub broken_bitpatterns_enabled: bool,
 }
 
 impl Default for RuMorphConfig {
@@ -67,7 +67,7 @@ impl Default for RuMorphConfig {
             report_level: ReportLevel::Info,
             broken_layout_enabled: true,
             uninit_exposure_enabled: true,
-            alloc_inconsistency_enabled: true,
+            broken_bitpatterns_enabled: true,
         }
     }
 }
@@ -124,18 +124,18 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     // }
 
     // Uninit Exposure analysis
-    if config.uninit_exposure_enabled {
-        run_analysis("UninitExposure", || {
-            let checker = UninitExposureChecker::new(rcx);
-            checker.analyze();
-        })
-    }
-
-    // // Alloc Dealloc Inconsistency analysis
-    // if config.alloc_inconsistency_enabled {
-    //     run_analysis("AllocInconsistency", || {
-    //         let checker = AllocInconsistencyChecker::new(rcx);
+    // if config.uninit_exposure_enabled {
+    //     run_analysis("UninitExposure", || {
+    //         let checker = UninitExposureChecker::new(rcx);
     //         checker.analyze();
     //     })
     // }
+
+    // Broken Bit patterns analysis
+    if config.broken_bitpatterns_enabled {
+        run_analysis("BrokenBitPatterns", || {
+            let checker = BrokenBitPatternsChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 }

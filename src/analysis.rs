@@ -1,5 +1,6 @@
 mod broken_layout;
 mod uninit_exposure;
+mod broken_bitpatterns;
 
 use rustc_middle::ty::{self, Ty, ParamEnv, TypeAndMut, TyKind, TyCtxt, IntTy, UintTy, FloatTy};
 
@@ -11,6 +12,7 @@ use crate::progress_info;
 
 pub use broken_layout::{BehaviorFlag as BrokenLayoutBehaviorFlag, BrokenLayoutChecker};
 pub use uninit_exposure::{BehaviorFlag as UninitExposureBehaviorFlag, UninitExposureChecker};
+pub use broken_bitpatterns::{BehaviorFlag as BrokenBitPatternsBehaviorFlag, BrokenBitPatternsChecker};
 
 pub type AnalysisResult<'tcx, T> = Result<T, Box<dyn AnalysisError + 'tcx>>;
 
@@ -66,6 +68,7 @@ pub enum AnalysisErrorKind {
 pub enum AnalysisKind {
     BrokenLayout(BrokenLayoutBehaviorFlag),
     UninitExposure(UninitExposureBehaviorFlag),
+    BrokenBitPatterns(BrokenBitPatternsBehaviorFlag),
 }
 
 trait IntoReportLevel {
@@ -109,7 +112,11 @@ impl Into<Cow<'static, str>> for AnalysisKind {
             AnalysisKind::UninitExposure(bypass_kinds) => {
                 let mut v = vec!["UninitExposure:"];
                 v.join("/").into()
-            }
+            },
+            AnalysisKind::BrokenBitPatterns(bypass_kinds) => {
+                let mut v = vec!["BrokenBitPatterns:"];
+                v.join("/").into()
+            },
         }
     }
 }
