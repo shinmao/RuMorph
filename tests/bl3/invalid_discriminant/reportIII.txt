@@ -1,0 +1,30 @@
+2023-09-05 03:06:51.656962 |INFO | [rumorph-progress] Running cargo rumorph
+2023-09-05 03:06:51.829771 |INFO | [rumorph-progress] Running rumorph for target bin:invalid_discriminant
+2023-09-05 03:06:52.185233 |INFO | [rumorph-progress] RuMorph started
+2023-09-05 03:06:52.185454 |INFO | [rumorph-progress] BrokenBitPatterns analysis started
+2023-09-05 03:06:52.196200 |INFO | [rumorph-progress] BrokenBitPatternsChecker::analyze(<MsgType as std::fmt::Debug>::fmt)
+2023-09-05 03:06:52.196236 |INFO | [rumorph-progress] bug not found
+2023-09-05 03:06:52.196242 |INFO | [rumorph-progress] BrokenBitPatternsChecker::analyze(main)
+2023-09-05 03:06:52.196249 |INFO | [rumorph-progress] bug not found
+2023-09-05 03:06:52.196257 |INFO | [rumorph-progress] BrokenBitPatternsChecker::analyze(<MsgType as std::convert::From<u8>>::from)
+2023-09-05 03:06:52.196265 |INFO | [rumorph-progress] This function contains unsafe block
+2023-09-05 03:06:52.196409 |INFO | [rumorph-progress] statement: StorageLive(_2), kind:StorageLive(_2), info:SourceInfo { span: src/main.rs:15:38: 15:39 (#0), scope: scope[1] }
+2023-09-05 03:06:52.196435 |INFO | [rumorph-progress] statement: _2 = _1, kind:Assign((_2, _1)), info:SourceInfo { span: src/main.rs:15:38: 15:39 (#0), scope: scope[1] }
+2023-09-05 03:06:52.196457 |INFO | [rumorph-progress] [dbg] lplace: 2, rplace: 1
+2023-09-05 03:06:52.196461 |INFO | [rumorph-progress] statement: _0 = move _2 as MsgType (Transmute), kind:Assign((_0, move _2 as MsgType (Transmute))), info:SourceInfo { span: src/main.rs:15:18: 15:40 (#0), scope: scope[1] }
+2023-09-05 03:06:52.196484 |INFO | [rumorph-progress] transmute
+2023-09-05 03:06:52.196489 |INFO | [rumorph-progress] LayoutChecker- from_ty:u8, to_ty:MsgType
+2023-09-05 03:06:52.196494 |INFO | [rumorph-progress] get_pointee: > u8 as type: u8
+2023-09-05 03:06:52.196505 |INFO | [rumorph-progress] get_pointee: > MsgType as type: Adt(MsgType, [])
+2023-09-05 03:06:52.196515 |INFO | [rumorph-progress] LayoutChecker- from_align:1, to_align:1
+2023-09-05 03:06:52.196520 |INFO | [rumorph-progress] LayoutChecker- from_size:1, to_size:1
+2023-09-05 03:06:52.196524 |INFO | [rumorph-progress] type conversion from type: u8 to type: MsgType
+2023-09-05 03:06:52.196532 |INFO | [rumorph-progress] true
+2023-09-05 03:06:52.196537 |INFO | [rumorph-progress] statement: StorageDead(_2), kind:StorageDead(_2), info:SourceInfo { span: src/main.rs:15:39: 15:40 (#0), scope: scope[1] }
+2023-09-05 03:06:52.196543 |INFO | [rumorph-progress] terminator: Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:16:6: 16:6 (#0), scope: scope[0] }, kind: return } }
+2023-09-05 03:06:52.196558 |INFO | [rumorph-progress] bug not found
+2023-09-05 03:06:52.196565 |INFO | [rumorph-progress] BrokenBitPatternsChecker::analyze(<MsgType as std::clone::Clone>::clone)
+2023-09-05 03:06:52.196580 |INFO | [rumorph-progress] bug not found
+2023-09-05 03:06:52.196584 |INFO | [rumorph-progress] BrokenBitPatterns analysis finished
+2023-09-05 03:06:52.196589 |INFO | [rumorph-progress] RuMorph finished
+2023-09-05 03:06:52.207855 |INFO | [rumorph-progress] cargo rumorph finished
