@@ -11,5 +11,5 @@ keywords = ["type-confusion"]
 patched = []
 ```
 
-# Allows accessing arbitrary `struct` as bytes
+# Allows uninitialized memory exposure in safe function
 The safe function `func` allows users to cast arbitrary types as bytes. If user provides a `struct` type with padding bytes, it could violate the safety guarantee of `func` and expose the uninitialized memory.
