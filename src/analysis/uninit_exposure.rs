@@ -72,21 +72,21 @@ impl<'tcx> UninitExposureChecker<'tcx> {
                         utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
                     );
 
-                    // for &span in status.strong_bypass_spans() {
-                    //     color_span.add_sub_span(Color::Red, span);
-                    // }
+                    for &span in status.strong_bypass_spans() {
+                        color_span.add_sub_span(Color::Red, span);
+                    }
 
-                    // for &span in status.weak_bypass_spans() {
-                    //     color_span.add_sub_span(Color::Yellow, span);
-                    // }
+                    for &span in status.weak_bypass_spans() {
+                        color_span.add_sub_span(Color::Yellow, span);
+                    }
 
-                    // for &span in status.unresolvable_generic_function_spans() {
-                    //     color_span.add_sub_span(Color::Cyan, span);
-                    // }
+                    for &span in status.unresolvable_generic_function_spans() {
+                        color_span.add_sub_span(Color::Cyan, span);
+                    }
 
-                    // for &span in status.plain_deref_spans() {
-                    //     color_span.add_sub_span(Color::Blue, span);
-                    // }
+                    for &span in status.plain_deref_spans() {
+                        color_span.add_sub_span(Color::Blue, span);
+                    }
                     
                     for &span in status.ty_conv_spans() {
                         color_span.add_sub_span(Color::Green, span);
@@ -193,7 +193,6 @@ mod inner {
                     }
                 }
             } else {
-                progress_info!("interprocedural analysis required");
                 // We don't perform interprocedural analysis,
                 // thus safe functions are considered safe
                 Some(Default::default())
@@ -204,7 +203,6 @@ mod inner {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
             for statement in self.body.statements() {
-                progress_info!("statement: {:?}, kind:{:?}, info:{:?}", statement, statement.kind, statement.source_info);
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
                 match statement.kind {
@@ -228,70 +226,80 @@ mod inner {
                                         match f_ty {
                                             Ok(from_ty) => {
                                                 let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                                let fty = lc.get_from_ty();
+                                                let tty = lc.get_to_ty();
                                                 let align_status = lc.get_align_status();
                                                 let size_status = lc.get_size_status();
+                                                let ty_bnd = lc.get_ty_bnd();
 
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
                                                         let id = place.local.index();
 
-                                                        // if A could be generic type or composite type, and B is primitive type, taint as source
-                                                        match size_status {
-                                                            Comparison::Less => {
-                                                                if lc.get_to_ty_name() != "usize" {
-                                                                    progress_info!("warn::size (conc>conc) from id{} to lplace{}", id, lplace.local.index());
+                                                        // check
+                                                        // (gen > prim) (adt > prim)
+                                                        // (gen > adt) (adt > adt)
+                                                        let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
+                                                        let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
+                                                        let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
+                                                        let (is_from_arr_slice, is_to_arr_slice) = lc.is_from_to_arr_slice();
+                                                        let (is_from_foreign, is_to_foreign) = lc.is_from_to_foreign();
+                                                        let (is_from_trans, is_to_trans) = lc.is_from_to_transparent();
+                                                        let (is_from_c, is_to_c) = lc.is_from_to_c();
+                                                        progress_info!("from_prime: {}, from_adt: {}, from_gen: {}, from_foreign: {}, from_transparent: {}, from_c: {}", is_from_prime, is_from_adt, is_from_gen, is_from_foreign, is_from_trans, is_from_c);
+                                                        progress_info!("to_prime: {}, to_adt: {}, to_gen: {}, to_foreign: {}, to_transparent: {}, to_c: {}", is_to_prime, is_to_adt, is_to_gen, is_to_foreign, is_to_trans, is_to_c);
+                                                        if is_from_gen == true && is_to_gen == false && tty.to_string() != "usize" {
+                                                            // generic > concrete
+                                                            // call TraitChecker for help
+                                                            if ty_bnd.len() == 0 {
+                                                                // it could be arbitrary type
+                                                                if is_to_prime | is_to_arr_slice {
+                                                                    progress_info!("warn::cast (gen>prime/arr/slice) from id{} to lplace{}", id, lplace.local.index());
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
+                                                                } else if is_to_adt {
+                                                                    // adt is required to have stable layout
+                                                                    if !is_to_trans && !is_to_c {
+                                                                        progress_info!("warn::cast (gen>adt) from id{} to lplace{}", id, lplace.local.index());
+                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                        self.status
+                                                                            .ty_convs
+                                                                            .push(statement.source_info.span);
+                                                                    }
+                                                                }
+                                                            }
+                                                        } else if is_from_gen == false && is_to_gen == true {
+                                                            // concrete > generic
+                                                            if ty_bnd.len() == 0 {
+                                                                // it could be arbitrary types
+                                                                if is_from_adt {
+                                                                    progress_info!("warn::cast (adt>gen) from id{} to lplace{}", id, lplace.local.index());
                                                                     taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                     self.status
                                                                         .ty_convs
                                                                         .push(statement.source_info.span);
                                                                 }
-                                                            },
-                                                            _ => {
-                                                                // check
-                                                                // (gen > prim) (adt > prim)
-                                                                // (gen > adt) (adt > adt)
-                                                                let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
-                                                                let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
-                                                                let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
-                                                                let (is_from_arr_slice, is_to_arr_slice) = lc.is_from_to_arr_slice();
-                                                                let (is_from_foreign, is_to_foreign) = lc.is_from_to_foreign();
-                                                                let (is_from_trans, is_to_trans) = lc.is_from_to_transparent();
-                                                                let (is_from_c, is_to_c) = lc.is_from_to_c();
-                                                                progress_info!("from_prime: {}, from_adt: {}, from_gen: {}, from_foreign: {}, from_transparent: {}, from_c: {}", is_from_prime, is_from_adt, is_from_gen, is_from_foreign, is_from_trans, is_from_c);
-                                                                progress_info!("to_prime: {}, to_adt: {}, to_gen: {}, to_foreign: {}, to_transparent: {}, to_c: {}", is_to_prime, is_to_adt, is_to_gen, is_to_foreign, is_to_trans, is_to_c);
-                                                                if is_to_prime | is_to_adt | is_to_arr_slice {
-                                                                    if is_from_gen | is_from_adt {
-                                                                        if is_from_adt && is_to_adt {
-                                                                            // adt>adt
-                                                                            // if one of the adt doesn't have stable layout, then it is dangerous
-                                                                            if (!is_from_trans && !is_from_c) | (!is_to_trans && !is_to_c) {
-                                                                                progress_info!("warn::size (adt>adt) from id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            }
-                                                                        } else if is_from_gen && is_to_adt {
-                                                                            // gen>adt
-                                                                            // adt is required to have stable layout
-                                                                            if !is_to_trans && !is_to_c {
-                                                                                progress_info!("warn::size (gen>adt) from id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            }
-                                                                        } else {
-                                                                            progress_info!("warn::size (gen/adt>prime/arr) from id{} to lplace{}", id, lplace.local.index());
-                                                                            taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                            self.status
-                                                                                .ty_convs
-                                                                                .push(statement.source_info.span);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            },
+                                                            }
+                                                        } else if is_from_adt && is_to_adt {
+                                                            // if one of the adt doesn't have stable layout, then it is dangerous
+                                                            if ((!is_from_trans && !is_from_c) | (!is_to_trans && !is_to_c)) && (fty.to_string() != tty.to_string()) {
+                                                                progress_info!("warn::cast (adt>adt) from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            }
+                                                        } else if (is_from_adt && is_to_prime) | (is_from_adt && is_to_arr_slice) {
+                                                            if !is_from_trans && !is_from_c {
+                                                                progress_info!("warn::cast (adt>prime/arr/slice) from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            }
                                                         }
                                                     },
                                                     Err(_e) => {
@@ -310,70 +318,83 @@ mod inner {
                                         match f_ty {
                                             Ok(from_ty) => {
                                                 let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                                let fty = lc.get_from_ty();
+                                                let tty = lc.get_to_ty();
                                                 let align_status = lc.get_align_status();
                                                 let size_status = lc.get_size_status();
+                                                let ty_bnd = lc.get_ty_bnd();
 
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
                                                         let id = place.local.index();
 
-                                                        match size_status {
-                                                            // make sure it is not kind of bug 1
-                                                            Comparison::Less => {
-                                                                if lc.get_to_ty_name() != "usize" {
-                                                                    progress_info!("warn::size (conc>conc/gen) from id{} to lplace{}", id, lplace.local.index());
+                                                        // check
+                                                        // (gen > prim) (adt > prim)
+                                                        // (gen > adt) (adt > adt)
+                                                        let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
+                                                        let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
+                                                        let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
+                                                        let (is_from_arr_slice, is_to_arr_slice) = lc.is_from_to_arr_slice();
+                                                        let (is_from_foreign, is_to_foreign) = lc.is_from_to_foreign();
+                                                        let (is_from_trans, is_to_trans) = lc.is_from_to_transparent();
+                                                        let (is_from_c, is_to_c) = lc.is_from_to_c();
+                                                        progress_info!("from_prime: {}, from_adt: {}, from_gen: {}, from_foreign: {}, from_transparent: {}, from_c: {}", is_from_prime, is_from_adt, is_from_gen, is_from_foreign, is_from_trans, is_from_c);
+                                                        progress_info!("to_prime: {}, to_adt: {}, to_gen: {}, to_foreign: {}, to_transparent: {}, to_c: {}", is_to_prime, is_to_adt, is_to_gen, is_to_foreign, is_to_trans, is_to_c);
+                                                        if is_from_gen == true && is_to_gen == false && tty.to_string() != "usize" {
+                                                            // generic > concrete
+                                                            // call TraitChecker for help
+                                                            if ty_bnd.len() == 0 {
+                                                                // it could be arbitrary type
+                                                                if is_to_prime | is_to_arr_slice {
+                                                                    progress_info!("warn::transmute (gen>prime/arr/slice) from id{} to lplace{}", id, lplace.local.index());
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
+                                                                } else if is_to_adt {
+                                                                    // adt is required to have stable layout
+                                                                    if !is_to_trans && !is_to_c {
+                                                                        progress_info!("warn::transmute (gen>adt) from id{} to lplace{}", id, lplace.local.index());
+                                                                        taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                        self.status
+                                                                            .ty_convs
+                                                                            .push(statement.source_info.span);
+                                                                    }
+                                                                }
+                                                            }
+                                                        } else if is_from_gen == false && is_to_gen == true {
+                                                            // concrete > generic
+                                                            if ty_bnd.len() == 0 {
+                                                                // it could be arbitrary types
+                                                                let from_ty_name = fty.to_string();
+                                                                if is_from_adt && (!from_ty_name.contains("MaybeUninit")) {
+                                                                    progress_info!("warn::transmute (adt>gen) from id{} to lplace{}", id, lplace.local.index());
                                                                     taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                     self.status
                                                                         .ty_convs
                                                                         .push(statement.source_info.span);
                                                                 }
-                                                            },
-                                                            _ => {
-                                                                // check
-                                                                // (gen > prim) (adt > prim)
-                                                                // (gen > adt) (adt > adt)
-                                                                let (is_from_prime, is_to_prime) = lc.is_from_to_primitive();
-                                                                let (is_from_adt, is_to_adt) = lc.is_from_to_adt();
-                                                                let (is_from_gen, is_to_gen) = lc.is_from_to_generic();
-                                                                let (is_from_arr_slice, is_to_arr_slice) = lc.is_from_to_arr_slice();
-                                                                let (is_from_foreign, is_to_foreign) = lc.is_from_to_foreign();
-                                                                let (is_from_trans, is_to_trans) = lc.is_from_to_transparent();
-                                                                let (is_from_c, is_to_c) = lc.is_from_to_c();
-                                                                progress_info!("from_prime: {}, from_adt: {}, from_gen: {}, from_foreign: {}, from_trans: {}, from_c: {}", is_from_prime, is_from_adt, is_from_gen, is_from_foreign, is_from_trans, is_from_c);
-                                                                progress_info!("to_prime: {}, to_adt: {}, to_gen: {}, to_foreign: {}, to_trans: {}, to_c: {}", is_to_prime, is_to_adt, is_to_gen, is_to_foreign, is_to_trans, is_to_c);
-                                                                if is_to_prime | is_to_adt | is_to_arr_slice {
-                                                                    if is_from_gen | is_from_adt {
-                                                                        if is_from_adt && is_to_adt {
-                                                                            // adt>adt
-                                                                            // if one of the adt doesn't have stable layout, then it is dangerous
-                                                                            if (!is_from_trans && !is_from_c) | (!is_to_trans && !is_to_c) {
-                                                                                progress_info!("warn::size (adt>adt) from id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            }
-                                                                        } else if is_from_gen && is_to_adt {
-                                                                            // gen>adt
-                                                                            // adt is required to have stable layout
-                                                                            if !is_to_trans && !is_to_c {
-                                                                                progress_info!("warn::size (gen>adt) from id{} to lplace{}", id, lplace.local.index());
-                                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                                self.status
-                                                                                    .ty_convs
-                                                                                    .push(statement.source_info.span);
-                                                                            }
-                                                                        } else {
-                                                                            progress_info!("warn::size (gen/adt>prime/arr) from id{} to lplace{}", id, lplace.local.index());
-                                                                            taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                            self.status
-                                                                                .ty_convs
-                                                                                .push(statement.source_info.span);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            },
+                                                            }
+                                                        } else if is_from_adt && is_to_adt {
+                                                            // if one of the adt doesn't have stable layout, then it is dangerous
+                                                            let from_ty_name = fty.to_string();
+                                                            if ((!is_from_trans && !is_from_c) | (!is_to_trans && !is_to_c)) && (from_ty_name != tty.to_string()) && (!from_ty_name.contains("MaybeUninit")) {
+                                                                progress_info!("warn::transmute (adt>adt) from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            }
+                                                        } else if (is_from_adt && is_to_prime) | (is_from_adt && is_to_arr_slice) {
+                                                            let from_ty_name = fty.to_string();
+                                                            if !is_from_trans && !is_from_c && (!from_ty_name.contains("MaybeUninit")) {
+                                                                progress_info!("warn::transmute (adt>prime/arr/slice) from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            }
                                                         }
                                                     },
                                                     Err(_e) => {
@@ -431,7 +452,6 @@ mod inner {
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
-                progress_info!("terminator: {:?}", terminator);
                 match terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
@@ -445,42 +465,36 @@ mod inner {
                         let ext = tcx.ext();
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
-                        progress_info!("terminator with symbol: {:?}", symbol_vec);
                         if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            // if self.fn_called_on_copy(
-                            //     (callee_did, args),
-                            //     &[&PTR_READ[..], &PTR_DIRECT_READ[..]],
-                            // ) {
-                            //     // read on Copy types is not a lifetime bypass.
-                            //     continue;
-                            // }
-
-                            // if ext.match_def_path(callee_did, &VEC_SET_LEN)
-                            //     && vec_set_len_to_0(self.rcx, callee_did, args)
-                            // {
-                            //     // Leaking data is safe (`vec.set_len(0);`)
-                            //     continue;
-                            // }
-
-                            // taint_analyzer
-                            //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
-                            // self.status
-                            //     .strong_bypasses
-                            //     .push(terminator.original.source_info.span);
+                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            for arg in args {
+                                // arg: mir::Operand
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .strong_bypasses
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
+                            }
                         } else if paths::WEAK_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            // if self.fn_called_on_copy(
-                            //     (callee_did, args),
-                            //     &[&PTR_WRITE[..], &PTR_DIRECT_WRITE[..]],
-                            // ) {
-                            //     // writing Copy types is not a lifetime bypass.
-                            //     continue;
-                            // }
-
-                            // taint_analyzer
-                            //     .mark_source(id, WEAK_BYPASS_MAP.get(&symbol_vec).unwrap());
-                            // self.status
-                            //     .weak_bypasses
-                            //     .push(terminator.original.source_info.span);
+                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            for arg in args {
+                                // arg: mir::Operand
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .weak_bypasses
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
+                            }
                         } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
                             for arg in args {
                                 // arg: mir::Operand
@@ -552,34 +566,6 @@ mod inner {
             self.status
         }
 
-        // fn fn_called_on_copy(
-        //     &self,
-        //     (callee_did, callee_args): (DefId, &Vec<Operand<'tcx>>),
-        //     paths: &[&[&str]],
-        // ) -> bool {
-        //     let tcx = self.rcx.tcx();
-        //     let ext = tcx.ext();
-        //     for path in paths.iter() {
-        //         if ext.match_def_path(callee_did, path) {
-        //             for arg in callee_args.iter() {
-        //                 if_chain! {
-        //                     if let Operand::Move(place) = arg;
-        //                     let place_ty = place.ty(self.body, tcx);
-        //                     if let TyKind::RawPtr(ty_and_mut) = place_ty.ty.kind();
-        //                     let pointed_ty = ty_and_mut.ty;
-        //                     if pointed_ty.is_copy_modulo_regions(tcx.at(DUMMY_SP), self.param_env);
-        //                     then {
-        //                         return true;
-        //                     }
-        //                 }
-        //                 // No need to inspect beyond first arg of the
-        //                 // target bypass functions.
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     false
-        // }
     }
 
     fn trace_calls_in_body<'tcx>(rcx: RuMorphCtxt<'tcx>, body_def_id: DefId) {
@@ -601,30 +587,6 @@ mod inner {
             }
         }
     }
-
-    // // Check if the argument of `Vec::set_len()` is 0_usize.
-    // fn vec_set_len_to_0<'tcx>(
-    //     rcx: RuMorphCtxt<'tcx>,
-    //     callee_did: DefId,
-    //     args: &Vec<Operand<'tcx>>,
-    // ) -> bool {
-    //     let tcx = rcx.tcx();
-    //     for arg in args.iter() {
-    //         if_chain! {
-    //             if let Operand::Constant(c) = arg;
-    //             if let Some(c_val) = c.literal.try_eval_usize(
-    //                 tcx,
-    //                 tcx.param_env(callee_did),
-    //             );
-    //             if c_val == 0;
-    //             then {
-    //                 // Leaking(`vec.set_len(0);`) is safe.
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    //     false
-    // }
 }
 
 fn get_place_from_op<'tcx>(op: &Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {

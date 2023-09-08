@@ -72,21 +72,21 @@ impl<'tcx> BrokenLayoutChecker<'tcx> {
                         utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
                     );
 
-                    // for &span in status.strong_bypass_spans() {
-                    //     color_span.add_sub_span(Color::Red, span);
-                    // }
+                    for &span in status.strong_bypass_spans() {
+                        color_span.add_sub_span(Color::Red, span);
+                    }
 
-                    // for &span in status.weak_bypass_spans() {
-                    //     color_span.add_sub_span(Color::Yellow, span);
-                    // }
+                    for &span in status.weak_bypass_spans() {
+                        color_span.add_sub_span(Color::Yellow, span);
+                    }
 
-                    // for &span in status.unresolvable_generic_function_spans() {
-                    //     color_span.add_sub_span(Color::Cyan, span);
-                    // }
+                    for &span in status.unresolvable_generic_function_spans() {
+                        color_span.add_sub_span(Color::Cyan, span);
+                    }
 
-                    // for &span in status.plain_deref_spans() {
-                    //     color_span.add_sub_span(Color::Blue, span);
-                    // }
+                    for &span in status.plain_deref_spans() {
+                        color_span.add_sub_span(Color::Blue, span);
+                    }
                     
                     for &span in status.ty_conv_spans() {
                         color_span.add_sub_span(Color::Green, span);
@@ -193,7 +193,6 @@ mod inner {
                     }
                 }
             } else {
-                progress_info!("interprocedural analysis required");
                 // We don't perform interprocedural analysis,
                 // thus safe functions are considered safe
                 Some(Default::default())
@@ -204,7 +203,6 @@ mod inner {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
             for statement in self.body.statements() {
-                progress_info!("statement: {:?}, kind:{:?}, info:{:?}", statement, statement.kind, statement.source_info);
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
                 match statement.kind {
@@ -237,29 +235,12 @@ mod inner {
 
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
-                                                            Comparison::Less | Comparison::NoideaL => {
-                                                                // we assume conversion to usize is always used for check
-                                                                // ignore the conversion from c_void
-                                                                if (lc.get_to_ty_name() != "usize") && (!lc.get_from_ty().is_c_void(self.rcx.tcx())) {
-                                                                    // in the case of NoideaL, we assume that to_ty is aligned to larger bytes than from_ty
-                                                                    progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
-                                                                    progress_info!("to_ty info?{}, {}", lc.is_from_to_adt().1, lc.is_from_to_generic().1);
-                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                    self.status
-                                                                        .ty_convs
-                                                                        .push(statement.source_info.span);
-                                                                }
-                                                            },
-                                                            Comparison::Noidea => {
-                                                                // check whether generic->concrete
-                                                                if (lc.is_fty_layout_spec() == false) && (lc.is_tty_layout_spec() == true) {
-                                                                    // in this case, generic->concrete is error-prone
-                                                                    progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
-                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                    self.status
-                                                                        .ty_convs
-                                                                        .push(statement.source_info.span);
-                                                                }
+                                                            Comparison::Less => {
+                                                                progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
                                                             },
                                                             _ => {},
                                                         }
@@ -289,27 +270,12 @@ mod inner {
 
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
-                                                            Comparison::Less | Comparison::NoideaL => {
-                                                                // we assume conversion to usize is always used for check
-                                                                // ignore conversion from c_void
-                                                                if (lc.get_to_ty_name() != "usize") && (!lc.get_from_ty().is_c_void(self.rcx.tcx())) {
-                                                                    progress_info!("warn::align");
-                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                    self.status
-                                                                        .ty_convs
-                                                                        .push(statement.source_info.span);
-                                                                }
-                                                            },
-                                                            Comparison::Noidea => {
-                                                                // check whether generic->concrete
-                                                                if (lc.is_fty_layout_spec() == false) && (lc.is_tty_layout_spec() == true) {
-                                                                    // in this case, generic->concrete is error-prone
-                                                                    progress_info!("warn: align from generic id{} to lplace{}", id, lplace.local.index());
-                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                    self.status
-                                                                        .ty_convs
-                                                                        .push(statement.source_info.span);
-                                                                }
+                                                            Comparison::Less => {
+                                                                progress_info!("warn::align");
+                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
                                                             },
                                                             _ => {},
                                                         }
@@ -369,7 +335,6 @@ mod inner {
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
-                progress_info!("terminator: {:?}", terminator);
                 match terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
@@ -384,40 +349,34 @@ mod inner {
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
                         if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            // if self.fn_called_on_copy(
-                            //     (callee_did, args),
-                            //     &[&PTR_READ[..], &PTR_DIRECT_READ[..]],
-                            // ) {
-                            //     // read on Copy types is not a lifetime bypass.
-                            //     continue;
-                            // }
-
-                            // if ext.match_def_path(callee_did, &VEC_SET_LEN)
-                            //     && vec_set_len_to_0(self.rcx, callee_did, args)
-                            // {
-                            //     // Leaking data is safe (`vec.set_len(0);`)
-                            //     continue;
-                            // }
-
-                            // taint_analyzer
-                            //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
-                            // self.status
-                            //     .strong_bypasses
-                            //     .push(terminator.original.source_info.span);
+                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            for arg in args {
+                                // arg: mir::Operand
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .strong_bypasses
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
+                            }
                         } else if paths::WEAK_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            // if self.fn_called_on_copy(
-                            //     (callee_did, args),
-                            //     &[&PTR_WRITE[..], &PTR_DIRECT_WRITE[..]],
-                            // ) {
-                            //     // writing Copy types is not a lifetime bypass.
-                            //     continue;
-                            // }
-
-                            // taint_analyzer
-                            //     .mark_source(id, WEAK_BYPASS_MAP.get(&symbol_vec).unwrap());
-                            // self.status
-                            //     .weak_bypasses
-                            //     .push(terminator.original.source_info.span);
+                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            for arg in args {
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .weak_bypasses
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
+                            }
                         } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
                             for arg in args {
                                 // arg: mir::Operand
@@ -488,35 +447,6 @@ mod inner {
             self.status.behavior_flag = taint_analyzer.propagate();
             self.status
         }
-
-        // fn fn_called_on_copy(
-        //     &self,
-        //     (callee_did, callee_args): (DefId, &Vec<Operand<'tcx>>),
-        //     paths: &[&[&str]],
-        // ) -> bool {
-        //     let tcx = self.rcx.tcx();
-        //     let ext = tcx.ext();
-        //     for path in paths.iter() {
-        //         if ext.match_def_path(callee_did, path) {
-        //             for arg in callee_args.iter() {
-        //                 if_chain! {
-        //                     if let Operand::Move(place) = arg;
-        //                     let place_ty = place.ty(self.body, tcx);
-        //                     if let TyKind::RawPtr(ty_and_mut) = place_ty.ty.kind();
-        //                     let pointed_ty = ty_and_mut.ty;
-        //                     if pointed_ty.is_copy_modulo_regions(tcx.at(DUMMY_SP), self.param_env);
-        //                     then {
-        //                         return true;
-        //                     }
-        //                 }
-        //                 // No need to inspect beyond first arg of the
-        //                 // target bypass functions.
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     false
-        // }
     }
 
     fn trace_calls_in_body<'tcx>(rcx: RuMorphCtxt<'tcx>, body_def_id: DefId) {
@@ -538,30 +468,6 @@ mod inner {
             }
         }
     }
-
-    // // Check if the argument of `Vec::set_len()` is 0_usize.
-    // fn vec_set_len_to_0<'tcx>(
-    //     rcx: RuMorphCtxt<'tcx>,
-    //     callee_did: DefId,
-    //     args: &Vec<Operand<'tcx>>,
-    // ) -> bool {
-    //     let tcx = rcx.tcx();
-    //     for arg in args.iter() {
-    //         if_chain! {
-    //             if let Operand::Constant(c) = arg;
-    //             if let Some(c_val) = c.literal.try_eval_usize(
-    //                 tcx,
-    //                 tcx.param_env(callee_did),
-    //             );
-    //             if c_val == 0;
-    //             then {
-    //                 // Leaking(`vec.set_len(0);`) is safe.
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    //     false
-    // }
 }
 
 fn get_place_from_op<'tcx>(op: &Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
