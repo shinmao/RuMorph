@@ -5,10 +5,11 @@ import os
 
 src_path = os.listdir("/home/RuMorph/crates/source")
 base_path = "/home/RuMorph/crates/source/"
-test_cmd = "cargo rumorph > reportII.txt 2>&1"
+test_cmd = "cargo rumorph > report.txt 2>&1"
 header1 = "Error (BrokenLayout:):"
 header2 = "Error (UninitExposure:):"
-report_path = "/home/RuMorph/reportII.txt"
+header3 = "Error (BrokenBitPatterns:):"
+report_path = "/home/RuMorph/report.txt"
 
 def report_analyzer(filename, crate):
     record = ""
@@ -20,11 +21,15 @@ def report_analyzer(filename, crate):
             for l_num, line in enumerate(f):
                 if header1 in line:
                     func = line.split("`")[1]
-                    record = crate + "," + func + ","
+                    record = crate + "," + func + ",bug1,"
                     CAPTURED = True
                 elif header2 in line:
                     func = line.split("`")[1]
-                    record = crate + "," + func + ","
+                    record = crate + "," + func + ",bug2,"
+                    CAPTURED = True
+                elif header3 in line:
+                    func = line.split("`")[1]
+                    record = crate + "," + func + ",bug3,"
                     CAPTURED = True
                 elif CAPTURED == True:
                     loc = line[3:]
@@ -52,8 +57,8 @@ if __name__ == '__main__':
     # pool.join()
     with open(report_path, "a+") as output:
         for src in src_path:
-            path = os.path.join(base_path, src) + "/reportII.txt"
+            path = os.path.join(base_path, src) + "/report.txt"
             for r in report_analyzer(path, src):
-                output.write(r)
-                print(r)
+               output.write(r)
+               print(r)
     output.close()
