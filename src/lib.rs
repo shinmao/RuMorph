@@ -116,20 +116,20 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     let tcx = ();
 
     // // Broken layout analysis
-    // if config.broken_layout_enabled {
-    //     run_analysis("BrokenLayout", || {
-    //         let checker = BrokenLayoutChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
+    if config.broken_layout_enabled {
+        run_analysis("BrokenLayout", || {
+            let checker = BrokenLayoutChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 
     // Uninit Exposure analysis
-    // if config.uninit_exposure_enabled {
-    //     run_analysis("UninitExposure", || {
-    //         let checker = UninitExposureChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
+    if config.uninit_exposure_enabled {
+        run_analysis("UninitExposure", || {
+            let checker = UninitExposureChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 
     // Broken Bit patterns analysis
     if config.broken_bitpatterns_enabled {

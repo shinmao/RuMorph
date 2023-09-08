@@ -24,12 +24,11 @@ pub const PTR_DIRECT_READ: [&str; 5] = ["core", "ptr", "const_ptr", "<impl *cons
 pub const INTRINSICS_COPY: [&str; 3] = ["core", "intrinsics", "copy"];
 pub const INTRINSICS_COPY_NONOVERLAPPING: [&str; 3] = ["core", "intrinsics", "copy_nonoverlapping"];
 
-pub const VEC_SET_LEN: [&str; 4] = ["alloc", "vec", "Vec", "set_len"];
+// pub const VEC_SET_LEN: [&str; 4] = ["alloc", "vec", "Vec", "set_len"];
 pub const VEC_FROM_RAW_PARTS: [&str; 4] = ["alloc", "vec", "Vec", "from_raw_parts"];
 
 // Weak bypasses
 pub const TRANSMUTE: [&str; 4] = ["core", "intrinsics", "", "transmute"];
-pub const STD_TRANSMUTE: [&str; 4] = ["std", "mem", "", "transmute"];
 
 pub const PTR_WRITE: [&str; 3] = ["core", "ptr", "write"];
 pub const PTR_DIRECT_WRITE: [&str; 5] = ["core", "ptr", "mut_ptr", "<impl *mut T>", "write"];
@@ -44,8 +43,8 @@ pub const SLICE_GET_UNCHECKED_MUT: [&str; 4] = ["core", "slice", "<impl [T]>", "
 
 pub const PTR_SLICE_FROM_RAW_PARTS: [&str; 3] = ["core", "ptr", "slice_from_raw_parts"];
 pub const PTR_SLICE_FROM_RAW_PARTS_MUT: [&str; 3] = ["core", "ptr", "slice_from_raw_parts_mut"];
-pub const SLICE_FROM_RAW_PARTS: [&str; 3] = ["core", "slice", "from_raw_parts"];
-pub const SLICE_FROM_RAW_PARTS_MUT: [&str; 3] = ["core", "slice", "from_raw_parts_mut"];
+pub const SLICE_FROM_RAW_PARTS: [&str; 4] = ["core", "slice", "raw", "from_raw_parts"];
+pub const SLICE_FROM_RAW_PARTS_MUT: [&str; 4] = ["core", "slice", "raw", "from_raw_parts_mut"];
 
 // Generic function call
 pub const PTR_DROP_IN_PLACE: [&str; 3] = ["core", "ptr", "drop_in_place"];
@@ -87,7 +86,6 @@ pub static STRONG_LIFETIME_BYPASS_LIST: Lazy<PathSet> = Lazy::new(move || {
         &INTRINSICS_COPY,
         &INTRINSICS_COPY_NONOVERLAPPING,
         //
-        &VEC_SET_LEN,
         &VEC_FROM_RAW_PARTS,
     ])
 });
