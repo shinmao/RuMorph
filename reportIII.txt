@@ -1,287 +1,151 @@
-enarx-shim-kvm-0.6.3,snp::ByteSized::from_bytes,bug3,src/snp/mod.rs:106:5: 112:6
-enarx-shim-kvm-0.6.3,snp::ByteSized::from_bytes,bug3,src/snp/mod.rs:106:5: 112:6
-pdb-0.8.0,common::cast_aligned,bug3,src/common.rs:968:1: 979:2
-mp4parse_fallible-0.0.3,try_extend_vec,bug3,lib.rs:71:1: 102:2
-cpython-0.7.1,objects::capsule::PyCapsule::new,bug3,src/objects/capsule.rs:583:5: 598:6
-emacs-0.18.0,types::user_ptr::<impl types::IntoLisp<'_> for std::boxed::Box<T>>::into_lisp,bug3,src/types/user_ptr.rs:75:5: 80:6
-fallible_collections-0.4.7,<alloc::boxed::Box<T> as boxed::FallibleBox<T>>::try_new,bug3,src/boxed.rs:97:5: 104:6
-concrete-fftw-0.1.4,<array::AlignedVec<T> as std::ops::Drop>::drop,bug3,src/array.rs:90:5: 92:6
-rdkafka-0.31.0,client::Client::<C>::new,bug3,src/client.rs:218:5: 269:6
-stronghold-runtime-1.1.0,boxed::mprotect,bug3,src/boxed.rs:308:1: 316:2
-async_logger-0.3.3,buf::Buf::<T>::new,bug3,src/buf.rs:42:5: 76:6
-vorbis_rs-0.3.0,decoder::decoder_impl::VorbisDecoder::<R>::new,bug3,src/decoder/decoder_impl.rs:34:2: 110:3
-queen-io-0.6.1,sys::socket::setsockopt,bug3,src/sys/socket.rs:7:1: 14:2
-queen-io-0.6.1,sys::socket::getsockopt,bug3,src/sys/socket.rs:16:1: 25:2
-cao-lang-0.1.108,bytecode::write_to_vec,bug3,src/bytecode.rs:4:1: 12:2
-cao-lang-0.1.108,bytecode::read_from_bytes,bug3,src/bytecode.rs:15:1: 21:2
-cao-lang-0.1.108,vm::runtime::RuntimeData::write_to_memory,bug3,src/vm/runtime.rs:159:5: 173:6
-libafl-0.10.1,executors::inprocess::InChildProcessHandlers::pre_run_target,bug3,src/executors/inprocess.rs:1313:5: 1329:6
-libafl-0.10.1,executors::inprocess::InProcessHandlers::pre_run_target,bug3,src/executors/inprocess.rs:277:5: 325:6
-stb_image-0.2.5,image::load_internal,bug3,src/image.rs:47:1: 60:2
-glutin-0.30.8,api::glx::glx_error_hook,bug3,src/api/glx/mod.rs:123:1: 176:2
-glutin-0.30.8,api::egl::display::Display::with_device,bug3,src/api/egl/display.rs:93:5: 146:6
-glutin-0.30.8,api::glx::config::<impl api::glx::display::Display>::find_configs,bug3,src/api/glx/config.rs:23:5: 182:6
+bumpalo-3.13.0,Bump::alloc_with,bug3,src/lib.rs:841:5: 871:6
+bumpalo-3.13.0,Bump::try_alloc_with,bug3,src/lib.rs:894:5: 926:6
+half-2.2.1,<std::vec::Vec<u16> as vec::HalfBitsVecExt>::reinterpret_into,bug3,src/vec.rs:205:5: 225:6
+half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast,bug3,src/slice.rs:489:5: 498:6
+half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast_mut,bug3,src/slice.rs:501:5: 510:6
+bytemuck-1.13.1,internal::try_pod_read_unaligned,bug3,src/internal.rs:111:1: 119:2
+bytemuck-1.13.1,internal::try_from_bytes,bug3,src/internal.rs:140:1: 150:2
+bytemuck-1.13.1,internal::try_from_bytes_mut,bug3,src/internal.rs:159:1: 169:2
+value-bag-1.4.0,internal::cast::primitive::from_any,bug3,src/internal/cast/primitive.rs:11:1: 90:2
+copyless-0.1.5,<std::boxed::Box<T> as boxed::BoxHelper<T>>::alloc,bug3,src/boxed.rs:51:5: 61:6
+wasmtime-runtime-9.0.2,traphandlers::catch_traps::call_closure,bug3,src/traphandlers.rs:277:5: 282:6
 glutin-0.30.8,api::glx::display::Display::new,bug3,src/api/glx/display.rs:41:5: 110:6
 glutin-0.30.8,api::egl::surface::NativeWindow::resize,bug3,src/api/egl/surface.rs:487:5: 502:6
 glutin-0.30.8,<api::egl::config::Config as platform::x11::X11GlConfigExt>::x11_visual,bug3,src/api/egl/config.rs:380:5: 388:6
-opencl3-0.9.3,svm::SvmRawVec::<'a, T>::grow,bug3,src/svm.rs:100:5: 160:6
-opencl3-0.9.3,<svm::SvmRawVec<'a, T> as std::ops::Drop>::drop,bug3,src/svm.rs:168:5: 180:6
-uhyve-0.2.2,linux::virtqueue::Vring::<T>::ring_elem,bug3,src/linux/virtqueue.rs:51:2: 54:3
-uhyve-0.2.2,linux::virtqueue::Vring::<T>::ring_elem,bug3,src/linux/virtqueue.rs:51:2: 54:3
-skyline-0.2.1,patching::PatchBuilder::data,bug3,src/patching.rs:256:5: 266:6
-tree-buf-0.10.0,internal::buffer::Buffer::<T>::new,bug3,src/internal/buffer.rs:47:5: 55:6
-dispatch-0.2.0,context_and_apply_function,bug3,src/lib.rs:120:1: 133:2
-socket-0.0.7,Socket::setsockopt,bug3,src/lib.rs:128:5: 136:6
-natpmp-0.4.0,convert_to,bug3,src/lib.rs:63:1: 68:2
-accesskit_windows-0.14.0,util::safe_array_from_primitive_slice,bug3,src/util.rs:145:1: 155:2
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::ITextProvider>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,text::<impl windows::core::AsImpl<text::PlatformRange> for windows::Win32::UI::Accessibility::ITextRangeProvider>::as_impl,bug3,src/text.rs:205:1: 205:33
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::ISelectionItemProvider>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IRawElementProviderFragmentRoot>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IRangeValueProvider>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IRawElementProviderFragment>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IRawElementProviderSimple>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IValueProvider>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IInvokeProvider>::as_impl,bug3,src/node.rs:497:1: 507:3
-accesskit_windows-0.14.0,node::<impl windows::core::AsImpl<node::PlatformNode> for windows::Win32::UI::Accessibility::IToggleProvider>::as_impl,bug3,src/node.rs:497:1: 507:3
-xplm-0.3.1,draw::Draw::new,bug3,src/draw.rs:33:5: 55:6
-unwinding-0.1.7,unwinder::find_fde::registry::__register_frame_info_table_bases,bug3,src/unwinder/find_fde/registry.rs:173:1: 191:2
-wasmer-vm-near-2.4.0,trap::traphandlers::catch_traps::call_closure,bug3,src/trap/traphandlers.rs:184:5: 189:6
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::visit_children_item,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::get_item_ref,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::get_subtree_range,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::get_subtree_component,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::get_item_tree,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::parent_node,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::subtree_index,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::layout_info,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::accessible_role,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::accessible_string_property,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,component::Component_vtable_mod::ComponentVTable::new::drop_in_place,bug3,component.rs:41:1: 41:10
-i-slint-core-1.0.2,graphics::image::OpaqueImage_vtable_mod::OpaqueImageVTable::new::drop_in_place,bug3,graphics/image.rs:23:1: 23:18
-i-slint-core-1.0.2,graphics::image::OpaqueImage_vtable_mod::OpaqueImageVTable::new::size,bug3,graphics/image.rs:23:1: 23:18
-i-slint-core-1.0.2,graphics::image::OpaqueImage_vtable_mod::OpaqueImageVTable::new::cache_key,bug3,graphics/image.rs:23:1: 23:18
-i-slint-core-1.0.2,graphics::image::PARSED_SVG_VT::drop_in_place,bug3,graphics/image.rs:23:1: 23:18
-i-slint-core-1.0.2,graphics::image::PARSED_SVG_VT::size,bug3,graphics/image.rs:23:1: 23:18
-i-slint-core-1.0.2,graphics::image::PARSED_SVG_VT::cache_key,bug3,graphics/image.rs:23:1: 23:18
-i-slint-core-1.0.2,item_tree::ItemVisitor_vtable_mod::ItemVisitorVTable::new::visit_item,bug3,item_tree.rs:670:1: 670:10
-i-slint-core-1.0.2,item_tree::ItemVisitor_vtable_mod::ItemVisitorVTable::new::drop,bug3,item_tree.rs:670:1: 670:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::Item_vtable_mod::ItemVTable::new::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::EmptyVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RectangleVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BorderRectangleVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TouchAreaVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FocusScopeVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClipVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::OpacityVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::LayerVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::RotateVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::FlickableVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::WindowItemVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::BoxShadowVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::TextInputVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ImageItemVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::ClippedImageVTable::render,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::init,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::geometry,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::layout_info,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::input_event_filter_before_children,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::input_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::focus_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::key_event,bug3,items.rs:104:1: 104:10
-i-slint-core-1.0.2,items::PathVTable::render,bug3,items.rs:104:1: 104:10
+quinn-udp-0.4.0,cmsg::Encoder::<'a>::push,bug3,src/cmsg.rs:35:5: 56:6
+slice-deque-0.3.0,mirrored::buffer::Buffer::<T>::uninitialized,bug3,src/mirrored/buffer.rs:125:5: 157:6
+sdl2-0.35.2,audio::audio_callback_marshall,bug3,src/sdl2/audio.rs:499:1: 517:2
+vm-memory-0.11.0,volatile_memory::VolatileMemory::get_atomic_ref,bug3,src/volatile_memory.rs:214:5: 221:6
+tantivy-0.19.2,postings::stacker::memory_arena::store,bug3,src/postings/stacker/memory_arena.rs:71:1: 76:2
+tantivy-0.19.2,postings::stacker::memory_arena::load,bug3,src/postings/stacker/memory_arena.rs:78:1: 81:2
+fallible_collections-0.4.7,<alloc::boxed::Box<T> as boxed::FallibleBox<T>>::try_new,bug3,src/boxed.rs:97:5: 104:6
 konst-0.3.5,ptr::is_null,bug3,src/ptr.rs:99:1: 106:2
 konst-0.3.5,ptr::nonnull::new,bug3,src/ptr.rs:130:5: 132:6
-vtable-0.1.10,vrc::VRcInner::<'vt, VTable, X>::data_ptr,bug3,src/vrc.rs:77:5: 80:6
-vtable-0.1.10,vrc::VRcInner::<'vt, VTable, X>::as_ref,bug3,src/vrc.rs:81:5: 84:6
-pix-0.13.2,raster::Raster::<P>::with_u8_buffer,bug3,src/raster.rs:293:5: 319:6
-pix-0.13.2,raster::Raster::<P>::with_u16_buffer,bug3,src/raster.rs:333:5: 359:6
-external-memory-0.0.1,<ptr::Ptr as std::convert::From<*mut T>>::from,bug3,src/ptr.rs:11:5: 13:6
-memflow-0.2.0-beta9,plugins::logger::PluginLogger::on_level_change,bug3,src/plugins/logger.rs:78:5: 83:6
-libhydrogen-0.4.1,utils::memzero,bug3,src/utils.rs:8:1: 13:2
-xous-0.9.44,definitions::MemoryRange::as_slice,bug3,src/definitions.rs:318:5: 328:6
-xous-0.9.44,definitions::MemoryRange::as_slice_mut,bug3,src/definitions.rs:335:5: 345:6
-git2-0.17.2,revwalk::Revwalk::<'repo>::with_hide_callback,bug3,src/revwalk.rs:158:5: 177:6
-recrypt-0.13.1,internal::memlock::mlock,bug3,src/internal/memlock.rs:28:9: 38:10
-recrypt-0.13.1,internal::memlock::munlock,bug3,src/internal/memlock.rs:39:9: 49:10
-recrypt-0.13.1,internal::memlock::mlock_slice,bug3,src/internal/memlock.rs:51:9: 61:10
-recrypt-0.13.1,internal::memlock::munlock_slice,bug3,src/internal/memlock.rs:62:9: 72:10
-kayrx-0.18.0,karx::karx::kernel::task::Task::<T>::tag,bug3,src/karx/karx/kernel/task.rs:283:5: 291:6
-kayrx-0.18.0,karx::karx::kernel::task::Task::<T>::into_raw,bug3,src/karx/karx/kernel/task.rs:294:5: 300:6
-kayrx-0.18.0,karx::karx::kernel::raw::RawTask::<F, R, S, T>::from_ptr,bug3,src/karx/karx/kernel/raw.rs:148:5: 161:6
-kayrx-0.18.0,karx::karx::kernel::join_handle::JoinHandle::<R, T>::tag,bug3,src/karx/karx/kernel/join_handle.rs:85:5: 93:6
+lodepng-3.7.2,Bitmap::<PixelType>::from_buffer,bug3,src/lib.rs:825:5: 857:6
+remoteprocess-0.4.11,ProcessMemory::copy_struct,bug3,src/lib.rs:177:5: 181:6
+remoteprocess-0.4.11,ProcessMemory::copy_vec,bug3,src/lib.rs:190:5: 198:6
+quick-protobuf-0.8.1,reader::BytesReader::read_packed_fixed,bug3,src/reader.rs:448:5: 462:6
+patricia_tree-0.6.0,node::Node::<V>::new,bug3,src/node.rs:64:5: 121:6
+patricia_tree-0.6.0,node::Node::<V>::value,bug3,src/node.rs:170:5: 180:6
+patricia_tree-0.6.0,node::Node::<V>::value_mut,bug3,src/node.rs:183:5: 193:6
+patricia_tree-0.6.0,node::Node::<V>::take_value,bug3,src/node.rs:289:5: 300:6
+patricia_tree-0.6.0,node::Node::<V>::set_value,bug3,src/node.rs:331:5: 342:6
+gfx-backend-gl-0.9.0,queue::Queue::get,bug3,src/queue.rs:185:5: 190:6
+pdb-0.8.0,common::cast_aligned,bug3,src/common.rs:968:1: 979:2
+windows-metadata-0.49.0,<[u8] as reader::file::View>::view_as,bug3,src/reader/file.rs:505:5: 508:6
+windows-metadata-0.49.0,<[u8] as reader::file::View>::view_as_slice_of,bug3,src/reader/file.rs:510:5: 513:6
+flatdata-0.5.3,<&'a [T] as arrayview::SliceExt<'a>>::from_bytes,bug3,src/arrayview.rs:21:5: 37:6
+freertos-rust-0.1.2,queue::Queue::<T>::send,bug3,src/queue.rs:36:5: 46:6
+freertos-rust-0.1.2,queue::Queue::<T>::send_from_isr,bug3,src/queue.rs:49:5: 62:6
+freertos-rust-0.1.2,queue::Queue::<T>::receive,bug3,src/queue.rs:65:5: 77:6
+pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
+pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
+pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
+pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
+pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
+pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
+pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
+pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
+pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
+pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
+pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
+pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
+pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
+pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
+wasmer-vm-near-2.4.0,trap::traphandlers::catch_traps::call_closure,bug3,src/trap/traphandlers.rs:184:5: 189:6
+fltk-1.4.4,window::DoubleWindow::platform_show,bug3,src/window.rs:415:5: 451:6
+fltk-1.4.4,window::DoubleWindow::platform_hide,bug3,src/window.rs:454:5: 498:6
 odbc-0.17.0,statement::types::convert_primitive,bug3,src/statement/types.rs:281:1: 286:2
 odbc-0.17.0,<raii::Raii<'p, T> as std::ops::Drop>::drop,bug3,src/raii.rs:33:5: 42:6
-substrate-wasmtime-runtime-0.16.0-threadsafe.4,traphandlers::catch_traps::call_closure,bug3,src/traphandlers.rs:390:5: 395:6
-slice-deque-0.3.0,<SliceDeque<T> as std::iter::IntoIterator>::into_iter,bug3,src/lib.rs:2503:5: 2526:6
-slice-deque-0.3.0,SliceDeque::<T>::drain,bug3,src/lib.rs:1222:5: 1276:6
-slice-deque-0.3.0,<IntoIter<T> as std::iter::DoubleEndedIterator>::next_back,bug3,src/lib.rs:2407:5: 2425:6
-slice-deque-0.3.0,mirrored::buffer::Buffer::<T>::uninitialized,bug3,src/mirrored/buffer.rs:125:5: 157:6
-slice-deque-0.3.0,<IntoIter<T> as std::iter::Iterator>::next,bug3,src/lib.rs:2367:5: 2388:6
-net2-0.2.38,ext::set_opt,bug3,src/ext.rs:71:1: 79:2
-net2-0.2.38,ext::get_opt,bug3,src/ext.rs:86:1: 96:2
-posix-acl-1.1.0,<util::AutoPtr<T> as std::ops::Drop>::drop,bug3,src/util.rs:18:5: 21:6
-zub-0.3.14,vm::gc::tag::TaggedHandle::<T>::from_float,bug3,src/vm/gc/tag.rs:42:5: 49:6
-zub-0.3.14,vm::gc::tag::TaggedHandle::<T>::from_tag,bug3,src/vm/gc/tag.rs:51:5: 58:6
-endian-type-rs-0.1.4,BigEndian::<T>::from_bytes,bug3,src/lib.rs:55:4: 58:5
-endian-type-rs-0.1.4,LittleEndian::<T>::from_bytes,bug3,src/lib.rs:55:4: 58:5
-s2n-quic-platform-0.22.0,<libc::msghdr as message::cmsg::Encoder>::encode_cmsg,bug3,src/message/cmsg.rs:52:5: 103:6
-openssl-0.10.52,x509::GeneralNameRef::ia5_string,bug3,src/x509/mod.rs:2052:5: 2072:6
-openssl-0.10.52,x509::GeneralNameRef::directory_name,bug3,src/x509/mod.rs:2080:5: 2093:6
-openssl-0.10.52,x509::GeneralNameRef::ipaddress,bug3,src/x509/mod.rs:2106:5: 2121:6
-openssl-0.10.52,ssl::SslContextBuilder::set_ex_data_inner,bug3,src/ssl/mod.rs:1566:5: 1572:6
-openssl-0.10.52,ssl::SslRef::set_ex_data,bug3,src/ssl/mod.rs:2913:5: 2922:6
-tarantool-0.6.5,trigger::on_shutdown,bug3,src/trigger.rs:8:1: 28:2
-tarantool-0.6.5,fiber::LuaFiber::<C>::trampoline,bug3,src/fiber.rs:529:5: 548:6
-tarantool-0.6.5,fiber::LuaJoinHandle::<'f, T>::join,bug3,src/fiber.rs:571:5: 587:6
-generator-0.7.4,stack::StackBox::<T>::new_uninit,bug3,src/stack/mod.rs:45:5: 67:6
-servo_arc-0.2.0,Arc::<HeaderSlice<H, [T]>>::from_header_and_iter_alloc,bug3,lib.rs:692:5: 805:6
-servo-glutin-0.15.0,api::egl::get_native_display,bug3,src/api/egl/mod.rs:55:1: 139:2
+surfman-0.6.0,platform::unix::wayland::connection::Connection::from_winit_window,bug3,src/platform/unix/wayland/connection.rs:166:5: 174:6
 toolshed-0.8.1,arena::Arena::alloc_slice,bug3,src/arena.rs:183:5: 193:6
 toolshed-0.8.1,arena::Arena::alloc_lazy_slice,bug3,src/arena.rs:201:5: 218:6
-toolshed-0.8.1,arena::Arena::alloc_vec,bug3,src/arena.rs:221:5: 235:6
-botan-0.10.3,memutils::scrub_mem,bug3,src/memutils.rs:25:1: 28:2
+scaly-0.0.37,memory::page::Page::allocate,bug3,src/memory/page.rs:65:5: 73:6
+legion-0.4.0,internals::storage::packed::RawAlloc::<T>::new,bug3,src/internals/storage/packed.rs:28:5: 47:6
+legion-0.4.0,internals::storage::packed::RawAlloc::<T>::grow,bug3,src/internals/storage/packed.rs:53:5: 79:6
+pix-0.13.2,raster::Raster::<P>::with_u8_buffer,bug3,src/raster.rs:293:5: 319:6
+lever-0.1.4,alloc::bucket_allocate_cont,bug3,src/alloc/mod.rs:4:1: 15:2
+lever-0.1.4,alloc::bucket_alloc,bug3,src/alloc/mod.rs:17:1: 29:2
+substrate-wasmtime-runtime-0.16.0-threadsafe.4,traphandlers::catch_traps::call_closure,bug3,src/traphandlers.rs:390:5: 395:6
+wasmer-near-2.4.0,sys::externals::memory::Memory::view,bug3,src/sys/externals/memory.rs:219:5: 225:6
+spl-token-swap-3.0.0,instruction::unpack,bug3,src/instruction.rs:557:1: 564:2
+libc-nnsdk-0.3.0,fwrite_slice,bug3,src/lib.rs:923:1: 932:2
+persistent_array-0.5.0,<PersistentArray<T> as std::ops::DerefMut>::deref_mut,bug3,src/lib.rs:175:5: 182:6
+persistent_array-0.5.0,<PersistentArray<T> as std::ops::Deref>::deref,bug3,src/lib.rs:164:5: 171:6
+ckb-std-0.13.0,<dynamic_loading::Symbol<T> as core::ops::Deref>::deref,bug3,src/dynamic_loading.rs:201:5: 203:6
+natpmp-0.4.0,convert_to,bug3,src/lib.rs:63:1: 68:2
+fmod-0.10.2,fmod_sys::file_close_callback,bug3,src/fmod_sys.rs:125:1: 141:2
+fmod-0.10.2,fmod_sys::file_seek_callback,bug3,src/fmod_sys.rs:170:1: 187:2
+maligned-0.2.1,heap::align_first,bug3,src/heap.rs:16:1: 28:2
+ring_buffer-2.0.2,RingBuffer::<T>::shrink_to,bug3,src/lib.rs:817:5: 865:6
+windows_winmd-0.3.1,file::<impl traits::View for [u8]>::view_as,bug3,src/file.rs:664:5: 668:6
+windows_winmd-0.3.1,file::<impl traits::View for [u8]>::view_as_slice_of,bug3,src/file.rs:670:5: 674:6
+dependency_runner-1.2.2,apiset::win10::Schema::<'a>::slice_len,bug3,src/apiset/win10.rs:28:5: 37:6
+dependency_runner-1.2.2,apiset::win10::Schema::<'a>::slice_len,bug3,src/apiset/win10.rs:28:5: 37:6
+dependency_runner-1.2.2,apiset::win10::Schema::<'a>::slice_len,bug3,src/apiset/win10.rs:28:5: 37:6
+softbuffer-0.2.0,wayland::WaylandImpl::new,bug3,src/wayland/mod.rs:24:5: 60:6
+softbuffer-0.2.0,x11::X11Impl::from_xlib,bug3,src/x11.rs:67:5: 97:6
+rune-0.12.3,hir::arena::Arena::alloc,bug3,src/hir/arena.rs:66:5: 76:6
+memflow-0.2.0-beta9,plugins::logger::PluginLogger::on_level_change,bug3,src/plugins/logger.rs:78:5: 83:6
+nfq-0.2.5,Nlmsg::<'a>::extra_header,bug3,src/lib.rs:154:5: 161:6
+nfq-0.2.5,Nlmsg::<'a>::put_slice,bug3,src/lib.rs:177:5: 180:6
+trailer-0.1.2,<Trailer<T> as std::ops::Drop>::drop,bug3,src/lib.rs:78:5: 83:6
+trailer-0.1.2,<Trailer<T> as std::ops::DerefMut>::deref_mut,bug3,src/lib.rs:94:5: 96:6
+trailer-0.1.2,<Trailer<T> as std::ops::Deref>::deref,bug3,src/lib.rs:88:5: 90:6
+trailer-0.1.2,Trailer::<T>::from,bug3,src/lib.rs:29:5: 37:6
+trailer-0.1.2,Trailer::<T>::new,bug3,src/lib.rs:18:5: 25:6
+udp-socket-0.1.5,cmsg::Encoder::<'a>::push,bug3,src/cmsg.rs:35:5: 51:6
 d4-0.3.7,stab::sparse_array::reader::assemble_incomplete_records,bug3,src/stab/sparse_array/reader.rs:8:1: 22:2
 d4-0.3.7,stab::sparse_array::reader::load_compressed_frame,bug3,src/stab/sparse_array/reader.rs:24:1: 61:2
 d4-0.3.7,stab::sparse_array::reader::load_frame,bug3,src/stab/sparse_array/reader.rs:62:1: 78:2
 d4-0.3.7,stab::sparse_array::record_block::RecordBlock::<'a, R>::decompress,bug3,src/stab/sparse_array/record_block.rs:35:5: 84:6
-mpv-0.2.3,<mpv_types::OsdString<'a> as mpv_enums::MpvFormat>::get_from_c_void,bug3,src/mpv_enums.rs:328:5: 338:6
-mpv-0.2.3,mpv_enums::Format::<'a>::get_from_c_void,bug3,src/mpv_enums.rs:170:5: 203:6
-mpv-0.2.3,<&'a str as mpv_enums::MpvFormat>::get_from_c_void,bug3,src/mpv_enums.rs:302:5: 312:6
-mpv-0.2.3,mpv_handler::MpvHandlerBuilder::build_with_gl,bug3,src/mpv_handler.rs:124:5: 157:6
-asi_opengl-0.6.2,buffer::Buffer::set,bug3,src/buffer.rs:36:2: 42:3
-wasmer-4.0.0-alpha.1,sys::mem_access::<impl access::WasmSliceAccess<'a, T>>::new,bug3,src/sys/mem_access.rs:9:5: 37:6
-wasmer-4.0.0-alpha.1,sys::mem_access::<impl access::WasmRefAccess<'a, T>>::new,bug3,src/sys/mem_access.rs:44:5: 69:6
-rustacuda-0.1.3,stream::Stream::add_callback,bug3,src/stream.rs:185:5: 198:6
-rustacuda-0.1.3,<memory::device::device_slice::DeviceSlice<T> as memory::device::CopyDestination<I>>::copy_from,bug3,src/memory/device/device_slice.rs:440:5: 458:6
-rustacuda-0.1.3,<memory::device::device_slice::DeviceSlice<T> as memory::device::CopyDestination<I>>::copy_to,bug3,src/memory/device/device_slice.rs:460:5: 478:6
-rustacuda-0.1.3,<module::Symbol<'a, T> as memory::device::CopyDestination<T>>::copy_from,bug3,src/module.rs:241:5: 254:6
-rustacuda-0.1.3,<module::Symbol<'a, T> as memory::device::CopyDestination<T>>::copy_to,bug3,src/module.rs:256:5: 269:6
-rustacuda-0.1.3,<memory::device::device_box::DeviceBox<T> as memory::device::CopyDestination<T>>::copy_from,bug3,src/memory/device/device_box.rs:258:5: 271:6
-rustacuda-0.1.3,<memory::device::device_box::DeviceBox<T> as memory::device::CopyDestination<T>>::copy_to,bug3,src/memory/device/device_box.rs:273:5: 286:6
-spl-token-swap-3.0.0,instruction::unpack,bug3,src/instruction.rs:557:1: 564:2
+async_logger-0.3.3,buf::Buf::<T>::new,bug3,src/buf.rs:42:5: 76:6
+xous-0.9.44,definitions::MemoryRange::as_slice,bug3,src/definitions.rs:318:5: 328:6
+xous-0.9.44,definitions::MemoryRange::as_slice_mut,bug3,src/definitions.rs:335:5: 345:6
+lmdb-rs-m-0.7.7,<bool as traits::FromMdbValue>::from_mdb_value,bug3,src/traits.rs:136:13: 141:14
+enarx-shim-kvm-0.6.3,snp::ByteSized::from_bytes,bug3,src/snp/mod.rs:106:5: 112:6
+enarx-shim-kvm-0.6.3,snp::ByteSized::from_bytes,bug3,src/snp/mod.rs:106:5: 112:6
+slice-ring-buffer-0.3.2,mirrored::buffer::Buffer::<T>::uninitialized,bug3,src/mirrored/buffer.rs:125:5: 157:6
+tarantool-0.6.5,fiber::LuaFiber::<C>::trampoline,bug3,src/fiber.rs:529:5: 548:6
+tarantool-0.6.5,fiber::LuaJoinHandle::<'f, T>::join,bug3,src/fiber.rs:571:5: 587:6
+endian-type-rs-0.1.4,BigEndian::<T>::from_bytes,bug3,src/lib.rs:55:4: 58:5
+endian-type-rs-0.1.4,LittleEndian::<T>::from_bytes,bug3,src/lib.rs:55:4: 58:5
+rbs-4.3.2,value::ext::se::to_value,bug3,src/value/ext/se.rs:66:1: 82:2
+gl33-0.2.1,global_loader::gl_ptr_filter,bug3,src/global_loader.rs:12:1: 18:2
+gl33-0.2.1,struct_loader::GlFns::ptr_filter,bug3,src/struct_loader.rs:378:3: 384:4
+zub-0.3.14,vm::gc::tag::TaggedHandle::<T>::from_float,bug3,src/vm/gc/tag.rs:42:5: 49:6
+zub-0.3.14,vm::gc::tag::TaggedHandle::<T>::from_tag,bug3,src/vm/gc/tag.rs:51:5: 58:6
+containerof-0.2.2,<OwnBox<T> as std::ops::DerefMut>::deref_mut,bug3,src/lib.rs:168:5: 170:6
+containerof-0.2.2,<OwnBox<T> as std::ops::Deref>::deref,bug3,src/lib.rs:163:5: 165:6
+uhyve-0.2.2,linux::virtqueue::Vring::<T>::ring_elem,bug3,src/linux/virtqueue.rs:51:2: 54:3
+uhyve-0.2.2,linux::virtqueue::Vring::<T>::ring_elem,bug3,src/linux/virtqueue.rs:51:2: 54:3
+i-slint-renderer-skia-1.0.2,cached_image::SKIA_CACHED_IMAGE_VT::drop_in_place,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/i-slint-core-1.0.2/graphics/image.rs:23:1: 23:18
+i-slint-renderer-skia-1.0.2,cached_image::SKIA_CACHED_IMAGE_VT::size,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/i-slint-core-1.0.2/graphics/image.rs:23:1: 23:18
+i-slint-renderer-skia-1.0.2,cached_image::SKIA_CACHED_IMAGE_VT::cache_key,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/i-slint-core-1.0.2/graphics/image.rs:23:1: 23:18
 crayon-0.7.1,utils::data_buf::DataBuffer::as_ref,bug3,src/utils/data_buf.rs:72:5: 79:6
 crayon-0.7.1,utils::data_buf::DataBuffer::as_slice,bug3,src/utils/data_buf.rs:83:5: 91:6
+tabox-1.3.1,linux::watcher,bug3,src/linux/mod.rs:87:1: 177:2
+cao-lang-0.1.108,bytecode::write_to_vec,bug3,src/bytecode.rs:4:1: 12:2
+cao-lang-0.1.108,bytecode::read_from_bytes,bug3,src/bytecode.rs:15:1: 21:2
+cao-lang-0.1.108,vm::runtime::RuntimeData::write_to_memory,bug3,src/vm/runtime.rs:159:5: 173:6
+data-buffer-0.8.0,DataBuffer::as_slice,bug3,src/lib.rs:403:5: 406:6
+data-buffer-0.8.0,DataBuffer::as_mut_slice,bug3,src/lib.rs:411:5: 414:6
+data-buffer-0.8.0,DataBuffer::get,bug3,src/lib.rs:418:5: 422:6
+data-buffer-0.8.0,DataBuffer::get_ref,bug3,src/lib.rs:426:5: 430:6
+data-buffer-0.8.0,DataBuffer::get_mut,bug3,src/lib.rs:434:5: 438:6
+graph_map-0.1.0,<typed_map::TypedMemoryMap<T> as std::ops::Index<std::ops::RangeFull>>::index,bug3,src/typed_map.rs:31:5: 33:6
+graph_map-0.1.0,<typed_map::TypedMemoryMap<T> as std::ops::Index<std::ops::RangeFull>>::index,bug3,src/typed_map.rs:31:5: 33:6
+graph_map-0.1.0,<typed_map::TypedMemoryMap<T> as std::ops::Index<std::ops::RangeFull>>::index,bug3,src/typed_map.rs:31:5: 33:6
 opengles-0.1.2,glesv2::buffer_data,bug3,src/glesv2.rs:600:1: 605:2
 opengles-0.1.2,glesv2::buffer_sub_data,bug3,src/glesv2.rs:607:1: 614:2
 opengles-0.1.2,glesv2::compressed_tex_image_2d,bug3,src/glesv2.rs:661:1: 668:2
@@ -292,649 +156,7 @@ opengles-0.1.2,glesv2::shader_binary,bug3,src/glesv2.rs:1321:1: 1326:2
 opengles-0.1.2,glesv2::tex_image_2d,bug3,src/glesv2.rs:1372:1: 1379:2
 opengles-0.1.2,glesv2::tex_sub_image_2d,bug3,src/glesv2.rs:1405:1: 1412:2
 opengles-0.1.2,glesv2::vertex_attrib_pointer,bug3,src/glesv2.rs:1594:1: 1601:2
-async-task-4.4.0,raw::RawTask::<F, T, S, M>::from_ptr,bug3,src/raw.rs:208:5: 220:6
-core-foundation-0.9.3,array::CFArray::<T>::from_copyable,bug3,src/array.rs:66:5: 74:6
-core-foundation-0.9.3,data::CFData::from_arc,bug3,src/data.rs:42:5: 74:6
-rscam-0.5.5,v4l2::xioctl,bug3,src/v4l2.rs:70:1: 87:2
-wasmtime-runtime-9.0.2,traphandlers::catch_traps::call_closure,bug3,src/traphandlers.rs:277:5: 282:6
-sdl2-0.35.2,audio::audio_callback_marshall,bug3,src/sdl2/audio.rs:499:1: 517:2
-macroquad-0.3.25,experimental::scene::Lens::<T>::get,bug3,src/experimental/scene.rs:90:5: 94:6
-append-only-vec-0.1.2,AppendOnlyVec::<T>::push,bug3,src/lib.rs:115:5: 174:6
-sciter-rs-0.5.58,eventhandler::is_detach_event,bug3,src/eventhandler.rs:19:1: 30:2
-sciter-rs-0.5.58,eventhandler::process_events,bug3,src/eventhandler.rs:95:1: 320:2
-sciter-rs-0.5.58,dom::Element::select_elements,bug3,src/dom.rs:1036:2: 1053:3
-libc-nnsdk-0.3.0,fwrite_slice,bug3,src/lib.rs:923:1: 932:2
-rusty_v8-0.32.1,isolate::Isolate::take_heap_snapshot,bug3,src/isolate.rs:706:3: 726:4
-tree-sitter-c2rust-0.20.10,<util::CBufferIter<T> as std::ops::Drop>::drop,bug3,binding_rust/util.rs:39:5: 41:6
 safecoin-runtime-1.14.17,cache_hash_data::CacheHashDataFile::get_mut,bug3,src/cache_hash_data.rs:35:5: 51:6
 safecoin-runtime-1.14.17,append_vec::AppendVec::get_type,bug3,src/append_vec.rs:452:5: 458:6
-slings-0.3.45,socket::setsockopt,bug3,src/socket/mod.rs:101:1: 116:2
-graph_map-0.1.0,<typed_map::TypedMemoryMap<T> as std::ops::Index<std::ops::RangeFull>>::index,bug3,src/typed_map.rs:31:5: 33:6
-graph_map-0.1.0,<typed_map::TypedMemoryMap<T> as std::ops::Index<std::ops::RangeFull>>::index,bug3,src/typed_map.rs:31:5: 33:6
-graph_map-0.1.0,<typed_map::TypedMemoryMap<T> as std::ops::Index<std::ops::RangeFull>>::index,bug3,src/typed_map.rs:31:5: 33:6
-deno_ffi-0.93.0,callback::do_ffi_callback,bug3,callback.rs:148:1: 509:2
-deno_ffi-0.93.0,repr::op_ffi_read_ptr::call,bug3,repr.rs:494:1: 515:2
-deno_ffi-0.93.0,repr::op_ffi_read_bool::call,bug3,repr.rs:219:1: 238:2
-deno_ffi-0.93.0,r#static::op_ffi_get_static::call,bug3,static.rs:17:1: 157:2
-windows-metadata-0.49.0,<[u8] as reader::file::View>::view_as,bug3,src/reader/file.rs:505:5: 508:6
-windows-metadata-0.49.0,<[u8] as reader::file::View>::view_as_slice_of,bug3,src/reader/file.rs:510:5: 513:6
-quinn-udp-0.4.0,cmsg::Encoder::<'a>::push,bug3,src/cmsg.rs:35:5: 56:6
-thin-vec-0.2.12,ThinVec::<T>::data_raw,bug3,src/lib.rs:571:5: 613:6
-vm-memory-0.11.0,volatile_memory::VolatileMemory::get_atomic_ref,bug3,src/volatile_memory.rs:214:5: 221:6
-slice-ring-buffer-0.3.2,<SliceRingBuffer<T> as std::iter::IntoIterator>::into_iter,bug3,src/lib.rs:2503:5: 2526:6
-slice-ring-buffer-0.3.2,SliceRingBuffer::<T>::drain,bug3,src/lib.rs:1222:5: 1276:6
-slice-ring-buffer-0.3.2,mirrored::buffer::Buffer::<T>::uninitialized,bug3,src/mirrored/buffer.rs:125:5: 157:6
-slice-ring-buffer-0.3.2,<IntoIter<T> as std::iter::Iterator>::next,bug3,src/lib.rs:2367:5: 2388:6
-slice-ring-buffer-0.3.2,<IntoIter<T> as std::iter::DoubleEndedIterator>::next_back,bug3,src/lib.rs:2407:5: 2425:6
-rio-0.9.4,<io_uring::cq::Cq as std::ops::Drop>::drop,bug3,src/io_uring/cq.rs:25:5: 33:6
-rio-0.9.4,<io_uring::sq::Sq as std::ops::Drop>::drop,bug3,src/io_uring/sq.rs:26:5: 39:6
-collenchyma-0.0.8,frameworks::opencl::api::memory::<impl frameworks::opencl::api::API>::read_from_memory,bug3,src/frameworks/opencl/api/memory.rs:33:5: 62:6
-collenchyma-0.0.8,frameworks::opencl::api::memory::<impl frameworks::opencl::api::API>::write_to_memory,bug3,src/frameworks/opencl/api/memory.rs:67:5: 96:6
-socketcan-2.0.0,socket::raw_write_frame,bug3,src/socket.rs:190:1: 198:2
-socketcan-2.0.0,socket::set_socket_option,bug3,src/socket.rs:219:1: 235:2
-socketcan-2.0.0,socket::set_socket_option_mult,bug3,src/socket.rs:238:1: 264:2
-malloc_buf-1.0.0,<Malloc<T> as core::ops::Drop>::drop,bug3,src/lib.rs:82:5: 89:6
-patricia_tree-0.6.0,node::Node::<V>::new,bug3,src/node.rs:64:5: 121:6
-patricia_tree-0.6.0,node::Node::<V>::value,bug3,src/node.rs:170:5: 180:6
-patricia_tree-0.6.0,node::Node::<V>::value_mut,bug3,src/node.rs:183:5: 193:6
-patricia_tree-0.6.0,node::Node::<V>::as_mut,bug3,src/node.rs:248:5: 286:6
-patricia_tree-0.6.0,node::Node::<V>::take_value,bug3,src/node.rs:289:5: 300:6
-patricia_tree-0.6.0,node::Node::<V>::set_value,bug3,src/node.rs:331:5: 342:6
-wasmer-near-2.4.0,sys::externals::function::build_export_function_metadata,bug3,src/sys/externals/function.rs:69:1: 108:2
-wasmer-near-2.4.0,sys::externals::memory::Memory::view,bug3,src/sys/externals/memory.rs:219:5: 225:6
-GSL-6.0.0,cblas::level1::cdotu_sub,bug3,src/cblas.rs:36:5: 47:6
-GSL-6.0.0,cblas::level1::cdotc_sub,bug3,src/cblas.rs:50:5: 61:6
-GSL-6.0.0,cblas::level1::zdotu_sub,bug3,src/cblas.rs:64:5: 75:6
-GSL-6.0.0,cblas::level1::zdotc_sub,bug3,src/cblas.rs:78:5: 89:6
-GSL-6.0.0,cblas::level1::scnrm2,bug3,src/cblas.rs:112:5: 114:6
-GSL-6.0.0,cblas::level1::scasum,bug3,src/cblas.rs:117:5: 119:6
-GSL-6.0.0,cblas::level1::dznrm2,bug3,src/cblas.rs:122:5: 124:6
-GSL-6.0.0,cblas::level1::dzasum,bug3,src/cblas.rs:127:5: 129:6
-GSL-6.0.0,cblas::level1::icamax,bug3,src/cblas.rs:142:5: 144:6
-GSL-6.0.0,cblas::level1::izamax,bug3,src/cblas.rs:147:5: 149:6
-GSL-6.0.0,cblas::level1::cswap,bug3,src/cblas.rs:182:5: 192:6
-GSL-6.0.0,cblas::level1::ccopy,bug3,src/cblas.rs:195:5: 205:6
-GSL-6.0.0,cblas::level1::caxpy,bug3,src/cblas.rs:208:5: 219:6
-GSL-6.0.0,cblas::level1::zswap,bug3,src/cblas.rs:222:5: 232:6
-GSL-6.0.0,cblas::level1::zcopy,bug3,src/cblas.rs:235:5: 245:6
-GSL-6.0.0,cblas::level1::zaxpy,bug3,src/cblas.rs:248:5: 259:6
-GSL-6.0.0,cblas::level1::cscal,bug3,src/cblas.rs:356:5: 365:6
-GSL-6.0.0,cblas::level1::zscal,bug3,src/cblas.rs:369:5: 378:6
-GSL-6.0.0,cblas::level1::csscal,bug3,src/cblas.rs:382:5: 384:6
-GSL-6.0.0,cblas::level1::zdscal,bug3,src/cblas.rs:388:5: 390:6
-GSL-6.0.0,cblas::level2::cgemv,bug3,src/cblas.rs:877:5: 907:6
-GSL-6.0.0,cblas::level2::cgbmv,bug3,src/cblas.rs:910:5: 944:6
-GSL-6.0.0,cblas::level2::ctrmv,bug3,src/cblas.rs:947:5: 971:6
-GSL-6.0.0,cblas::level2::ctbmv,bug3,src/cblas.rs:974:5: 1000:6
-GSL-6.0.0,cblas::level2::ctpmv,bug3,src/cblas.rs:1003:5: 1025:6
-GSL-6.0.0,cblas::level2::ctrsv,bug3,src/cblas.rs:1028:5: 1052:6
-GSL-6.0.0,cblas::level2::ctbsv,bug3,src/cblas.rs:1055:5: 1081:6
-GSL-6.0.0,cblas::level2::ctpsv,bug3,src/cblas.rs:1084:5: 1106:6
-GSL-6.0.0,cblas::level2::zgemv,bug3,src/cblas.rs:1109:5: 1139:6
-GSL-6.0.0,cblas::level2::zgbmv,bug3,src/cblas.rs:1142:5: 1176:6
-GSL-6.0.0,cblas::level2::ztrmv,bug3,src/cblas.rs:1179:5: 1203:6
-GSL-6.0.0,cblas::level2::ztbmv,bug3,src/cblas.rs:1206:5: 1232:6
-GSL-6.0.0,cblas::level2::ztpmv,bug3,src/cblas.rs:1235:5: 1257:6
-GSL-6.0.0,cblas::level2::ztrsv,bug3,src/cblas.rs:1260:5: 1284:6
-GSL-6.0.0,cblas::level2::ztbsv,bug3,src/cblas.rs:1287:5: 1313:6
-GSL-6.0.0,cblas::level2::ztpsv,bug3,src/cblas.rs:1316:5: 1338:6
-GSL-6.0.0,cblas::level2::chemv,bug3,src/cblas.rs:1793:5: 1821:6
-GSL-6.0.0,cblas::level2::chbmv,bug3,src/cblas.rs:1824:5: 1854:6
-GSL-6.0.0,cblas::level2::chpmv,bug3,src/cblas.rs:1857:5: 1883:6
-GSL-6.0.0,cblas::level2::cgeru,bug3,src/cblas.rs:1886:5: 1912:6
-GSL-6.0.0,cblas::level2::cgerc,bug3,src/cblas.rs:1915:5: 1941:6
-GSL-6.0.0,cblas::level2::cher,bug3,src/cblas.rs:1944:5: 1966:6
-GSL-6.0.0,cblas::level2::chpr,bug3,src/cblas.rs:1969:5: 1989:6
-GSL-6.0.0,cblas::level2::cher2,bug3,src/cblas.rs:1992:5: 2018:6
-GSL-6.0.0,cblas::level2::chpr2,bug3,src/cblas.rs:2021:5: 2045:6
-GSL-6.0.0,cblas::level2::zhemv,bug3,src/cblas.rs:2048:5: 2076:6
-GSL-6.0.0,cblas::level2::zhbmv,bug3,src/cblas.rs:2079:5: 2109:6
-GSL-6.0.0,cblas::level2::zhpmv,bug3,src/cblas.rs:2112:5: 2138:6
-GSL-6.0.0,cblas::level2::zgeru,bug3,src/cblas.rs:2141:5: 2167:6
-GSL-6.0.0,cblas::level2::zgerc,bug3,src/cblas.rs:2170:5: 2196:6
-GSL-6.0.0,cblas::level2::zher,bug3,src/cblas.rs:2199:5: 2221:6
-GSL-6.0.0,cblas::level2::zhpr,bug3,src/cblas.rs:2224:5: 2244:6
-GSL-6.0.0,cblas::level2::zher2,bug3,src/cblas.rs:2247:5: 2273:6
-GSL-6.0.0,cblas::level2::zhpr2,bug3,src/cblas.rs:2276:5: 2300:6
-GSL-6.0.0,cblas::level3::cgemm,bug3,src/cblas.rs:2752:5: 2786:6
-GSL-6.0.0,cblas::level3::csymm,bug3,src/cblas.rs:2789:5: 2821:6
-GSL-6.0.0,cblas::level3::csyrk,bug3,src/cblas.rs:2824:5: 2852:6
-GSL-6.0.0,cblas::level3::csyr2k,bug3,src/cblas.rs:2855:5: 2887:6
-GSL-6.0.0,cblas::level3::ctrmm,bug3,src/cblas.rs:2890:5: 2920:6
-GSL-6.0.0,cblas::level3::ctrsm,bug3,src/cblas.rs:2923:5: 2953:6
-GSL-6.0.0,cblas::level3::zgemm,bug3,src/cblas.rs:2956:5: 2990:6
-GSL-6.0.0,cblas::level3::zsymm,bug3,src/cblas.rs:2993:5: 3025:6
-GSL-6.0.0,cblas::level3::zsyrk,bug3,src/cblas.rs:3028:5: 3056:6
-GSL-6.0.0,cblas::level3::zsyr2k,bug3,src/cblas.rs:3059:5: 3091:6
-GSL-6.0.0,cblas::level3::ztrmm,bug3,src/cblas.rs:3094:5: 3124:6
-GSL-6.0.0,cblas::level3::ztrsm,bug3,src/cblas.rs:3127:5: 3157:6
-GSL-6.0.0,cblas::level3::chemm,bug3,src/cblas.rs:3160:5: 3192:6
-GSL-6.0.0,cblas::level3::cherk,bug3,src/cblas.rs:3195:5: 3223:6
-GSL-6.0.0,cblas::level3::cher2k,bug3,src/cblas.rs:3226:5: 3258:6
-GSL-6.0.0,cblas::level3::zhemm,bug3,src/cblas.rs:3261:5: 3293:6
-GSL-6.0.0,cblas::level3::zherk,bug3,src/cblas.rs:3296:5: 3324:6
-GSL-6.0.0,cblas::level3::zher2k,bug3,src/cblas.rs:3327:5: 3359:6
-GSL-6.0.0,integration::qng,bug3,src/integration.rs:96:1: 121:2
-GSL-6.0.0,integration::qk15,bug3,src/integration.rs:130:1: 149:2
-GSL-6.0.0,integration::qk21,bug3,src/integration.rs:153:1: 172:2
-GSL-6.0.0,integration::qk31,bug3,src/integration.rs:176:1: 195:2
-GSL-6.0.0,integration::qk41,bug3,src/integration.rs:199:1: 218:2
-GSL-6.0.0,integration::qk51,bug3,src/integration.rs:222:1: 241:2
-GSL-6.0.0,integration::qk61,bug3,src/integration.rs:245:1: 264:2
-GSL-6.0.0,integration::qk,bug3,src/integration.rs:268:1: 307:2
-GSL-6.0.0,integration::qawf,bug3,src/integration.rs:359:1: 386:2
-GSL-6.0.0,numerical_differentiation::deriv_central,bug3,src/numerical_differentiation.rs:34:1: 41:2
-GSL-6.0.0,numerical_differentiation::deriv_forward,bug3,src/numerical_differentiation.rs:57:1: 64:2
-GSL-6.0.0,numerical_differentiation::deriv_backward,bug3,src/numerical_differentiation.rs:76:1: 83:2
-GSL-6.0.0,types::minimizer::Minimizer::<'a>::set,bug3,src/types/minimizer.rs:140:5: 159:6
-GSL-6.0.0,types::minimizer::Minimizer::<'a>::set_with_values,bug3,src/types/minimizer.rs:164:5: 189:6
-GSL-6.0.0,types::integration::IntegrationQawoTable::qawo,bug3,src/types/integration.rs:659:5: 686:6
-GSL-6.0.0,types::monte_carlo::PlainMonteCarlo::integrate,bug3,src/types/monte_carlo.rs:134:5: 166:6
-GSL-6.0.0,types::integration::GLFixedTable::glfixed,bug3,src/types/integration.rs:808:5: 811:6
-GSL-6.0.0,types::chebyshev::ChebSeries::init,bug3,src/types/chebyshev.rs:54:5: 58:6
-GSL-6.0.0,types::integration::IntegrationFixedWorkspace::fixed,bug3,src/types/integration.rs:103:5: 110:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qag,bug3,src/types/integration.rs:181:5: 210:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qags,bug3,src/types/integration.rs:224:5: 251:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qagp,bug3,src/types/integration.rs:275:5: 301:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qagi,bug3,src/types/integration.rs:320:5: 343:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qagiu,bug3,src/types/integration.rs:360:5: 385:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qagil,bug3,src/types/integration.rs:402:5: 427:6
-GSL-6.0.0,types::integration::IntegrationWorkspace::qawc,bug3,src/types/integration.rs:445:5: 474:6
-GSL-6.0.0,types::n_tuples::ReadNTuples::project,bug3,src/types/n_tuples.rs:149:13: 194:14
-GSL-6.0.0,types::monte_carlo::MiserMonteCarlo::integrate,bug3,src/types/monte_carlo.rs:234:5: 265:6
-GSL-6.0.0,types::integration::CquadWorkspace::cquad,bug3,src/types/integration.rs:737:5: 764:6
-GSL-6.0.0,types::n_tuples::ReadNTuples::read,bug3,src/types/n_tuples.rs:120:5: 129:6
-GSL-6.0.0,types::multiroot::MultiRootFSolver::<'a>::set,bug3,src/types/multiroot.rs:166:5: 196:6
-GSL-6.0.0,types::n_tuples::WriteNTuples::project,bug3,src/types/n_tuples.rs:149:13: 194:14
-GSL-6.0.0,types::integration::IntegrationQawsTable::qaws,bug3,src/types/integration.rs:544:5: 573:6
-GSL-6.0.0,types::rng::Rng::shuffle,bug3,src/types/rng.rs:246:5: 255:6
-GSL-6.0.0,types::rng::Rng::choose,bug3,src/types/rng.rs:276:5: 288:6
-GSL-6.0.0,types::rng::Rng::sample,bug3,src/types/rng.rs:293:5: 305:6
-GSL-6.0.0,types::roots::RootFSolver::<'a>::set,bug3,src/types/roots.rs:140:5: 147:6
-GSL-6.0.0,types::monte_carlo::VegasMonteCarlo::integrate,bug3,src/types/monte_carlo.rs:395:5: 426:6
-sqlx-sqlite-0.7.0-alpha.3,connection::collation::create_collation,bug3,src/connection/collation.rs:82:1: 116:2
-sqlx-sqlite-0.7.0-alpha.3,connection::LockedSqliteHandle::<'_>::set_progress_handler,bug3,src/connection/mod.rs:261:5: 280:6
-quick-protobuf-0.8.1,reader::BytesReader::read_packed_fixed,bug3,src/reader.rs:448:5: 462:6
-cart-tmp-winit-0.22.2,<platform_impl::platform::x11::util::memory::XSmartPointer<'a, T> as std::ops::Drop>::drop,bug3,src/platform_impl/linux/x11/util/memory.rs:37:5: 41:6
-spng-0.2.0-alpha.2,raw::RawContext::<R>::set_png_stream,bug3,src/raw.rs:478:5: 484:6
-surfman-0.6.0,<platform::generic::egl::ffi::EGL_EXTENSION_FUNCTIONS as lazy_static::__Deref>::deref::__static_ref_initialize,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lazy_static-1.4.0/src/lib.rs:137:17: 137:58
-surfman-0.6.0,platform::unix::wayland::surface::<impl platform::unix::wayland::device::Device>::resize_surface,bug3,src/platform/unix/wayland/surface.rs:212:5: 230:6
-surfman-0.6.0,platform::unix::wayland::connection::Connection::from_winit_window,bug3,src/platform/unix/wayland/connection.rs:166:5: 174:6
-napi-2.13.1,bindgen_runtime::iterator::create_iterator,bug3,src/bindgen_runtime/iterator.rs:38:1: 90:2
-napi-2.13.1,env::raw_finalize,bug3,src/env.rs:1342:1: 1362:2
-napi-2.13.1,bindgen_runtime::callback_info::CallbackInfo::<N>::_factory,bug3,src/bindgen_runtime/callback_info.rs:139:3: 183:4
-copyless-0.1.5,<std::boxed::Box<T> as boxed::BoxHelper<T>>::alloc,bug3,src/boxed.rs:51:5: 61:6
-meshopt-0.1.9,encoding::decode_index_buffer,bug3,src/encoding.rs:29:1: 53:2
-meshopt-0.1.9,encoding::encode_vertex_buffer,bug3,src/encoding.rs:60:1: 75:2
-meshopt-0.1.9,encoding::decode_vertex_buffer,bug3,src/encoding.rs:79:1: 97:2
-meshopt-0.1.9,optimize::optimize_vertex_fetch,bug3,src/optimize.rs:96:1: 110:2
-meshopt-0.1.9,optimize::optimize_vertex_fetch_in_place,bug3,src/optimize.rs:120:1: 131:2
-meshopt-0.1.9,remap::generate_vertex_remap,bug3,src/remap.rs:11:1: 34:2
-meshopt-0.1.9,remap::remap_vertex_buffer,bug3,src/remap.rs:115:1: 131:2
-lazy-socket-0.3.0,raw::unix::Socket::get_opt,bug3,src/raw/unix.rs:430:5: 441:6
-lazy-socket-0.3.0,raw::unix::Socket::set_opt,bug3,src/raw/unix.rs:446:5: 455:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, A>::get_ptr,bug3,src/struct_field_offset.rs:853:5: 855:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, A>::get_mut_ptr,bug3,src/struct_field_offset.rs:887:5: 889:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Unaligned>::get_copy,bug3,src/struct_field_offset.rs:1434:5: 1439:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Aligned>::get,bug3,src/struct_field_offset.rs:774:5: 776:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Aligned>::get_mut,bug3,src/struct_field_offset.rs:793:5: 795:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Aligned>::get_copy,bug3,src/struct_field_offset.rs:822:5: 827:6
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtOps<alignment::Unaligned> for S>::f_replace,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:35:13: 37:14
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtOps<alignment::Unaligned> for S>::f_swap,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:40:13: 43:14
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtOps<alignment::Unaligned> for S>::f_get_copy,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:46:13: 51:14
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Unaligned>::replace_mut,bug3,src/struct_field_offset.rs:1695:5: 1697:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Unaligned>::swap_mut,bug3,src/struct_field_offset.rs:1805:5: 1807:6
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtOps<alignment::Aligned> for S>::f_replace,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:35:13: 37:14
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtOps<alignment::Aligned> for S>::f_swap,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:40:13: 43:14
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtOps<alignment::Aligned> for S>::f_get_copy,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:46:13: 51:14
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtAcc for S>::f_get,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:11:5: 13:6
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtAcc for S>::f_get_mut,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:15:5: 17:6
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtAcc for S>::f_get_ptr,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:20:5: 22:6
-repr_offset-0.2.2,struct_field_offset::repr_offset_ext_impls::<impl ext::ROExtAcc for S>::f_get_mut_ptr,bug3,src/struct_field_offset/repr_offset_ext_impls.rs:25:5: 27:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Aligned>::replace_mut,bug3,src/struct_field_offset.rs:1299:5: 1301:6
-repr_offset-0.2.2,struct_field_offset::FieldOffset::<S, F, alignment::Aligned>::swap_mut,bug3,src/struct_field_offset.rs:1402:5: 1404:6
-bumpalo-3.13.0,Bump::alloc_with,bug3,src/lib.rs:841:5: 871:6
-bumpalo-3.13.0,Bump::try_alloc_with,bug3,src/lib.rs:894:5: 926:6
-vst-0.4.0,interfaces::dispatch,bug3,src/interfaces.rs:83:1: 299:2
-rune-0.12.3,hir::arena::Arena::alloc,bug3,src/hir/arena.rs:66:5: 76:6
-lmdb-rs-m-0.7.7,<bool as traits::FromMdbValue>::from_mdb_value,bug3,src/traits.rs:136:13: 141:14
-lmdb-rs-m-0.7.7,core::MdbValue::<'a>::new_from_sized,bug3,src/core.rs:1865:5: 1869:6
-webplatform-0.4.2,Document::<'a>::on,bug3,src/lib.rs:376:5: 390:6
-webplatform-0.4.2,HtmlNode::<'a>::on,bug3,src/lib.rs:297:5: 311:6
-webplatform-0.4.2,HtmlNode::<'a>::captured_on,bug3,src/lib.rs:313:5: 327:6
-webplatform-0.4.2,Document::<'a>::on,bug3,src/lib.rs:376:5: 390:6
-webplatform-0.4.2,HtmlNode::<'a>::on,bug3,src/lib.rs:297:5: 311:6
-webplatform-0.4.2,HtmlNode::<'a>::captured_on,bug3,src/lib.rs:313:5: 327:6
-pprof-0.11.1,<collector::TempFdArrayIterator<'a, T> as std::iter::Iterator>::next,bug3,src/collector.rs:218:5: 233:6
-nix-0.26.2,sys::ptrace::linux::ptrace_get_data,bug3,src/sys/ptrace/linux.rs:243:1: 255:2
-half-2.2.1,<std::vec::Vec<u16> as vec::HalfBitsVecExt>::reinterpret_into,bug3,src/vec.rs:205:5: 225:6
-half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast,bug3,src/slice.rs:489:5: 498:6
-half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast_mut,bug3,src/slice.rs:501:5: 510:6
-af_packet-0.3.1,socket::Socket::setsockopt,bug3,src/socket.rs:131:5: 144:6
-winit-0.28.6,<platform_impl::platform::x11::util::memory::XSmartPointer<'a, T> as std::ops::Drop>::drop,bug3,src/platform_impl/linux/x11/util/memory.rs:37:5: 41:6
-udp-socket-0.1.5,cmsg::Encoder::<'a>::push,bug3,src/cmsg.rs:35:5: 51:6
-luminance-gl-0.19.1,gl33::texture::set_texels,bug3,src/gl33/texture.rs:602:1: 706:2
-softbuffer-0.2.0,wayland::WaylandImpl::new,bug3,src/wayland/mod.rs:24:5: 60:6
-softbuffer-0.2.0,x11::X11Impl::from_xlib,bug3,src/x11.rs:67:5: 97:6
-brotli-decompressor-2.3.4,<ffi::alloc_util::SubclassableAllocator as alloc_stdlib::Allocator<Ty>>::free_cell,bug3,src/ffi/alloc_util.rs:86:5: 98:6
-brotli-decompressor-2.3.4,<ffi::alloc_util::SubclassableAllocator as alloc_stdlib::Allocator<Ty>>::free_cell,bug3,src/ffi/alloc_util.rs:86:5: 98:6
-renderdoc-0.11.0,renderdoc::RenderDoc::<version::V140>::discard_frame_capture,bug3,src/renderdoc.rs:648:5: 654:6
-renderdoc-0.11.0,renderdoc::RenderDoc::<version::V100>::set_active_window,bug3,src/renderdoc.rs:417:5: 425:6
-renderdoc-0.11.0,renderdoc::RenderDoc::<version::V100>::start_frame_capture,bug3,src/renderdoc.rs:447:5: 455:6
-renderdoc-0.11.0,renderdoc::RenderDoc::<version::V100>::end_frame_capture,bug3,src/renderdoc.rs:498:5: 506:6
-fftw-0.8.0,<array::AlignedVec<T> as std::ops::Drop>::drop,bug3,src/array.rs:89:5: 91:6
-td_rlua-0.3.1,userdata::push_lightuserdata,bug3,src/userdata.rs:127:1: 158:2
-malloced-1.3.1,<Malloced<[T]> as std::iter::IntoIterator>::into_iter,bug3,src/lib.rs:123:5: 151:6
-malloced-1.3.1,<iter::SliceIter<T> as std::iter::Iterator>::next,bug3,src/iter.rs:55:5: 71:6
-malloced-1.3.1,impls::<impl std::ops::Drop for Malloced<T>>::drop,bug3,src/impls.rs:15:5: 21:6
-malloced-1.3.1,<iter::SliceIter<T> as std::iter::DoubleEndedIterator>::next_back,bug3,src/iter.rs:92:5: 107:6
-malloced-1.3.1,<<iter::SliceIter<T> as std::ops::Drop>::drop::DeallocGuard<'a, T> as std::ops::Drop>::drop,bug3,src/iter.rs:33:13: 37:14
-stakker-0.2.7,queue::flat::hvec::HVec::push,bug3,src/queue/flat.rs:344:9: 385:10
-uds-0.2.6,ancillary::send_ancillary,bug3,src/ancillary.rs:49:1: 146:2
-sqlite-0.30.4,connection::Connection::iterate,bug3,src/connection.rs:102:5: 120:6
-sqlite-0.30.4,connection::Connection::set_busy_handler,bug3,src/connection.rs:147:5: 163:6
-windows_winmd-0.3.1,file::<impl traits::View for [u8]>::view_as,bug3,src/file.rs:664:5: 668:6
-windows_winmd-0.3.1,file::<impl traits::View for [u8]>::view_as_slice_of,bug3,src/file.rs:670:5: 674:6
-simple-slab-0.3.3,Slab::<T>::reallocate,bug3,src/lib.rs:131:5: 149:6
-simple-slab-0.3.3,<Slab<T> as std::ops::Drop>::drop,bug3,src/lib.rs:153:5: 162:6
-gfx-backend-gl-0.9.0,queue::Queue::get,bug3,src/queue.rs:185:5: 190:6
-freertos-rust-0.1.2,queue::Queue::<T>::send,bug3,src/queue.rs:36:5: 46:6
-freertos-rust-0.1.2,queue::Queue::<T>::send_from_isr,bug3,src/queue.rs:49:5: 62:6
-freertos-rust-0.1.2,queue::Queue::<T>::receive,bug3,src/queue.rs:65:5: 77:6
-containerof-0.2.2,<OwnBox<T> as std::ops::DerefMut>::deref_mut,bug3,src/lib.rs:168:5: 170:6
-containerof-0.2.2,<OwnBox<T> as std::ops::Deref>::deref,bug3,src/lib.rs:163:5: 165:6
-ugli-raw-0.14.0,implementation::texture::<impl implementation::Context>::tex_image_2d,bug3,src/gl/texture.rs:46:5: 74:6
-ugli-raw-0.14.0,implementation::texture::<impl implementation::Context>::tex_sub_image_2d,bug3,src/gl/texture.rs:83:5: 108:6
-ugli-raw-0.14.0,implementation::buffer::<impl implementation::Context>::buffer_data,bug3,src/gl/buffer.rs:12:5: 21:6
-ugli-raw-0.14.0,implementation::buffer::<impl implementation::Context>::buffer_sub_data,bug3,src/gl/buffer.rs:23:5: 32:6
-ugli-raw-0.14.0,implementation::framebuffer::<impl implementation::Context>::read_pixels,bug3,src/gl/framebuffer.rs:72:5: 85:6
-sparkle-0.1.25,gl::buffer_data,bug3,src/lib.rs:2667:5: 2676:6
-sparkle-0.1.25,gl::buffer_sub_data,bug3,src/lib.rs:2678:5: 2687:6
-odds-0.4.0,slice::unalign::UnalignedIter::<'a, T>::peek_next,bug3,src/slice/unalign.rs:76:5: 84:6
-odds-0.4.0,<slice::unalign::UnalignedIter<'a, T> as core::iter::Iterator>::next,bug3,src/slice/unalign.rs:91:5: 101:6
-tabox-1.3.1,linux::watcher,bug3,src/linux/mod.rs:87:1: 177:2
-rust_asio-0.6.0,ffi::tss::pthread::PthreadTssPtr::<T>::set,bug3,src/ffi/tss/pthread.rs:32:5: 34:6
-slabmalloc-0.11.0,sc::SCAllocator::<'a, P>::deallocate,bug3,src/sc.rs:305:5: 326:6
-colain-0.1.4,CLI::<'a, T>::cast_slice,bug3,src/lib.rs:586:5: 588:6
-tantivy-0.19.2,postings::stacker::memory_arena::store,bug3,src/postings/stacker/memory_arena.rs:71:1: 76:2
-tantivy-0.19.2,postings::stacker::memory_arena::load,bug3,src/postings/stacker/memory_arena.rs:78:1: 81:2
-flatdata-0.5.3,<&'a [T] as arrayview::SliceExt<'a>>::from_bytes,bug3,src/arrayview.rs:21:5: 37:6
-solana_rbpf-0.4.0,jit::JitCompiler::<'a, V, C>::emit,bug3,src/jit.rs:699:5: 706:6
-tract-core-0.20.5,ops::cnn::conv::lazy_im2col::LazyIm2col::<T>::input_8n,bug3,src/ops/cnn/conv/lazy_im2col.rs:44:5: 74:6
-tract-core-0.20.5,ops::cnn::conv::lazy_im2col::LazyIm2col::<T>::input_6n,bug3,src/ops/cnn/conv/lazy_im2col.rs:76:5: 100:6
-tract-core-0.20.5,ops::cnn::conv::lazy_im2col::LazyIm2col::<T>::input_4n,bug3,src/ops/cnn/conv/lazy_im2col.rs:102:5: 120:6
-tract-core-0.20.5,ops::cnn::conv::lazy_im2col::LazyIm2col::<T>::input_2n,bug3,src/ops/cnn/conv/lazy_im2col.rs:122:5: 134:6
-tract-core-0.20.5,ops::cnn::conv::lazy_im2col::LazyIm2col::<T>::write,bug3,src/ops/cnn/conv/lazy_im2col.rs:136:5: 226:6
-tauri-winit-0.24.1,<platform_impl::platform::x11::util::memory::XSmartPointer<'a, T> as std::ops::Drop>::drop,bug3,src/platform_impl/linux/x11/util/memory.rs:37:5: 41:6
-dittolive-ditto-4.1.1,store::live_query::LiveQuery::with_handler,bug3,src/store/live_query/mod.rs:58:5: 169:6
-ckb-std-0.13.0,<dynamic_loading::Symbol<T> as core::ops::Deref>::deref,bug3,src/dynamic_loading.rs:201:5: 203:6
-winrt_gen-0.7.2,<[u8] as file::View>::view_as,bug3,src/file.rs:661:5: 665:6
-winrt_gen-0.7.2,<[u8] as file::View>::view_as_slice_of,bug3,src/file.rs:667:5: 671:6
-scaly-0.0.37,memory::page::Page::allocate,bug3,src/memory/page.rs:65:5: 73:6
-scaly-0.0.37,containers::vector::Vector::<T>::new,bug3,src/containers/vector.rs:15:5: 22:6
-scaly-0.0.37,containers::array::Array::<T>::reallocate,bug3,src/containers/array.rs:53:5: 79:6
-physx-0.18.0,foundation::AllocatorCallback::into_px,bug3,src/foundation.rs:224:5: 232:6
-physx-0.18.0,physics::assert_handler::AssertHandler::into_px,bug3,src/physics/assert_handler.rs:15:5: 41:6
-physx-0.18.0,physics::error_callback::ErrorCallback::into_px,bug3,src/physics/error_callback.rs:9:5: 35:6
-physx-0.18.0,physics::profiler::ProfilerCallback::into_px,bug3,src/physics/profiler.rs:34:5: 42:6
-physx-0.18.0,<traits::descriptor::SceneDescriptor<U, L, S, D, C, OC, OT, OCB, OWS, OA> as traits::descriptor::Descriptor<P>>::create,bug3,src/traits/descriptor.rs:176:5: 253:6
-nanomsg-0.7.2,Socket::zc_write,bug3,src/lib.rs:531:5: 539:6
-tree-sitter-0.20.10,<util::CBufferIter<T> as std::ops::Drop>::drop,bug3,binding_rust/util.rs:39:5: 41:6
-pathfinder_gl-0.5.0,<GLDevice as pathfinder_gpu::Device>::allocate_buffer,bug3,src/lib.rs:435:5: 454:6
-lodepng-3.7.2,Bitmap::<PixelType>::from_buffer,bug3,src/lib.rs:825:5: 857:6
-bytemuck-1.13.1,internal::try_pod_read_unaligned,bug3,src/internal.rs:111:1: 119:2
-bytemuck-1.13.1,internal::try_from_bytes,bug3,src/internal.rs:140:1: 150:2
-bytemuck-1.13.1,internal::try_from_bytes_mut,bug3,src/internal.rs:159:1: 169:2
-udp_sas-0.1.4,getsockopt,bug3,src/lib.rs:111:1: 121:2
-udp_sas-0.1.4,setsockopt,bug3,src/lib.rs:122:1: 131:2
-egli-0.5.0,egl::get_filtered_configs,bug3,src/egl/mod.rs:401:1: 416:2
-egli-0.5.0,egl::get_configs,bug3,src/egl/mod.rs:631:1: 642:2
-rbs-4.3.2,value::ext::se::to_value,bug3,src/value/ext/se.rs:66:1: 82:2
-abomonation-0.7.3,<abomonated::Abomonated<T, S> as std::ops::Deref>::deref,bug3,src/abomonated.rs:123:5: 126:6
-pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
-pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
-pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
-pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
-pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
-pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
-pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
-pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
-pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
-pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
-pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,<&'a [u8] as pe32::scanner::Scan<'a>>::read,bug3,src/pe32/../pe64/scanner.rs:132:2: 136:3
-pelite-0.10.0,resources::Resources::<'a>::slice,bug3,src/resources/mod.rs:52:2: 63:3
-pelite-0.10.0,resources::Resources::<'a>::slice_len,bug3,src/resources/mod.rs:66:2: 77:3
-pelite-0.10.0,<&'a [u8] as pe64::scanner::Scan<'a>>::read,bug3,src/pe64/scanner.rs:132:2: 136:3
-adi-0.13.0-pre2,screen::ffi::render::opengl::asi::buffer::Buffer::set,bug3,src/screen/ffi/render/opengl/asi/buffer.rs:43:5: 54:6
-adi-0.13.0-pre2,screen::ffi::render::vulkan::asi::buffer::Buffer::update,bug3,src/screen/ffi/render/vulkan/asi/buffer.rs:104:5: 132:6
-mimalloc-rust-0.2.1,heap::HeapVisitor::visit,bug3,src/heap.rs:182:5: 192:6
-gdnative-core-0.11.3,init::init_handle::InitHandle::add_maybe_tool_class_as_with::constructor,bug3,src/init/init_handle.rs:145:17: 193:18
-maligned-0.2.1,heap::align_first,bug3,src/heap.rs:16:1: 28:2
-secstr-0.5.1,memlock::mlock,bug3,src/lib.rs:274:5: 284:6
-secstr-0.5.1,memlock::munlock,bug3,src/lib.rs:286:5: 296:6
-remoteprocess-0.4.11,ProcessMemory::copy_struct,bug3,src/lib.rs:177:5: 181:6
-remoteprocess-0.4.11,ProcessMemory::copy_vec,bug3,src/lib.rs:190:5: 198:6
-pen-ffi-0.10.11,arc::Arc::<T>::new,bug3,src/arc.rs:22:5: 31:6
-pen-ffi-0.10.11,<arc::Arc<T> as core::ops::Deref>::deref,bug3,src/arc.rs:53:5: 55:6
-pen-ffi-0.10.11,arc::arc_block::ArcBlock::drop_inner,bug3,src/arc/arc_block.rs:114:5: 124:6
-ein-ffi-0.6.0,arc::Arc::<T>::new,bug3,src/arc/mod.rs:16:5: 27:6
-ein-ffi-0.6.0,<arc::Arc<T> as std::ops::Deref>::deref,bug3,src/arc/mod.rs:39:5: 41:6
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CursorChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CursorChangedEventHandler>::as_impl,bug3,src/callback.rs:135:1: 135:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::PrintCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2PrintCompletedHandler>::as_impl,bug3,src/callback.rs:272:1: 272:22
-webview2-com-0.25.0,<options::IFixedEnvironmentOptions4 as windows::core::AsImpl<options::CoreWebView2EnvironmentOptions>>::as_impl,bug3,src/options.rs:26:1: 31:3
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameNavigationCompletedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameNavigationCompletedEventHandler>::as_impl,bug3,src/callback.rs:453:1: 453:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::GetNonDefaultPermissionSettingsCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2GetNonDefaultPermissionSettingsCompletedHandler>::as_impl,bug3,src/callback.rs:240:1: 240:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::AddScriptToExecuteOnDocumentCreatedCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2AddScriptToExecuteOnDocumentCreatedCompletedHandler>::as_impl,bug3,src/callback.rs:289:1: 289:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ProcessInfosChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ProcessInfosChangedEventHandler>::as_impl,bug3,src/callback.rs:170:1: 170:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ContextMenuRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ContextMenuRequestedEventHandler>::as_impl,bug3,src/callback.rs:491:1: 491:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ClearBrowsingDataCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ClearBrowsingDataCompletedHandler>::as_impl,bug3,src/callback.rs:519:1: 519:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::MoveFocusRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2MoveFocusRequestedEventHandler>::as_impl,bug3,src/callback.rs:149:1: 149:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::DocumentTitleChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2DocumentTitleChangedEventHandler>::as_impl,bug3,src/callback.rs:327:1: 327:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameDestroyedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameDestroyedEventHandler>::as_impl,bug3,src/callback.rs:432:1: 432:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::PrintToPdfStreamCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2PrintToPdfStreamCompletedHandler>::as_impl,bug3,src/callback.rs:282:1: 282:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ContentLoadingEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ContentLoadingEventHandler>::as_impl,bug3,src/callback.rs:191:1: 191:18
-webview2-com-0.25.0,options::<impl windows::core::AsImpl<options::CoreWebView2EnvironmentOptions> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2EnvironmentOptions>::as_impl,bug3,src/options.rs:26:1: 31:3
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ZoomFactorChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ZoomFactorChangedEventHandler>::as_impl,bug3,src/callback.rs:142:1: 142:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::AcceleratorKeyPressedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2AcceleratorKeyPressedEventHandler>::as_impl,bug3,src/callback.rs:163:1: 163:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::RasterizationScaleChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2RasterizationScaleChangedEventHandler>::as_impl,bug3,src/callback.rs:177:1: 177:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::BytesReceivedChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2BytesReceivedChangedEventHandler>::as_impl,bug3,src/callback.rs:376:1: 376:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CustomItemSelectedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CustomItemSelectedEventHandler>::as_impl,bug3,src/callback.rs:498:1: 498:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CreateCoreWebView2EnvironmentCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>::as_impl,bug3,src/callback.rs:107:1: 107:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::PrintToPdfCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2PrintToPdfCompletedHandler>::as_impl,bug3,src/callback.rs:279:1: 279:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CallDevToolsProtocolMethodCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CallDevToolsProtocolMethodCompletedHandler>::as_impl,bug3,src/callback.rs:313:1: 313:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::WebResourceResponseViewGetContentCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2WebResourceResponseViewGetContentCompletedHandler>::as_impl,bug3,src/callback.rs:355:1: 355:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::GetCookiesCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2GetCookiesCompletedHandler>::as_impl,bug3,src/callback.rs:474:1: 474:22
-webview2-com-0.25.0,options::<impl windows::core::AsImpl<options::CoreWebView2CustomSchemeRegistration> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CustomSchemeRegistration>::as_impl,bug3,src/options.rs:399:1: 399:52
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameNameChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameNameChangedEventHandler>::as_impl,bug3,src/callback.rs:439:1: 439:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::IsDefaultDownloadDialogOpenChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2IsDefaultDownloadDialogOpenChangedEventHandler>::as_impl,bug3,src/callback.rs:86:1: 86:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::EstimatedEndTimeChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2EstimatedEndTimeChangedEventHandler>::as_impl,bug3,src/callback.rs:390:1: 390:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameDOMContentLoadedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameDOMContentLoadedEventHandler>::as_impl,bug3,src/callback.rs:425:1: 425:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::NewWindowRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2NewWindowRequestedEventHandler>::as_impl,bug3,src/callback.rs:320:1: 320:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::NavigationStartingEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2NavigationStartingEventHandler>::as_impl,bug3,src/callback.rs:184:1: 184:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameWebMessageReceivedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameWebMessageReceivedEventHandler>::as_impl,bug3,src/callback.rs:467:1: 467:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ServerCertificateErrorDetectedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ServerCertificateErrorDetectedEventHandler>::as_impl,bug3,src/callback.rs:531:1: 531:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameCreatedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameCreatedEventHandler>::as_impl,bug3,src/callback.rs:418:1: 418:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::WebMessageReceivedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2WebMessageReceivedEventHandler>::as_impl,bug3,src/callback.rs:306:1: 306:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ClientCertificateRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ClientCertificateRequestedEventHandler>::as_impl,bug3,src/callback.rs:446:1: 446:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FocusChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FocusChangedEventHandler>::as_impl,bug3,src/callback.rs:156:1: 156:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::StatusBarTextChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2StatusBarTextChangedEventHandler>::as_impl,bug3,src/callback.rs:512:1: 512:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::SetPermissionStateCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2SetPermissionStateCompletedHandler>::as_impl,bug3,src/callback.rs:247:1: 247:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::WindowCloseRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2WindowCloseRequestedEventHandler>::as_impl,bug3,src/callback.rs:362:1: 362:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::PermissionRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2PermissionRequestedEventHandler>::as_impl,bug3,src/callback.rs:233:1: 233:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CreateCoreWebView2CompositionControllerCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CreateCoreWebView2CompositionControllerCompletedHandler>::as_impl,bug3,src/callback.rs:128:1: 128:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::DOMContentLoadedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2DOMContentLoadedEventHandler>::as_impl,bug3,src/callback.rs:205:1: 205:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::HistoryChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2HistoryChangedEventHandler>::as_impl,bug3,src/callback.rs:212:1: 212:18
-webview2-com-0.25.0,options::<impl windows::core::AsImpl<options::CoreWebView2EnvironmentOptions> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2EnvironmentOptions3>::as_impl,bug3,src/options.rs:26:1: 31:3
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ClearServerCertificateErrorActionsCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ClearServerCertificateErrorActionsCompletedHandler>::as_impl,bug3,src/callback.rs:525:1: 525:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::NavigationCompletedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2NavigationCompletedEventHandler>::as_impl,bug3,src/callback.rs:219:1: 219:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ScriptDialogOpeningEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ScriptDialogOpeningEventHandler>::as_impl,bug3,src/callback.rs:226:1: 226:18
-webview2-com-0.25.0,options::<impl windows::core::AsImpl<options::CoreWebView2EnvironmentOptions> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2EnvironmentOptions2>::as_impl,bug3,src/options.rs:26:1: 31:3
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameNavigationStartingEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameNavigationStartingEventHandler>::as_impl,bug3,src/callback.rs:460:1: 460:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ProcessFailedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ProcessFailedEventHandler>::as_impl,bug3,src/callback.rs:253:1: 253:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::BrowserProcessExitedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2BrowserProcessExitedEventHandler>::as_impl,bug3,src/callback.rs:383:1: 383:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FramePermissionRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FramePermissionRequestedEventHandler>::as_impl,bug3,src/callback.rs:505:1: 505:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::IsMutedChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2IsMutedChangedEventHandler>::as_impl,bug3,src/callback.rs:100:1: 100:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ContainsFullScreenElementChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ContainsFullScreenElementChangedEventHandler>::as_impl,bug3,src/callback.rs:334:1: 334:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::DevToolsProtocolEventReceivedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2DevToolsProtocolEventReceivedEventHandler>::as_impl,bug3,src/callback.rs:404:1: 404:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::SourceChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2SourceChangedEventHandler>::as_impl,bug3,src/callback.rs:198:1: 198:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::StateChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2StateChangedEventHandler>::as_impl,bug3,src/callback.rs:397:1: 397:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CapturePreviewCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CapturePreviewCompletedHandler>::as_impl,bug3,src/callback.rs:303:1: 303:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::TrySuspendCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2TrySuspendCompletedHandler>::as_impl,bug3,src/callback.rs:481:1: 481:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::GetFaviconCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2GetFaviconCompletedHandler>::as_impl,bug3,src/callback.rs:545:1: 545:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::WebResourceRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2WebResourceRequestedEventHandler>::as_impl,bug3,src/callback.rs:341:1: 341:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::ExecuteScriptCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2ExecuteScriptCompletedHandler>::as_impl,bug3,src/callback.rs:296:1: 296:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::NewBrowserVersionAvailableEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2NewBrowserVersionAvailableEventHandler>::as_impl,bug3,src/callback.rs:121:1: 121:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::IsDocumentPlayingAudioChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2IsDocumentPlayingAudioChangedEventHandler>::as_impl,bug3,src/callback.rs:93:1: 93:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::BasicAuthenticationRequestedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2BasicAuthenticationRequestedEventHandler>::as_impl,bug3,src/callback.rs:484:1: 484:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FaviconChangedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FaviconChangedEventHandler>::as_impl,bug3,src/callback.rs:538:1: 538:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::DownloadStartingEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2DownloadStartingEventHandler>::as_impl,bug3,src/callback.rs:369:1: 369:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::FrameContentLoadingEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2FrameContentLoadingEventHandler>::as_impl,bug3,src/callback.rs:411:1: 411:18
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::CreateCoreWebView2ControllerCompletedHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>::as_impl,bug3,src/callback.rs:114:1: 114:22
-webview2-com-0.25.0,callback::<impl windows::core::AsImpl<callback::WebResourceResponseReceivedEventHandler> for webview2_com_sys::Microsoft::Web::WebView2::Win32::ICoreWebView2WebResourceResponseReceivedEventHandler>::as_impl,bug3,src/callback.rs:348:1: 348:18
-lightproc-0.3.6-alpha.0,raw_proc::RawProc::<F, R, S>::from_ptr,bug3,src/raw_proc.rs:93:5: 106:6
-cfile-0.5.1,<unlocked::Unlocked as stream::Stream>::read_slice,bug3,src/unlocked.rs:115:5: 136:6
-cfile-0.5.1,<unlocked::Unlocked as stream::Stream>::write_slice,bug3,src/unlocked.rs:138:5: 159:6
-cfile-0.5.1,<cfile::CFileRef as stream::Stream>::read_slice,bug3,src/stream.rs:285:5: 306:6
-cfile-0.5.1,<cfile::CFileRef as stream::Stream>::write_slice,bug3,src/stream.rs:308:5: 329:6
-aya-log-common-0.1.13,TagLenValue::<'a, T>::write,bug3,src/lib.rs:122:5: 144:6
-sqa-jack-0.6.1,handler::set_handler,bug3,src/handler.rs:209:1: 228:2
-trailer-0.1.2,<Trailer<T> as std::ops::Drop>::drop,bug3,src/lib.rs:78:5: 83:6
-trailer-0.1.2,<Trailer<T> as std::ops::DerefMut>::deref_mut,bug3,src/lib.rs:94:5: 96:6
-trailer-0.1.2,<Trailer<T> as std::ops::Deref>::deref,bug3,src/lib.rs:88:5: 90:6
-trailer-0.1.2,Trailer::<T>::from,bug3,src/lib.rs:29:5: 37:6
-trailer-0.1.2,Trailer::<T>::new,bug3,src/lib.rs:18:5: 25:6
-redis-module-2.0.4,context::keys_cursor::KeysCursor::scan,bug3,src/context/keys_cursor.rs:38:5: 52:6
-aligned-vec-0.5.0,ABox::<T, A>::new,bug3,src/lib.rs:235:5: 244:6
-vapoursynth-0.4.0,function::Function::<'core>::new,bug3,src/function.rs:67:5: 116:6
-luminance-webgl-0.6.1,<webgl2::buffer::BufferSliceMut<'_, T, TARGET> as std::ops::Deref>::deref,bug3,src/webgl2/buffer.rs:214:3: 221:4
-luminance-webgl-0.6.1,<webgl2::buffer::BufferSliceMut<'_, T, TARGET> as std::ops::DerefMut>::deref_mut,bug3,src/webgl2/buffer.rs:228:3: 232:4
-atomic_ref-0.2.1,AtomicRef::<'a, T>::get_mut,bug3,src/lib.rs:189:5: 192:6
-sqlite3-0.24.0,<&'l [u8] as statement::Bindable>::bind,bug3,src/statement.rs:159:5: 174:6
-sqlite3-0.24.0,<&'l str as statement::Bindable>::bind,bug3,src/statement.rs:207:5: 222:6
-sqlite3-0.24.0,connection::Connection::iterate,bug3,src/connection.rs:60:5: 78:6
-sqlite3-0.24.0,connection::Connection::set_busy_handler,bug3,src/connection.rs:91:5: 107:6
-i-slint-renderer-skia-1.0.2,cached_image::SKIA_CACHED_IMAGE_VT::drop_in_place,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/i-slint-core-1.0.2/graphics/image.rs:23:1: 23:18
-i-slint-renderer-skia-1.0.2,cached_image::SKIA_CACHED_IMAGE_VT::size,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/i-slint-core-1.0.2/graphics/image.rs:23:1: 23:18
-i-slint-renderer-skia-1.0.2,cached_image::SKIA_CACHED_IMAGE_VT::cache_key,bug3,/root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/i-slint-core-1.0.2/graphics/image.rs:23:1: 23:18
-blosc-0.1.3,Context::compress,bug3,src/lib.rs:212:5: 242:6
-gl33-0.2.1,global_loader::gl_ptr_filter,bug3,src/global_loader.rs:12:1: 18:2
-gl33-0.2.1,struct_loader::GlFns::ptr_filter,bug3,src/struct_loader.rs:378:3: 384:4
-glommio-0.8.0,task::raw::RawTask::<F, R, S>::from_ptr,bug3,src/task/raw.rs:179:5: 191:6
-icmp-0.3.0,compat::setsockopt,bug3,src/compat.rs:96:1: 108:2
-icmp-0.3.0,compat::getsockopt,bug3,src/compat.rs:110:1: 124:2
-fltk-1.4.4,app::rt::add_raw_timeout,bug3,src/app/rt.rs:644:1: 651:2
-fltk-1.4.4,app::rt::repeat_raw_timeout,bug3,src/app/rt.rs:654:1: 661:2
-fltk-1.4.4,app::rt::remove_raw_timeout,bug3,src/app/rt.rs:664:1: 671:2
-fltk-1.4.4,app::rt::has_raw_timeout,bug3,src/app/rt.rs:674:1: 681:2
-fltk-1.4.4,window::DoubleWindow::platform_show,bug3,src/window.rs:415:5: 451:6
-fltk-1.4.4,window::DoubleWindow::platform_hide,bug3,src/window.rs:454:5: 498:6
-fltk-1.4.4,<browser::HoldBrowser as prelude::BrowserExt>::set_data,bug3,src/macros/browser.rs:364:17: 371:18
-fltk-1.4.4,<browser::Browser as prelude::BrowserExt>::set_data,bug3,src/macros/browser.rs:364:17: 371:18
-fltk-1.4.4,<browser::MultiBrowser as prelude::BrowserExt>::set_data,bug3,src/macros/browser.rs:364:17: 371:18
-fltk-1.4.4,<browser::FileBrowser as prelude::BrowserExt>::set_data,bug3,src/macros/browser.rs:364:17: 371:18
-fltk-1.4.4,<browser::SelectBrowser as prelude::BrowserExt>::set_data,bug3,src/macros/browser.rs:364:17: 371:18
-fltk-1.4.4,tree::TreeItem::set_user_data,bug3,src/tree.rs:1301:5: 1306:6
-fmod-0.10.2,fmod_sys::file_close_callback,bug3,src/fmod_sys.rs:125:1: 141:2
-fmod-0.10.2,fmod_sys::file_read_callback,bug3,src/fmod_sys.rs:143:1: 168:2
-fmod-0.10.2,fmod_sys::file_seek_callback,bug3,src/fmod_sys.rs:170:1: 187:2
-fmod-0.10.2,dsp::Dsp::set_user_data,bug3,src/dsp.rs:938:5: 962:6
-fmod-0.10.2,dsp_connection::DspConnection::set_user_data,bug3,src/dsp_connection.rs:121:5: 123:6
-fmod-0.10.2,sound::Sound::set_user_data,bug3,src/sound.rs:689:5: 714:6
-fmod-0.10.2,geometry::Geometry::set_user_data,bug3,src/geometry.rs:254:5: 256:6
-fmod-0.10.2,channel::Channel::set_user_data,bug3,src/channel.rs:679:5: 681:6
-fmod-0.10.2,sound_group::SoundGroup::set_user_data,bug3,src/sound_group.rs:185:5: 187:6
-fmod-0.10.2,fmod_sys::UserData::set_user_data,bug3,src/fmod_sys.rs:294:5: 296:6
-fmod-0.10.2,reverb::Reverb::set_user_data,bug3,src/reverb.rs:143:5: 145:6
-fmod-0.10.2,channel_group::ChannelGroup::set_user_data,bug3,src/channel_group.rs:331:5: 333:6
-ssh2-0.9.4,session::Session::userauth_keyboard_interactive,bug3,src/session.rs:355:5: 466:6
-dependency_runner-1.2.2,apiset::win10::Schema::<'a>::slice_len,bug3,src/apiset/win10.rs:28:5: 37:6
-dependency_runner-1.2.2,apiset::win10::Schema::<'a>::slice_len,bug3,src/apiset/win10.rs:28:5: 37:6
-dependency_runner-1.2.2,apiset::win10::Schema::<'a>::slice_len,bug3,src/apiset/win10.rs:28:5: 37:6
-sixtyfps-corelib-0.1.6,component::Component_vtable_mod::ComponentVTable::new::visit_children_item,bug3,component.rs:15:1: 15:10
-sixtyfps-corelib-0.1.6,component::Component_vtable_mod::ComponentVTable::new::get_item_ref,bug3,component.rs:15:1: 15:10
-sixtyfps-corelib-0.1.6,component::Component_vtable_mod::ComponentVTable::new::parent_item,bug3,component.rs:15:1: 15:10
-sixtyfps-corelib-0.1.6,component::Component_vtable_mod::ComponentVTable::new::layout_info,bug3,component.rs:15:1: 15:10
-sixtyfps-corelib-0.1.6,component::Component_vtable_mod::ComponentVTable::new::drop_in_place,bug3,component.rs:15:1: 15:10
-sixtyfps-corelib-0.1.6,item_tree::ItemVisitor_vtable_mod::ItemVisitorVTable::new::visit_item,bug3,item_tree.rs:106:1: 106:10
-sixtyfps-corelib-0.1.6,item_tree::ItemVisitor_vtable_mod::ItemVisitorVTable::new::drop,bug3,item_tree.rs:106:1: 106:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::Item_vtable_mod::ItemVTable::new::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RectangleVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BorderRectangleVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TouchAreaVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FocusScopeVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClipVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::OpacityVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::RotateVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::FlickableVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::WindowItemVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::BoxShadowVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::TextInputVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ImageItemVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::ClippedImageVTable::render,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::init,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::geometry,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::layout_info,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::input_event_filter_before_children,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::input_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::focus_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::key_event,bug3,items.rs:86:1: 86:10
-sixtyfps-corelib-0.1.6,items::PathVTable::render,bug3,items.rs:86:1: 86:10
-nfq-0.2.5,Nlmsg::<'a>::extra_header,bug3,src/lib.rs:154:5: 161:6
-nfq-0.2.5,Nlmsg::<'a>::put_slice,bug3,src/lib.rs:177:5: 180:6
-arrayfire-3.8.0,core::util::alloc_host,bug3,src/core/util.rs:55:1: 63:2
-arrayfire-3.8.0,core::util::free_host,bug3,src/core/util.rs:66:1: 71:2
-rlua-0.19.4,scope::Scope::<'lua, 'scope>::create_nonstatic_userdata,bug3,src/scope.rs:148:5: 300:6
-lever-0.1.4,alloc::bucket_allocate_cont,bug3,src/alloc/mod.rs:4:1: 15:2
-lever-0.1.4,alloc::bucket_alloc,bug3,src/alloc/mod.rs:17:1: 29:2
-ring_buffer-2.0.2,RingBuffer::<T>::shrink_to,bug3,src/lib.rs:817:5: 865:6
-ring_buffer-2.0.2,RingBuffer::<T>::grow,bug3,src/lib.rs:1019:5: 1066:6
-data-buffer-0.8.0,DataBuffer::as_slice,bug3,src/lib.rs:403:5: 406:6
-data-buffer-0.8.0,DataBuffer::as_mut_slice,bug3,src/lib.rs:411:5: 414:6
-data-buffer-0.8.0,DataBuffer::get,bug3,src/lib.rs:418:5: 422:6
-data-buffer-0.8.0,DataBuffer::get_ref,bug3,src/lib.rs:426:5: 430:6
-data-buffer-0.8.0,DataBuffer::get_mut,bug3,src/lib.rs:434:5: 438:6
-onig-6.4.0,find::<impl Regex>::scan_with_region,bug3,src/find.rs:146:5: 192:6
-onig-6.4.0,region::Region::tree_traverse_at,bug3,src/region.rs:156:5: 189:6
-onig-6.4.0,names::<impl Regex>::foreach_name,bug3,src/names.rs:17:5: 55:6
-asi_vulkan-0.9.0,memory::buffer::Buffer::update,bug3,src/memory/buffer.rs:118:20: 141:3
-imgui-0.11.0,Ui::new_id_ptr,bug3,src/lib.rs:336:5: 340:6
-imgui-0.11.0,internal::ImVector::<T>::replace_from_slice,bug3,src/internal.rs:24:5: 35:6
-imgui-0.11.0,draw_list::Callback::<'ui, F>::build,bug3,src/draw_list.rs:1213:5: 1225:6
-imgui-0.11.0,stacks::<impl Ui>::push_id_ptr,bug3,src/stacks.rs:507:5: 510:6
-webm-1.0.2,mux::Writer::<T>::new,bug3,src/lib/lib.rs:22:9: 65:10
-skia-safe-0.62.0,core::typeface::<impl prelude::RCHandle<skia_bindings::SkTypeface>>::text_to_glyphs,bug3,src/core/typeface.rs:178:5: 196:6
-skia-safe-0.62.0,core::image::<impl prelude::RCHandle<skia_bindings::SkImage>>::read_pixels,bug3,src/core/image.rs:924:5: 949:6
-skia-safe-0.62.0,core::pixmap::<impl prelude::Handle<skia_bindings::SkPixmap>>::read_pixels,bug3,src/core/pixmap.rs:192:5: 214:6
-skia-safe-0.62.0,core::data_table::<impl prelude::RCHandle<skia_bindings::SkDataTable>>::from_slice,bug3,src/core/data_table.rs:87:5: 96:6
-fil-rustacuda-0.1.3,<module::Symbol<'a, T> as memory::device::CopyDestination<T>>::copy_from,bug3,src/module.rs:278:5: 291:6
-fil-rustacuda-0.1.3,<module::Symbol<'a, T> as memory::device::CopyDestination<T>>::copy_to,bug3,src/module.rs:293:5: 306:6
-fil-rustacuda-0.1.3,stream::Stream::add_callback,bug3,src/stream.rs:185:5: 198:6
-fil-rustacuda-0.1.3,<memory::device::device_slice::DeviceSlice<T> as memory::device::CopyDestination<I>>::copy_from,bug3,src/memory/device/device_slice.rs:440:5: 458:6
-fil-rustacuda-0.1.3,<memory::device::device_slice::DeviceSlice<T> as memory::device::CopyDestination<I>>::copy_to,bug3,src/memory/device/device_slice.rs:460:5: 478:6
-fil-rustacuda-0.1.3,<memory::device::device_box::DeviceBox<T> as memory::device::CopyDestination<T>>::copy_from,bug3,src/memory/device/device_box.rs:258:5: 271:6
-fil-rustacuda-0.1.3,<memory::device::device_box::DeviceBox<T> as memory::device::CopyDestination<T>>::copy_to,bug3,src/memory/device/device_box.rs:273:5: 286:6
-awi-0.9.1,render::vulkan::asi::memory::buffer::Buffer::update,bug3,src/render/vulkan/asi/memory/buffer.rs:118:20: 141:3
-awi-0.9.1,render::opengl::asi::buffer::Buffer::set,bug3,src/render/opengl/asi/buffer.rs:36:2: 42:3
-libwebp-0.1.2,<boxed::WebpBox<T> as std::ops::Drop>::drop,bug3,src/boxed.rs:84:5: 88:6
-persistent_array-0.5.0,PersistentArray::<T>::new,bug3,src/lib.rs:52:5: 111:6
-persistent_array-0.5.0,<PersistentArray<T> as std::ops::DerefMut>::deref_mut,bug3,src/lib.rs:175:5: 182:6
-persistent_array-0.5.0,<PersistentArray<T> as std::ops::Deref>::deref,bug3,src/lib.rs:164:5: 171:6
-legion-0.4.0,internals::storage::packed::RawAlloc::<T>::new,bug3,src/internals/storage/packed.rs:28:5: 47:6
-legion-0.4.0,internals::storage::packed::RawAlloc::<T>::grow,bug3,src/internals/storage/packed.rs:53:5: 79:6
-value-bag-1.4.0,internal::cast::primitive::from_any,bug3,src/internal/cast/primitive.rs:11:1: 90:2
+append-only-vec-0.1.2,AppendOnlyVec::<T>::push,bug3,src/lib.rs:115:5: 174:6
+tree-buf-0.10.0,internal::buffer::Buffer::<T>::new,bug3,src/internal/buffer.rs:47:5: 55:6
