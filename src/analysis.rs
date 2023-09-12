@@ -536,7 +536,8 @@ impl<'tcx> ValueChecker<'tcx> {
 
         // we only focus on the type conversion between generic and concrete type
         // compare the range of value set to get the size status
-        let val_status = if (from_gen == true || from_ty.is_c_void(tcx)) && to_gen == false {
+        progress_info!("to_ty is c_void? {}", to_ty.is_c_void(tcx));
+        let val_status = if (from_gen == true || from_ty.is_c_void(tcx)) && (to_gen == false && !to_ty.is_c_void(tcx)) {
             // generic > concrete
             if ty_bnd.len() == 0 {
                 // from_ty could be arbitrary type
@@ -550,12 +551,12 @@ impl<'tcx> ValueChecker<'tcx> {
                 for satisfied_ty in ty_bnd {
                     if (satisfied_ty.is_numeric() || satisfied_ty.is_str() || satisfied_ty.is_char())
                         && (to_ty.is_bool() || to_ty.is_str() || to_ty.is_char() || to_ty.is_enum()) {
-                        res = Comparison::Less;
+                        // res = Comparison::Less;
                     }
                 }
                 res
             }
-        } else if from_gen == false && (to_gen == true || to_ty.is_c_void(tcx)) {
+        } else if from_gen == false && to_gen == true {
             // concrete > generic
             if ty_bnd.len() == 0 {
                 // to_ty could be arbitrary type
@@ -569,7 +570,7 @@ impl<'tcx> ValueChecker<'tcx> {
                 for satisfied_ty in ty_bnd {
                     if (from_ty.is_numeric() || from_ty.is_str() || from_ty.is_char())
                         && (satisfied_ty.is_bool() || satisfied_ty.is_str() || satisfied_ty.is_char() || satisfied_ty.is_enum()) {
-                        res = Comparison::Less;
+                        // res = Comparison::Less;
                     }
                 }
                 res

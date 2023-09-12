@@ -190,7 +190,10 @@ mod inner {
                     Ok(body) => {
                         let param_env = rcx.tcx().param_env(body_did);
                         let body_analyzer = BrokenBitPatternsBodyAnalyzer::new(rcx, param_env, body);
-                        Some(body_analyzer.analyze())
+
+                        let mut type_conv_hop: u8 = 0;
+
+                        Some(body_analyzer.analyze(type_conv_hop))
                     }
                 }
             } else {
@@ -198,7 +201,7 @@ mod inner {
             }
         }
 
-        fn analyze(mut self) -> BrokenBitPatternsStatus {
+        fn analyze(mut self, mut ty_conv_hop: u8) -> BrokenBitPatternsStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
             for statement in self.body.statements() {
@@ -227,6 +230,8 @@ mod inner {
                                                 let vc = ValueChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let value_status = vc.get_val_status();
 
+                                                ty_conv_hop += 1;
+
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
@@ -235,16 +240,18 @@ mod inner {
                                                         // if A could be generic type or composite type, and B is primitive type, taint as source
                                                         match value_status {
                                                             Comparison::Less => {
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
-                                                                self.status
-                                                                    .ty_convs
-                                                                    .push(statement.source_info.span);
+                                                                if ty_conv_hop == 1 {
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
 
-                                                                taint_analyzer.mark_sink(id);
-                                                                self.status
-                                                                    .creation
-                                                                    .push(statement.source_info.span);
-
+                                                                    taint_analyzer.mark_sink(id);
+                                                                    self.status
+                                                                        .creation
+                                                                        .push(statement.source_info.span);
+                                                                    progress_info!("cast leads to ub in this statement");
+                                                                }
                                                             },
                                                             _ => {},
                                                         }
@@ -267,6 +274,8 @@ mod inner {
                                                 let vc = ValueChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let value_status = vc.get_val_status();
 
+                                                ty_conv_hop += 1;
+
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
@@ -275,15 +284,18 @@ mod inner {
                                                         match value_status {
                                                             // make sure it is not kind of bug 1
                                                             Comparison::Less => {
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
-                                                                self.status
-                                                                    .ty_convs
-                                                                    .push(statement.source_info.span);
+                                                                if ty_conv_hop == 1 {
+                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                    self.status
+                                                                        .ty_convs
+                                                                        .push(statement.source_info.span);
 
-                                                                taint_analyzer.mark_sink(id);
-                                                                self.status
-                                                                    .creation
-                                                                    .push(statement.source_info.span);
+                                                                    taint_analyzer.mark_sink(id);
+                                                                    self.status
+                                                                        .creation
+                                                                        .push(statement.source_info.span);
+                                                                    progress_info!("transmute leads to ub in this statement");
+                                                                }
                                                             },
                                                             _ => {},
                                                         }
