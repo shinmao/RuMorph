@@ -50,6 +50,8 @@ In the column of Conv, it shows the method of type conversion:
 | [zub](https://crates.io/crates/zub) | D-BB 2 | transmute | return | [issue](https://github.com/nilq/zub-vm/issues/14) |
 | [xous](https://crates.io/crates/xous) | D-BB 2 | ptr-as | | [issue](https://github.com/betrusted-io/xous-core/issues/410) |
 | [natpmp](https://crates.io/crates/natpmp) | D-BL | ptr-as | | [issue](https://github.com/fengyc/natpmp/issues/2) |
+| [gfx-backend-gl](https://crates.io/crates/gfx-backend-gl) | D-BL | ptr-as | `std::slice::from_raw_parts` | [issue](https://github.com/gfx-rs/gfx/issues/3795) |
+| [spl-token-swap](https://crates.io/crates/spl-token-swap) | D-BB | ptr-as | return | [issue](https://github.com/solana-labs/solana-program-library/issues/5243) |
 
 
 
