@@ -76,7 +76,7 @@ pub enum AnalysisKind {
 }
 
 trait IntoReportLevel {
-    fn report_level(&self) -> ReportLevel;
+    fn report_level(&self, visibility: bool) -> ReportLevel;
 }
 
 impl Into<Cow<'static, str>> for AnalysisKind {
@@ -551,7 +551,7 @@ impl<'tcx> ValueChecker<'tcx> {
                 for satisfied_ty in ty_bnd {
                     if (satisfied_ty.is_numeric() || satisfied_ty.is_str() || satisfied_ty.is_char())
                         && (to_ty.is_bool() || to_ty.is_str() || to_ty.is_char() || to_ty.is_enum()) {
-                        // res = Comparison::Less;
+                        res = Comparison::Less;
                     }
                 }
                 res
@@ -570,7 +570,7 @@ impl<'tcx> ValueChecker<'tcx> {
                 for satisfied_ty in ty_bnd {
                     if (from_ty.is_numeric() || from_ty.is_str() || from_ty.is_char())
                         && (satisfied_ty.is_bool() || satisfied_ty.is_str() || satisfied_ty.is_char() || satisfied_ty.is_enum()) {
-                        // res = Comparison::Less;
+                        res = Comparison::Less;
                     }
                 }
                 res

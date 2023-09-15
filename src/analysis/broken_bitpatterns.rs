@@ -39,6 +39,8 @@ impl AnalysisError for BrokenBitPatternsError {
     }
 }
 
+
+
 pub struct BrokenBitPatternsChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
 }
@@ -54,11 +56,15 @@ impl<'tcx> BrokenBitPatternsChecker<'tcx> {
 
         // Iterates all (type, related function) pairs
         for (_ty_hir_id, (body_id, related_item_span)) in self.rcx.types_with_related_items() {
-
+            
+            let f_def_id = hir_map.body_owner_def_id(body_id).to_def_id();
             // print the funciton name of current body
             progress_info!("BrokenBitPatternsChecker::analyze({})", 
-                        tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
+                        tcx.def_path_str(f_def_id)
             );
+
+            let visible = tcx.visibility(f_def_id).is_public();
+            progress_info!("Current body is {}", visible);
 
 
             if let Some(status) = inner::BrokenBitPatternsBodyAnalyzer::analyze_body(self.rcx, body_id)
@@ -94,7 +100,7 @@ impl<'tcx> BrokenBitPatternsChecker<'tcx> {
 
                     rumorph_report(Report::with_color_span(
                         tcx,
-                        behavior_flag.report_level(),
+                        behavior_flag.report_level(visible),
                         AnalysisKind::BrokenBitPatterns(behavior_flag),
                         format!(
                             "Potential broken bit patterns issue in `{}`",
@@ -207,6 +213,7 @@ mod inner {
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
+                progress_info!("statement: {:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         // lhs could also contains deref operation
@@ -354,123 +361,113 @@ mod inner {
                 }
             }
 
-            // for (_id, terminator) in self.body.terminators().enumerate() {
-            //     progress_info!("terminator: {:?}", terminator);
-            //     match terminator.kind {
-            //         ir::TerminatorKind::StaticCall {
-            //             callee_did,
-            //             callee_substs,
-            //             ref args,
-            //             dest,
-            //             ..
-            //         } => {
-            //             let tcx = self.rcx.tcx();
-            //             // TyCtxtExtension
-            //             let ext = tcx.ext();
-            //             // Check for lifetime bypass
-            //             let symbol_vec = ext.get_def_path(callee_did);
-            //             progress_info!("terminator with symbol: {:?}", symbol_vec);
-            //             if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-            //                 // if self.fn_called_on_copy(
-            //                 //     (callee_did, args),
-            //                 //     &[&PTR_READ[..], &PTR_DIRECT_READ[..]],
-            //                 // ) {
-            //                 //     // read on Copy types is not a lifetime bypass.
-            //                 //     continue;
-            //                 // }
+            for (_id, terminator) in self.body.terminators().enumerate() {
+                progress_info!("terminator: {:?}", terminator);
+                match terminator.kind {
+                    ir::TerminatorKind::StaticCall {
+                        callee_did,
+                        callee_substs,
+                        ref args,
+                        dest,
+                        ..
+                    } => {
+                        let tcx = self.rcx.tcx();
+                        // TyCtxtExtension
+                        let ext = tcx.ext();
+                        // Check for lifetime bypass
+                        let symbol_vec = ext.get_def_path(callee_did);
+                        progress_info!("terminator with symbol: {:?}", symbol_vec);
+                        let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
+                        if sym.contains("alloc") {
+                            let id = dest.local.index();
+                            taint_analyzer
+                                .clear_source(id);
+                        } else if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
+                            // taint_analyzer
+                            //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
+                            // self.status
+                            //     .strong_bypasses
+                            //     .push(terminator.original.source_info.span);
+                        } else if paths::WEAK_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
+                            // if self.fn_called_on_copy(
+                            //     (callee_did, args),
+                            //     &[&PTR_WRITE[..], &PTR_DIRECT_WRITE[..]],
+                            // ) {
+                            //     // writing Copy types is not a lifetime bypass.
+                            //     continue;
+                            // }
 
-            //                 // if ext.match_def_path(callee_did, &VEC_SET_LEN)
-            //                 //     && vec_set_len_to_0(self.rcx, callee_did, args)
-            //                 // {
-            //                 //     // Leaking data is safe (`vec.set_len(0);`)
-            //                 //     continue;
-            //                 // }
-
-            //                 // taint_analyzer
-            //                 //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
-            //                 // self.status
-            //                 //     .strong_bypasses
-            //                 //     .push(terminator.original.source_info.span);
-            //             } else if paths::WEAK_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-            //                 // if self.fn_called_on_copy(
-            //                 //     (callee_did, args),
-            //                 //     &[&PTR_WRITE[..], &PTR_DIRECT_WRITE[..]],
-            //                 // ) {
-            //                 //     // writing Copy types is not a lifetime bypass.
-            //                 //     continue;
-            //                 // }
-
-            //                 // taint_analyzer
-            //                 //     .mark_source(id, WEAK_BYPASS_MAP.get(&symbol_vec).unwrap());
-            //                 // self.status
-            //                 //     .weak_bypasses
-            //                 //     .push(terminator.original.source_info.span);
-            //             } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
-            //                 for arg in args {
-            //                     // arg: mir::Operand
-            //                     match arg {
-            //                         Operand::Copy(pl) | Operand::Move(pl) => {
-            //                             let id = pl.local.index();
-            //                             taint_analyzer.mark_sink(id);
-            //                             self.status
-            //                                 .unresolvable_generic_functions
-            //                                 .push(terminator.original.source_info.span);
-            //                         },
-            //                         _ => {},
-            //                     }
-            //                 }
-            //             } else {
-            //                 // Check for unresolvable generic function calls
-            //                 match Instance::resolve(
-            //                     self.rcx.tcx(),
-            //                     self.param_env,
-            //                     callee_did,
-            //                     callee_substs,
-            //                 ) {
-            //                     Err(_e) => log_err!(ResolveError),
-            //                     Ok(Some(_)) => {
-            //                         // Calls were successfully resolved
-            //                     }
-            //                     Ok(None) => {
-            //                         // Call contains unresolvable generic parts
-            //                         // Here, we are making a two step approximation:
-            //                         // 1. Unresolvable generic code is potentially user-provided
-            //                         // 2. User-provided code potentially deref the resulted type of type conversion
-            //                         for arg in args {
-            //                             // arg: mir::Operand
-            //                             match arg {
-            //                                 Operand::Copy(pl) | Operand::Move(pl) => {
-            //                                     let id = pl.local.index();
-            //                                     taint_analyzer.mark_sink(id);
-            //                                     self.status
-            //                                         .unresolvable_generic_functions
-            //                                         .push(terminator.original.source_info.span);
-            //                                 },
-            //                                 _ => {},
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         },
-            //         ir::TerminatorKind::Return => {
-            //             // _0 is always considered as return value
-            //             let return_pl0 = self.body.local_decls().get(RETURN_PLACE);
-            //             if return_pl0.is_some() {
-            //                 match return_pl0.unwrap().ty.kind() {
-            //                     TyKind::Ref(..) => {
-            //                         taint_analyzer.mark_sink(0);
-            //                         self.status
-            //                             .plain_deref
-            //                             .push(terminator.original.source_info.span);
-            //                     },
-            //                     _ => {},
-            //                 }
-            //             }
-            //         },
-            //         _ => {},
-            //     }
-            // }
+                            // taint_analyzer
+                            //     .mark_source(id, WEAK_BYPASS_MAP.get(&symbol_vec).unwrap());
+                            // self.status
+                            //     .weak_bypasses
+                            //     .push(terminator.original.source_info.span);
+                        } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
+                            for arg in args {
+                                // arg: mir::Operand
+                                // match arg {
+                                //     Operand::Copy(pl) | Operand::Move(pl) => {
+                                //         let id = pl.local.index();
+                                //         taint_analyzer.mark_sink(id);
+                                //         self.status
+                                //             .unresolvable_generic_functions
+                                //             .push(terminator.original.source_info.span);
+                                //     },
+                                //     _ => {},
+                                // }
+                            }
+                        } else {
+                            // Check for unresolvable generic function calls
+                            match Instance::resolve(
+                                self.rcx.tcx(),
+                                self.param_env,
+                                callee_did,
+                                callee_substs,
+                            ) {
+                                Err(_e) => log_err!(ResolveError),
+                                Ok(Some(_)) => {
+                                    // Calls were successfully resolved
+                                }
+                                Ok(None) => {
+                                    // Call contains unresolvable generic parts
+                                    // Here, we are making a two step approximation:
+                                    // 1. Unresolvable generic code is potentially user-provided
+                                    // 2. User-provided code potentially deref the resulted type of type conversion
+                                    // for arg in args {
+                                    //     // arg: mir::Operand
+                                    //     match arg {
+                                    //         Operand::Copy(pl) | Operand::Move(pl) => {
+                                    //             let id = pl.local.index();
+                                    //             taint_analyzer.mark_sink(id);
+                                    //             self.status
+                                    //                 .unresolvable_generic_functions
+                                    //                 .push(terminator.original.source_info.span);
+                                    //         },
+                                    //         _ => {},
+                                    //     }
+                                    // }
+                                }
+                            }
+                        }
+                    },
+                    ir::TerminatorKind::Return => {
+                        // _0 is always considered as return value
+                        let return_pl0 = self.body.local_decls().get(RETURN_PLACE);
+                        if return_pl0.is_some() {
+                            match return_pl0.unwrap().ty.kind() {
+                                TyKind::Ref(..) => {
+                                    // taint_analyzer.mark_sink(0);
+                                    // self.status
+                                    //     .plain_deref
+                                    //     .push(terminator.original.source_info.span);
+                                },
+                                _ => {},
+                            }
+                        }
+                    },
+                    _ => {},
+                }
+            }
 
             self.status.behavior_flag = taint_analyzer.propagate();
             self.status
@@ -530,7 +527,7 @@ bitflags! {
 }
 
 impl IntoReportLevel for BehaviorFlag {
-    fn report_level(&self) -> ReportLevel {
+    fn report_level(&self, visibility: bool) -> ReportLevel {
         use BehaviorFlag as Flag;
 
         let high = Flag::CAST | Flag::TRANSMUTE;
@@ -543,7 +540,13 @@ impl IntoReportLevel for BehaviorFlag {
         // } else {
         //     ReportLevel::Info
         // }
-        ReportLevel::Error
+
+        if visibility == false {
+            // if the function is private
+            ReportLevel::Warning
+        } else {
+            ReportLevel::Error
+        }
     }
 }
 

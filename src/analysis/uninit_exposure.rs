@@ -54,11 +54,14 @@ impl<'tcx> UninitExposureChecker<'tcx> {
 
         // Iterates all (type, related function) pairs
         for (_ty_hir_id, (body_id, related_item_span)) in self.rcx.types_with_related_items() {
-
+            
+            let f_def_id = hir_map.body_owner_def_id(body_id).to_def_id();
             // print the funciton name of current body
             progress_info!("UninitExposureChecker::analyze({})", 
-                        tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
+                        tcx.def_path_str(f_def_id)
             );
+
+            let visible = tcx.visibility(f_def_id).is_public();
 
 
             if let Some(status) = inner::UninitExposureBodyAnalyzer::analyze_body(self.rcx, body_id)
@@ -94,7 +97,7 @@ impl<'tcx> UninitExposureChecker<'tcx> {
 
                     rumorph_report(Report::with_color_span(
                         tcx,
-                        behavior_flag.report_level(),
+                        behavior_flag.report_level(visible),
                         AnalysisKind::UninitExposure(behavior_flag),
                         format!(
                             "Potential uninit exposure issue in `{}`",
@@ -621,7 +624,7 @@ bitflags! {
 }
 
 impl IntoReportLevel for BehaviorFlag {
-    fn report_level(&self) -> ReportLevel {
+    fn report_level(&self, visibility: bool) -> ReportLevel {
         use BehaviorFlag as Flag;
 
         let high = Flag::CAST | Flag::TRANSMUTE;
@@ -634,7 +637,12 @@ impl IntoReportLevel for BehaviorFlag {
         // } else {
         //     ReportLevel::Info
         // }
-        ReportLevel::Error
+        
+        if visibility == false {
+            ReportLevel::Warning
+        } else {
+            ReportLevel::Error
+        }
     }
 }
 
