@@ -1,4 +1,4 @@
-use std::{cmp::min, collections::VecDeque};
+use std::{cmp::min, collections::VecDeque, collections::HashSet};
 
 use crate::ir;
 
@@ -52,7 +52,24 @@ impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
     }
 
     pub fn clear_source(&mut self, id: usize) {
-        self.sources[id] = T::default();
+        // use bfs to clean the tainted source
+        let mut work_list = VecDeque::new();
+        let mut visited = HashSet::new();
+
+        work_list.push_back(id);
+        visited.insert(id);
+        while let Some(current) = work_list.pop_front() {
+            for next in self.graph.next(current) {
+                if !visited.contains(&next) {
+                    work_list.push_back(next);
+                    visited.insert(next);
+                }
+            }
+        }
+
+        for v in visited.iter() {
+            self.sources[*v] = T::default();
+        }
     }
 
     pub fn mark_sink(&mut self, id: usize) {
