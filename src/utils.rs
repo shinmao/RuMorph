@@ -1,6 +1,6 @@
 use rustc_middle::ty::{Instance, InstanceDef, TyCtxt};
 use rustc_middle::mir::pretty::write_mir_pretty;
-use rustc_span::{CharPos, Span};
+use rustc_span::{CharPos, Span, def_id::DefId};
 
 use std::io::Write;
 use std::rc::Rc;
@@ -291,4 +291,22 @@ pub fn print_mir_to_file<'tcx>(tcx: TyCtxt<'tcx>, instance: Instance<'tcx>, outp
         }
         _ => info!("Cannot print MIR: `{:?}` is a shim", instance),
     }
+}
+
+pub fn check_visibility<'tcx>(tcx: TyCtxt<'tcx>, func_defid: DefId) -> bool {
+    // return false if function can't be reachable to users
+    let visible = tcx.visibility(func_defid).is_public();
+    if visible == false {
+        return false;
+    }
+    
+    if let Some(f_loc_defid) = func_defid.as_local() {
+        let mod_loc_defid = tcx.parent_module_from_def_id(f_loc_defid);
+        let mod_def_id = mod_loc_defid.to_def_id();
+        if tcx.visibility(mod_def_id).is_public() == false {
+            return false;
+        }
+    }
+
+    true
 }

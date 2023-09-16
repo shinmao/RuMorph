@@ -257,23 +257,28 @@ impl<'tcx> LayoutChecker<'tcx> {
             let mut ag_status = if let TyKind::Param(_) = t_ty_.kind() {
                 // in this case, we can't get layout because t_ty_ is generic type
                 // call TraitChecker for help
-                if tc.is_ty_arbitrary() {
-                    // t_ty_ could be arbitrary types
-                    Comparison::Less
-                } else {
-                    // t_ty_ is limited to trait bound
-                    let mut res = Comparison::Noidea;
-                    for satisfied_ty in &ty_bnd {
-                        let sub_lc = LayoutChecker::new(rc, p_env, f_ty_, *satisfied_ty);
-                        let sub_align_status = sub_lc.get_align_status();
-                        match sub_align_status {
-                            Comparison::Less => {
-                                res = Comparison::Less;
-                            },
-                            _ => {},
+                let is_wrapped = f_ty_.contains(t_ty_);
+                if !is_wrapped {
+                    if tc.is_ty_arbitrary() {
+                        // t_ty_ could be arbitrary types
+                        Comparison::Less
+                    } else {
+                        // t_ty_ is limited to trait bound
+                        let mut res = Comparison::Noidea;
+                        for satisfied_ty in &ty_bnd {
+                            let sub_lc = LayoutChecker::new(rc, p_env, f_ty_, *satisfied_ty);
+                            let sub_align_status = sub_lc.get_align_status();
+                            match sub_align_status {
+                                Comparison::Less => {
+                                    res = Comparison::Less;
+                                },
+                                _ => {},
+                            }
                         }
+                        res
                     }
-                    res
+                } else {
+                    Comparison::Equal
                 }
             } else {
                 // we can't get layout because t_ty_ might be external type
@@ -312,27 +317,32 @@ impl<'tcx> LayoutChecker<'tcx> {
             let mut ag_status = if let TyKind::Param(_) = f_ty_.kind() {
                 // f_ty_ is generic type
                 // call TraitChecker for help
-                if tc.is_ty_arbitrary() {
-                    // f_ty_ could be arbitrary types
-                    if to_align.abi.bytes() == 1 {
-                        Comparison::NoideaG
+                let is_wrapped = t_ty_.contains(f_ty_);
+                if !is_wrapped {
+                    if tc.is_ty_arbitrary() {
+                        // f_ty_ could be arbitrary types
+                        if to_align.abi.bytes() == 1 {
+                            Comparison::NoideaG
+                        } else {
+                            Comparison::Less
+                        }
                     } else {
-                        Comparison::Less
+                        // f_ty_ is limited to trait bound
+                        let mut res = Comparison::Noidea;
+                        for satisfied_ty in &ty_bnd {
+                            let sub_lc = LayoutChecker::new(rc, p_env, *satisfied_ty, t_ty_);
+                            let sub_align_status = sub_lc.get_align_status();
+                            match sub_align_status {
+                                Comparison::Less => {
+                                    res = Comparison::Less;
+                                },
+                                _ => {},
+                            }
+                        }
+                        res
                     }
                 } else {
-                    // f_ty_ is limited to trait bound
-                    let mut res = Comparison::Noidea;
-                    for satisfied_ty in &ty_bnd {
-                        let sub_lc = LayoutChecker::new(rc, p_env, *satisfied_ty, t_ty_);
-                        let sub_align_status = sub_lc.get_align_status();
-                        match sub_align_status {
-                            Comparison::Less => {
-                                res = Comparison::Less;
-                            },
-                            _ => {},
-                        }
-                    }
-                    res
+                    Comparison::Equal
                 }
             } else {
                 // we can't identify f_ty layout not because genric type
@@ -536,44 +546,58 @@ impl<'tcx> ValueChecker<'tcx> {
 
         // we only focus on the type conversion between generic and concrete type
         // compare the range of value set to get the size status
+        progress_info!("from_ty is c_void? {}", from_ty.is_c_void(tcx));
         progress_info!("to_ty is c_void? {}", to_ty.is_c_void(tcx));
-        let val_status = if (from_gen == true || from_ty.is_c_void(tcx)) && (to_gen == false && !to_ty.is_c_void(tcx)) {
+        let is_from_c_void = from_ty.to_string().contains("c_void");
+        let is_to_c_void = to_ty.to_string().contains("c_void");
+        let val_status = if (from_gen == true || is_from_c_void) && (to_gen == false && !is_to_c_void) {
             // generic > concrete
-            if ty_bnd.len() == 0 {
-                // from_ty could be arbitrary type
-                if to_ty.is_bool() || to_ty.is_str() || to_ty.is_char() || to_ty.is_enum() {
-                    Comparison::Less
+            // is from_ty wrapped in to_ty?
+            let is_wrapped = to_ty.contains(from_ty);
+            if !is_wrapped {
+                if ty_bnd.len() == 0 {
+                    // from_ty could be arbitrary type
+                    if to_ty.is_bool() || to_ty.is_str() || to_ty.is_char() || to_ty.is_enum() {
+                        Comparison::Less
+                    } else {
+                        Comparison::Noidea
+                    }
                 } else {
-                    Comparison::Noidea
+                    let mut res = Comparison::Noidea;
+                    for satisfied_ty in ty_bnd {
+                        if (satisfied_ty.is_numeric() || satisfied_ty.is_str() || satisfied_ty.is_char())
+                            && (to_ty.is_bool() || to_ty.is_str() || to_ty.is_char() || to_ty.is_enum()) {
+                            res = Comparison::Less;
+                        }
+                    }
+                    res
                 }
             } else {
-                let mut res = Comparison::Noidea;
-                for satisfied_ty in ty_bnd {
-                    if (satisfied_ty.is_numeric() || satisfied_ty.is_str() || satisfied_ty.is_char())
-                        && (to_ty.is_bool() || to_ty.is_str() || to_ty.is_char() || to_ty.is_enum()) {
-                        res = Comparison::Less;
-                    }
-                }
-                res
+                Comparison::Equal
             }
         } else if from_gen == false && to_gen == true {
             // concrete > generic
-            if ty_bnd.len() == 0 {
-                // to_ty could be arbitrary type
-                if from_ty.is_numeric() || from_ty.is_str() || from_ty.is_char() {
-                    Comparison::Less
+            let is_wrapped = from_ty.contains(to_ty);
+            if !is_wrapped {
+                if ty_bnd.len() == 0 {
+                    // to_ty could be arbitrary type
+                    if from_ty.is_numeric() || from_ty.is_str() || from_ty.is_char() {
+                        Comparison::Less
+                    } else {
+                        Comparison::Noidea
+                    }
                 } else {
-                    Comparison::Noidea
+                    let mut res = Comparison::Noidea;
+                    for satisfied_ty in ty_bnd {
+                        if (from_ty.is_numeric() || from_ty.is_str() || from_ty.is_char())
+                            && (satisfied_ty.is_bool() || satisfied_ty.is_str() || satisfied_ty.is_char() || satisfied_ty.is_enum()) {
+                            res = Comparison::Less;
+                        }
+                    }
+                    res
                 }
             } else {
-                let mut res = Comparison::Noidea;
-                for satisfied_ty in ty_bnd {
-                    if (from_ty.is_numeric() || from_ty.is_str() || from_ty.is_char())
-                        && (satisfied_ty.is_bool() || satisfied_ty.is_str() || satisfied_ty.is_char() || satisfied_ty.is_enum()) {
-                        res = Comparison::Less;
-                    }
-                }
-                res
+                Comparison::Equal
             }
         } else {
             Comparison::Noidea

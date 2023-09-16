@@ -54,6 +54,10 @@ pub const PTR_DIRECT_DROP_IN_PLACE: [&str; 5] =
 // MaybeUninit function call
 pub const MAYBEUNINIT: [&str; 5] = ["core", "mem", "maybe_uninit", "MaybeUninit", "uninit"];
 
+// str from unchecked
+pub const STR_FROM_UNCHECKED: [&str; 4] = ["core", "str", "converts", "from_utf8_unchecked"];
+pub const STR_FROM_UNCHECKED_MUT: [&str; 4] = ["core", "str", "converts", "from_utf8_unchecked_mut"];
+
 pub struct PathSet {
     set: HashSet<Vec<Symbol>>,
 }
@@ -109,6 +113,13 @@ pub static WEAK_LIFETIME_BYPASS_LIST: Lazy<PathSet> = Lazy::new(move || {
         &PTR_SLICE_FROM_RAW_PARTS_MUT,
         &SLICE_FROM_RAW_PARTS,
         &SLICE_FROM_RAW_PARTS_MUT,
+    ])
+});
+
+pub static STR_UNCHECKED_LIST: Lazy<PathSet> = Lazy::new(move || {
+    PathSet::new(&[
+        &STR_FROM_UNCHECKED,
+        &STR_FROM_UNCHECKED_MUT,
     ])
 });
 

@@ -72,12 +72,42 @@ impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
         }
     }
 
+    pub fn is_reachable(&self, start_id: usize, end_id: usize) -> bool {
+        if start_id == end_id {
+            return true;
+        }
+        
+        let mut work_list = VecDeque::new();
+        let mut visited = HashSet::new();
+
+        work_list.push_back(start_id);
+        visited.insert(start_id);
+        while let Some(curr) = work_list.pop_front() {
+            for next in self.graph.next(curr) {
+                if next == end_id {
+                    return true;
+                }
+                if !visited.contains(&next) {
+                    work_list.push_back(next);
+                    visited.insert(next);
+                }
+            }
+        }
+
+        false
+    }
+
     pub fn mark_sink(&mut self, id: usize) {
         self.sinks[id] = true;
     }
 
     pub fn unmark_sink(&mut self, id: usize) {
         self.sinks[id] = false;
+    }
+
+    pub fn mark_at_once(&mut self, id: usize, taint: &T) {
+        self.sources[id].join(taint);
+        self.sinks[id] = true;
     }
 
     // Unmark all sources and sinks

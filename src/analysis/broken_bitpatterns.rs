@@ -63,15 +63,13 @@ impl<'tcx> BrokenBitPatternsChecker<'tcx> {
                         tcx.def_path_str(f_def_id)
             );
 
-            let visible = tcx.visibility(f_def_id).is_public();
-            progress_info!("Current body is {}", visible);
-
-
+            let visible = utils::check_visibility(tcx, f_def_id);
+            
             if let Some(status) = inner::BrokenBitPatternsBodyAnalyzer::analyze_body(self.rcx, body_id)
             {
                 let behavior_flag = status.behavior_flag();
                 if !behavior_flag.is_empty()
-                    //&& behavior_flag.report_level() >= self.rcx.report_level()
+                    && behavior_flag.report_level(visible) >= self.rcx.report_level()
                 {
                     progress_info!("find the bug with behavior_flag: {:?}", behavior_flag);
                     let mut color_span = unwrap_or!(
@@ -197,9 +195,9 @@ mod inner {
                         let param_env = rcx.tcx().param_env(body_did);
                         let body_analyzer = BrokenBitPatternsBodyAnalyzer::new(rcx, param_env, body);
 
-                        let mut type_conv_hop: u8 = 0;
+                        let mut tconv_source: Vec<usize> = Vec::new();
 
-                        Some(body_analyzer.analyze(type_conv_hop))
+                        Some(body_analyzer.analyze(tconv_source))
                     }
                 }
             } else {
@@ -207,7 +205,8 @@ mod inner {
             }
         }
 
-        fn analyze(mut self, mut ty_conv_hop: u8) -> BrokenBitPatternsStatus {
+        fn analyze(mut self, mut tconv_source: Vec<usize>) -> BrokenBitPatternsStatus {
+            let loc_decls = self.body.local_decls();
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
             for statement in self.body.statements() {
@@ -216,15 +215,6 @@ mod inner {
                 progress_info!("statement: {:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
-                        // lhs could also contains deref operation
-                        if lplace.is_indirect() {
-                            // contains deref projection
-                            progress_info!("warn::deref on place:{}", lplace.local.index());
-                            taint_analyzer.mark_sink(lplace.local.index());
-                            self.status
-                                .plain_deref
-                                .push(statement.source_info.span);
-                        }
                         // rhs
                         match rval {
                             Rvalue::Cast(cast_kind, op, to_ty) => {
@@ -237,8 +227,6 @@ mod inner {
                                                 let vc = ValueChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let value_status = vc.get_val_status();
 
-                                                ty_conv_hop += 1;
-
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
@@ -247,20 +235,30 @@ mod inner {
                                                         // if A could be generic type or composite type, and B is primitive type, taint as source
                                                         match value_status {
                                                             Comparison::Less => {
-                                                                if ty_conv_hop == 1 {
-                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                let mut pre_conv: bool = false;
+                                                                if !tconv_source.is_empty() {
+                                                                    for conv_id in tconv_source.iter() {
+                                                                        if taint_analyzer.is_reachable(*conv_id, id) {
+                                                                            pre_conv = true;
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                if !pre_conv {
+                                                                    taint_analyzer.mark_at_once(id, &BehaviorFlag::CAST);
                                                                     self.status
                                                                         .ty_convs
                                                                         .push(statement.source_info.span);
 
-                                                                    taint_analyzer.mark_sink(id);
                                                                     self.status
                                                                         .creation
                                                                         .push(statement.source_info.span);
                                                                     progress_info!("cast leads to ub in this statement");
                                                                 }
                                                             },
-                                                            _ => {},
+                                                            _ => {
+                                                                tconv_source.push(id);
+                                                            },
                                                         }
                                                     },
                                                     Err(_e) => {
@@ -281,8 +279,6 @@ mod inner {
                                                 let vc = ValueChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let value_status = vc.get_val_status();
 
-                                                ty_conv_hop += 1;
-
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
@@ -291,20 +287,30 @@ mod inner {
                                                         match value_status {
                                                             // make sure it is not kind of bug 1
                                                             Comparison::Less => {
-                                                                if ty_conv_hop == 1 {
-                                                                    taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                let mut pre_conv: bool = false;
+                                                                if !tconv_source.is_empty() {
+                                                                    for conv_id in tconv_source.iter() {
+                                                                        if taint_analyzer.is_reachable(*conv_id, id) {
+                                                                            pre_conv = true;
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                if !pre_conv {
+                                                                    taint_analyzer.mark_at_once(id, &BehaviorFlag::TRANSMUTE);
                                                                     self.status
                                                                         .ty_convs
                                                                         .push(statement.source_info.span);
 
-                                                                    taint_analyzer.mark_sink(id);
                                                                     self.status
                                                                         .creation
                                                                         .push(statement.source_info.span);
-                                                                    progress_info!("transmute leads to ub in this statement");
+                                                                    progress_info!("cast leads to ub in this statement");
                                                                 }
                                                             },
-                                                            _ => {},
+                                                            _ => {
+                                                                tconv_source.push(id);
+                                                            },
                                                         }
                                                     },
                                                     Err(_e) => {
@@ -318,40 +324,6 @@ mod inner {
                                         }
                                     },
                                     _ => (),
-                                }
-                            },
-                            Rvalue::Use(op)
-                            | Rvalue::Repeat(op, _)
-                            | Rvalue::ShallowInitBox(op, _) => {
-                                match op {
-                                    Operand::Copy(pl) | Operand::Move(pl) => {
-                                        let id = pl.local.index();
-                                        progress_info!("[dbg] lplace: {}, rplace: {}", lplace.local.index(), pl.local.index());
-                                        if pl.is_indirect() {
-                                            // contains deref projection
-                                            progress_info!("warn::deref on place:{}", id);
-                                            taint_analyzer.mark_sink(id);
-                                            self.status
-                                                .plain_deref
-                                                .push(statement.source_info.span);
-                                        }
-                                    },
-                                    _ => {},
-                                }
-                            },
-                            Rvalue::Ref(_, _, pl)
-                            | Rvalue::AddressOf(_, pl)
-                            | Rvalue::Len(pl)
-                            | Rvalue::Discriminant(pl)
-                            | Rvalue::CopyForDeref(pl) => {
-                                let id = pl.local.index();
-                                if pl.is_indirect() {
-                                    // contains deref projection
-                                    progress_info!("warn::deref on place:{}", id);
-                                    taint_analyzer.mark_sink(id);
-                                    self.status
-                                        .plain_deref
-                                        .push(statement.source_info.span);
                                 }
                             },
                             _ => {},
@@ -382,6 +354,22 @@ mod inner {
                             let id = dest.local.index();
                             taint_analyzer
                                 .clear_source(id);
+                        } else if sym.starts_with("from") && sym.ends_with("unchecked") {
+                            let id = dest.local.index();
+                            for conv_id in tconv_source.iter() {
+                                if taint_analyzer.is_reachable(*conv_id, id) {
+                                    taint_analyzer.mark_at_once(id, &BehaviorFlag::FUNC);
+                                    self.status
+                                        .ty_convs
+                                        .push(terminator.original.source_info.span);
+
+                                    self.status
+                                        .creation
+                                        .push(terminator.original.source_info.span);
+                                    progress_info!("leads to ub in this terminator");
+                                    break;
+                                }
+                            }
                         } else if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
                             // taint_analyzer
                             //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
@@ -402,52 +390,6 @@ mod inner {
                             // self.status
                             //     .weak_bypasses
                             //     .push(terminator.original.source_info.span);
-                        } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
-                            for arg in args {
-                                // arg: mir::Operand
-                                // match arg {
-                                //     Operand::Copy(pl) | Operand::Move(pl) => {
-                                //         let id = pl.local.index();
-                                //         taint_analyzer.mark_sink(id);
-                                //         self.status
-                                //             .unresolvable_generic_functions
-                                //             .push(terminator.original.source_info.span);
-                                //     },
-                                //     _ => {},
-                                // }
-                            }
-                        } else {
-                            // Check for unresolvable generic function calls
-                            match Instance::resolve(
-                                self.rcx.tcx(),
-                                self.param_env,
-                                callee_did,
-                                callee_substs,
-                            ) {
-                                Err(_e) => log_err!(ResolveError),
-                                Ok(Some(_)) => {
-                                    // Calls were successfully resolved
-                                }
-                                Ok(None) => {
-                                    // Call contains unresolvable generic parts
-                                    // Here, we are making a two step approximation:
-                                    // 1. Unresolvable generic code is potentially user-provided
-                                    // 2. User-provided code potentially deref the resulted type of type conversion
-                                    // for arg in args {
-                                    //     // arg: mir::Operand
-                                    //     match arg {
-                                    //         Operand::Copy(pl) | Operand::Move(pl) => {
-                                    //             let id = pl.local.index();
-                                    //             taint_analyzer.mark_sink(id);
-                                    //             self.status
-                                    //                 .unresolvable_generic_functions
-                                    //                 .push(terminator.original.source_info.span);
-                                    //         },
-                                    //         _ => {},
-                                    //     }
-                                    // }
-                                }
-                            }
                         }
                     },
                     ir::TerminatorKind::Return => {
@@ -523,6 +465,7 @@ bitflags! {
     pub struct BehaviorFlag: u16 {
         const CAST = 0b00000001;
         const TRANSMUTE = 0b00000010;
+        const FUNC = 0b00000100;
     }
 }
 
