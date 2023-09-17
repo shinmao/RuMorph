@@ -27,7 +27,7 @@ In the colum of Status, it shows the confirmation by packages' authors or RUSTSE
 | [cyfs-base](https://crates.io/crates/cyfs-base) | D-BL |  transmute | 🌕 | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/buckyos/CYFS/274?logo=github)](https://github.com/buckyos/CYFS/issues/274) |
 | [d4](https://crates.io/crates/d4) | D-BL | transmute | 🌓 | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/38/d4-format/71?logo=github)](https://github.com/38/d4-format/issues/71) |
 | [hash-rs](https://crates.io/crates/hash-rs) | D-BL 3 | ptr-as | 🌓 | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/asukharev/hash-rs/2?logo=github)](https://github.com/asukharev/hash-rs/issues/2) |
-| [lmdb-rs](https://crates.io/crates/lmdb-rs) | D-BL / BB / UM |  transmute | 🌕 | [![RUSTSEC-2023-0047](https://img.shields.io/badge/RUSTSEC-2023--0047-blue?style=flat-square&logo=rust)](https://rustsec.org/advisories/RUSTSEC-2023-0047.html) |
+| [lmdb-rs](https://crates.io/crates/lmdb-rs) | D-BL / BB 2 / UM |  transmute | 🌕 | [![RUSTSEC-2023-0047](https://img.shields.io/badge/RUSTSEC-2023--0047-blue?style=flat-square&logo=rust)](https://rustsec.org/advisories/RUSTSEC-2023-0047.html) |
 | [rendy](https://crates.io/crates/rendy/) | D-UM 2 | ptr-as | 🌕 | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/amethyst/rendy/328?logo=github)](https://github.com/amethyst/rendy/issues/328) |
 | [data-buffer](https://crates.io/crates/data_buffer) | D-UM 2 / O | ptr-as | 🌕 | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/elrnv/buffer/2?logo=github)](https://github.com/elrnv/buffer/issues/2) |
 | [lonlat-bng](https://crates.io/crates/lonlat_bng) | D-BL 1 / UM 1 | ptr-as | 🌕 | [![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/urschrei/lonlat_bng/19?logo=github)](https://github.com/urschrei/lonlat_bng/issues/19#issuecomment-1618461663) |
@@ -56,6 +56,8 @@ In the colum of Status, it shows the confirmation by packages' authors or RUSTSE
 | [natpmp](https://crates.io/crates/natpmp) | D-BL | ptr-as | 🌓 | [issue](https://github.com/fengyc/natpmp/issues/2) |
 | [gfx-backend-gl](https://crates.io/crates/gfx-backend-gl) | D-BL | ptr-as | 🌕 | [issue](https://github.com/gfx-rs/gfx/issues/3795) |
 | [spl-token-swap](https://crates.io/crates/spl-token-swap) | D-BB | ptr-as | 🌓 | [issue](https://github.com/solana-labs/solana-program-library/issues/5243) |
+| [uhyve](https://crates.io/crates/uhyve) | D-BL / BB | ptr-as | 🌓 | [issue](https://github.com/hermit-os/uhyve/issues/571) |
+| [containerof](https://crates.io/crates/containerof) | O | transmute | 🌓 | [issue](https://github.com/aidancully/containerof/issues/1) |
 
 
 
