@@ -43,6 +43,9 @@ impl PathsDiscovery {
             std::intrinsics::drop_in_place(12 as *mut i32);
             std::ptr::drop_in_place(12 as *mut i32);
             (12 as *mut i32).drop_in_place();
+
+            let st = vec![240, 159, 146, 150];
+            std::str::from_utf8_unchecked(&st);
         }
     }
 }
