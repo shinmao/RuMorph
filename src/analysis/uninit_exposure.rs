@@ -1,4 +1,4 @@
-use rustc_hir::{def_id::DefId, BodyId};
+use rustc_hir::{def_id::DefId, BodyId, Unsafety};
 use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls, AggregateKind};
 use rustc_middle::mir::RETURN_PLACE;
 use rustc_middle::ty::{Ty, Instance, ParamEnv, TyKind};
@@ -182,17 +182,23 @@ mod inner {
                 trace_calls_in_body(rcx, body_did);
                 None
             } else if ContainsUnsafe::contains_unsafe(rcx.tcx(), body_id) {
-                progress_info!("This function contains unsafe block");
-                match rcx.translate_body(body_did).as_ref() {
-                    Err(e) => {
-                        // MIR is not available for def - log it and continue
-                        e.log();
-                        None
-                    }
-                    Ok(body) => {
-                        let param_env = rcx.tcx().param_env(body_did);
-                        let body_analyzer = UninitExposureBodyAnalyzer::new(rcx, param_env, body);
-                        Some(body_analyzer.analyze())
+                let fn_sig = rcx.tcx().fn_sig(body_did).skip_binder();
+                if let Unsafety::Unsafe = fn_sig.unsafety() {
+                    progress_info!("The function is unsafe");
+                    None
+                } else {
+                    progress_info!("This function contains unsafe block");
+                    match rcx.translate_body(body_did).as_ref() {
+                        Err(e) => {
+                            // MIR is not available for def - log it and continue
+                            e.log();
+                            None
+                        }
+                        Ok(body) => {
+                            let param_env = rcx.tcx().param_env(body_did);
+                            let body_analyzer = UninitExposureBodyAnalyzer::new(rcx, param_env, body);
+                            Some(body_analyzer.analyze())
+                        }
                     }
                 }
             } else {
