@@ -83,16 +83,16 @@ impl<'tcx> UninitExposureChecker<'tcx> {
                         color_span.add_sub_span(Color::Yellow, span);
                     }
 
-                    for &span in status.unresolvable_generic_function_spans() {
-                        color_span.add_sub_span(Color::Cyan, span);
-                    }
-
                     for &span in status.plain_deref_spans() {
                         color_span.add_sub_span(Color::Blue, span);
                     }
                     
                     for &span in status.ty_conv_spans() {
                         color_span.add_sub_span(Color::Green, span);
+                    }
+
+                    for &span in status.access_uninit_spans() {
+                        color_span.add_sub_span(Color::Cyan, span);
                     }
 
                     rumorph_report(Report::with_color_span(
@@ -123,6 +123,7 @@ mod inner {
         plain_deref: Vec<Span>,
         unresolvable_generic_functions: Vec<Span>,
         ty_convs: Vec<Span>,
+        access_uninit: Vec<Span>,
         behavior_flag: BehaviorFlag,
     }
 
@@ -149,6 +150,10 @@ mod inner {
 
         pub fn ty_conv_spans(&self) -> &Vec<Span> {
             &self.ty_convs
+        }
+
+        pub fn access_uninit_spans(&self) -> &Vec<Span> {
+            &self.access_uninit
         }
     }
 
@@ -474,7 +479,27 @@ mod inner {
                         let ext = tcx.ext();
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
-                        if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
+                        let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
+                        if sym.contains("write_unaligned") {
+                            // core::ptr::write_unaligned is used to init uninitialized memory
+                            let id = dest.local.index();
+                            taint_analyzer
+                                .clear_source(id);
+                        } else if sym.contains("read_unaligned") {
+                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            for arg in args {
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .access_uninit
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
+                            }
+                        } else if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
                             progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
                             for arg in args {
                                 // arg: mir::Operand
@@ -502,52 +527,6 @@ mod inner {
                                             .push(terminator.original.source_info.span);
                                     },
                                     _ => {},
-                                }
-                            }
-                        } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
-                            for arg in args {
-                                // arg: mir::Operand
-                                match arg {
-                                    Operand::Copy(pl) | Operand::Move(pl) => {
-                                        let id = pl.local.index();
-                                        taint_analyzer.mark_sink(id);
-                                        self.status
-                                            .unresolvable_generic_functions
-                                            .push(terminator.original.source_info.span);
-                                    },
-                                    _ => {},
-                                }
-                            }
-                        } else {
-                            // Check for unresolvable generic function calls
-                            match Instance::resolve(
-                                self.rcx.tcx(),
-                                self.param_env,
-                                callee_did,
-                                callee_substs,
-                            ) {
-                                Err(_e) => log_err!(ResolveError),
-                                Ok(Some(_)) => {
-                                    // Calls were successfully resolved
-                                }
-                                Ok(None) => {
-                                    // Call contains unresolvable generic parts
-                                    // Here, we are making a two step approximation:
-                                    // 1. Unresolvable generic code is potentially user-provided
-                                    // 2. User-provided code potentially deref the resulted type of type conversion
-                                    for arg in args {
-                                        // arg: mir::Operand
-                                        match arg {
-                                            Operand::Copy(pl) | Operand::Move(pl) => {
-                                                let id = pl.local.index();
-                                                taint_analyzer.mark_sink(id);
-                                                self.status
-                                                    .unresolvable_generic_functions
-                                                    .push(terminator.original.source_info.span);
-                                            },
-                                            _ => {},
-                                        }
-                                    }
                                 }
                             }
                         }

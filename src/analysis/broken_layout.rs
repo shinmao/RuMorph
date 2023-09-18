@@ -354,7 +354,12 @@ mod inner {
                         let ext = tcx.ext();
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
-                        if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
+                        let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
+                        if sym.contains("alloc") || sym.contains("unaligned") {
+                            let id = dest.local.index();
+                            taint_analyzer
+                                .clear_source(id);
+                        } else if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
                             progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
                             for arg in args {
                                 // arg: mir::Operand
@@ -381,52 +386,6 @@ mod inner {
                                             .push(terminator.original.source_info.span);
                                     },
                                     _ => {},
-                                }
-                            }
-                        } else if paths::GENERIC_FN_LIST.contains(&symbol_vec) {
-                            for arg in args {
-                                // arg: mir::Operand
-                                match arg {
-                                    Operand::Copy(pl) | Operand::Move(pl) => {
-                                        let id = pl.local.index();
-                                        taint_analyzer.mark_sink(id);
-                                        self.status
-                                            .unresolvable_generic_functions
-                                            .push(terminator.original.source_info.span);
-                                    },
-                                    _ => {},
-                                }
-                            }
-                        } else {
-                            // Check for unresolvable generic function calls
-                            match Instance::resolve(
-                                self.rcx.tcx(),
-                                self.param_env,
-                                callee_did,
-                                callee_substs,
-                            ) {
-                                Err(_e) => log_err!(ResolveError),
-                                Ok(Some(_)) => {
-                                    // Calls were successfully resolved
-                                }
-                                Ok(None) => {
-                                    // Call contains unresolvable generic parts
-                                    // Here, we are making a two step approximation:
-                                    // 1. Unresolvable generic code is potentially user-provided
-                                    // 2. User-provided code potentially deref the resulted type of type conversion
-                                    for arg in args {
-                                        // arg: mir::Operand
-                                        match arg {
-                                            Operand::Copy(pl) | Operand::Move(pl) => {
-                                                let id = pl.local.index();
-                                                taint_analyzer.mark_sink(id);
-                                                self.status
-                                                    .unresolvable_generic_functions
-                                                    .push(terminator.original.source_info.span);
-                                            },
-                                            _ => {},
-                                        }
-                                    }
                                 }
                             }
                         }

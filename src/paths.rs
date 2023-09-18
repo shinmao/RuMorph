@@ -58,6 +58,10 @@ pub const MAYBEUNINIT: [&str; 5] = ["core", "mem", "maybe_uninit", "MaybeUninit"
 pub const STR_FROM_UNCHECKED: [&str; 4] = ["core", "str", "converts", "from_utf8_unchecked"];
 pub const STR_FROM_UNCHECKED_MUT: [&str; 4] = ["core", "str", "converts", "from_utf8_unchecked_mut"];
 
+// for alignment
+pub const READ_UNALIGNED: [&str; 3] = ["core", "ptr", "read_unaligned"];
+pub const WRITE_UNALIGNED: [&str; 3] = ["core", "ptr", "write_unaligned"];
+
 pub struct PathSet {
     set: HashSet<Vec<Symbol>>,
 }
