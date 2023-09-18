@@ -46,6 +46,11 @@ impl PathsDiscovery {
 
             let st = vec![240, 159, 146, 150];
             std::str::from_utf8_unchecked(&st);
+
+            let a: u8 = 1;
+            let mut b: u8 = 1;
+            std::ptr::read_unaligned(&a as *const u8 as *const u16);
+            std::ptr::write_unaligned(&mut b as *mut u8 as *mut u16, 2);
         }
     }
 }
