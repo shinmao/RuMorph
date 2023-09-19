@@ -1,16 +1,15 @@
 from multiprocessing import Pool
 import subprocess
 from glob import glob
-import os
+import os, time
 
-src_path_bug3 = "/home/RuMorph/crate_list.txt"
 src_path = os.listdir("/home/RuMorph/crates/source")
 base_path = "/home/RuMorph/crates/source/"
-test_cmd = "cargo rumorph > reportIII.txt 2>&1"
+test_cmd = "cargo rumorph > report.txt 2>&1"
 header1 = "Error (BrokenLayout:):"
 header2 = "Error (UninitExposure:):"
 header3 = "Error (BrokenBitPatterns:):"
-report_path = "/home/RuMorph/reportIII.txt"
+report_path = "/home/RuMorph/report.txt"
 
 def report_analyzer(filename, crate):
     record = ""
@@ -52,19 +51,18 @@ def tester(path):
     print(f"tester log for {path} has been created")
 
 if __name__ == '__main__':
-    # crate_list = list()
-    # with open(src_path_bug3, 'r') as f:
-    #     for l in f:
-    #         crate_list.append(l.rstrip())
-    # print(crate_list)
+    start_time = time.time()
     # with Pool(processes=20) as pool:
     #    pool.map(tester, src_path)
     # pool.close()
     # pool.join()
     with open(report_path, "a+") as output:
         for src in src_path:
-            path = os.path.join(base_path, src) + "/reportIII.txt"
+            path = os.path.join(base_path, src) + "/report.txt"
             for r in report_analyzer(path, src):
                output.write(r)
                print(r)
     output.close()
+    with open("execution.txt", "w+") as exe:
+        exe.write(str(time.time() - start_time))
+    exe.close()

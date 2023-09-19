@@ -68,6 +68,3 @@ In the colum of Status, it shows the confirmation by packages' authors or RUSTSE
 
 1. Cases for Uninitialized Memory Exposure bugs
     * [MaybeUninit](https://github.com/alekseysidorov/static-box/issues/8)
-
-## Tips for PoC
-1. [struct visibility](https://doc.rust-lang.org/rust-by-example/mod/struct_visibility.html)
