@@ -52,12 +52,20 @@ In the colum of Status, it shows the confirmation by packages' authors or RUSTSE
 | [pipe-channel](https://crates.io/crates/pipe-channel) | D-UM 2 | ptr-as | 🌕 | [issue](https://github.com/bugaevc/pipe-channel/issues/4) |
 | [granne](https://crates.io/crates/granne) | D-UM | ptr-as | 🌓 | [issue](https://github.com/granne/granne/issues/25) |
 | [zub](https://crates.io/crates/zub) | D-BB 2 | transmute | 🌕 | [issue](https://github.com/nilq/zub-vm/issues/14) |
-| [xous](https://crates.io/crates/xous) | D-BB 2 | ptr-as | 🌕 | [issue](https://github.com/betrusted-io/xous-core/issues/410) |
+| [xous](https://crates.io/crates/xous) | D-BL 2 / BB 2 | ptr-as | 🌕 | [issue](https://github.com/betrusted-io/xous-core/issues/410) |
 | [natpmp](https://crates.io/crates/natpmp) | D-BL | ptr-as | 🌓 | [issue](https://github.com/fengyc/natpmp/issues/2) |
 | [gfx-backend-gl](https://crates.io/crates/gfx-backend-gl) | D-BL | ptr-as | 🌕 | [issue](https://github.com/gfx-rs/gfx/issues/3795) |
-| [spl-token-swap](https://crates.io/crates/spl-token-swap) | D-BB | ptr-as | 🌓 | [issue](https://github.com/solana-labs/solana-program-library/issues/5243) |
+| [spl-token-swap](https://crates.io/crates/spl-token-swap) | D-BL / BB | ptr-as | 🌓 | [issue](https://github.com/solana-labs/solana-program-library/issues/5243) |
 | [uhyve](https://crates.io/crates/uhyve) | D-BL / BB | ptr-as | 🌓 | [issue](https://github.com/hermit-os/uhyve/issues/571) |
 | [containerof](https://crates.io/crates/containerof) | O | transmute | 🌓 | [issue](https://github.com/aidancully/containerof/issues/1) |
+| [libafl](https://crates.io/crates/libafl) | D-BL | ptr-as | 🌕 | [issue](https://github.com/AFLplusplus/LibAFL/issues/1526) |
+| [fontdue](https://crates.io/crates/fontdue) | D-BL | transmute | 🌓 | [issue](https://github.com/mooman219/fontdue/issues/142) |
+| [socket](https://crates.io/crates/socket) | D-BL 2 | ptr-as | 🌓 | [issue](https://github.com/jstasiak/rust-socket/issues/7) |
+| [garando-syntax](https://crates.io/crates/garando_syntax) | D-BL | transmute | 🌓 | [issue](https://github.com/JohnTitor/garando/issues/21) |
+| [if-addrs](https://crates.io/crates/if-addrs) | D-BL 2 | ptr-as | 🌓 | [issue](https://github.com/messense/if-addrs/issues/30) |
+| [unix_path](https://crates.io/crates/unix_path) | D-UM | ptr-as | 🌓 | [issue](https://gitlab.com/SnejUgal/unix_path/-/issues/2) |
+| [pnet_datalink](https://crates.io/crates/pnet_datalink) | D-BL 2 | ptr-as | 🌓 | [issue](https://github.com/libpnet/libpnet/issues/648) |
+
 
 
 
