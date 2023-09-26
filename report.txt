@@ -17,3 +17,28 @@ tracing-core-0.1.31,<(dyn subscriber::Subscriber + std::marker::Sync + 'static)>
 nix-0.26.2,sys::socket::addr::SockaddrLike::family,bug1,src/sys/socket/addr.rs:1151:5: 1157:6
 nix-0.26.2,sys::uio::IoVec::<T>::as_slice,bug2,src/sys/uio.rs:173:5: 179:6
 backtrace-0.3.67,<symbolize::gimli::mmap::Mmap as core::ops::Deref>::deref,bug2,src/symbolize/gimli/mmap_unix.rs:32:5: 34:6
+openssl-0.10.52,ssl::callbacks::raw_sni,bug2,src/ssl/callbacks.rs:161:1: 177:2
+openssl-0.10.52,error::Error::put,bug2,src/error.rs:164:5: 190:6
+openssl-0.10.52,pkey_ctx::PkeyCtxRef::<T>::set_rsa_oaep_label,bug2,src/pkey_ctx.rs:422:5: 442:6
+openssl-0.10.52,encrypt::Decrypter::<'a>::set_rsa_oaep_label,bug2,src/encrypt.rs:374:5: 390:6
+openssl-0.10.52,x509::X509StoreContextRef::ex_data,bug2,src/x509/mod.rs:95:5: 104:6
+openssl-0.10.52,x509::GeneralNameRef::directory_name,bug2,src/x509/mod.rs:2080:5: 2093:6
+openssl-0.10.52,x509::GeneralNameRef::ipaddress,bug2,src/x509/mod.rs:2106:5: 2121:6
+openssl-0.10.52,encrypt::Encrypter::<'a>::set_rsa_oaep_label,bug2,src/encrypt.rs:170:5: 186:6
+openssl-0.10.52,asn1::Asn1BitStringRef::as_slice,bug2,src/asn1.rs:599:5: 601:6
+openssl-0.10.52,ssl::SslContextRef::ex_data,bug2,src/ssl/mod.rs:1841:5: 1850:6
+openssl-0.10.52,ssl::SslRef::set_ocsp_status,bug2,src/ssl/mod.rs:2884:5: 2900:6
+openssl-0.10.52,ssl::SslRef::ex_data,bug2,src/ssl/mod.rs:2926:5: 2935:6
+openssl-0.10.52,ssl::SslRef::ex_data_mut,bug2,src/ssl/mod.rs:2939:5: 2948:6
+libloading-0.8.0,<os::unix::Symbol<T> as std::ops::Deref>::deref,bug2,src/os/unix/mod.rs:397:5: 402:6
+tracing-subscriber-0.3.17,layer::layered::Layered::<L, S>::downcast_ref,bug1,src/layer/layered.rs:77:5: 86:6
+iovec-0.2.0,sys::unix::IoVec::as_ref,bug2,src/sys/unix.rs:30:5: 36:6
+iovec-0.2.0,sys::unix::IoVec::as_mut,bug2,src/sys/unix.rs:38:5: 44:6
+half-2.2.1,<std::vec::Vec<u16> as vec::HalfBitsVecExt>::reinterpret_into,bug1,src/vec.rs:205:5: 225:6
+half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast,bug1,src/slice.rs:489:5: 498:6
+half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast_mut,bug1,src/slice.rs:501:5: 510:6
+half-2.2.1,<std::vec::Vec<u16> as vec::HalfBitsVecExt>::reinterpret_into,bug3,src/vec.rs:205:5: 225:6
+half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast,bug3,src/slice.rs:489:5: 498:6
+half-2.2.1,<[u16] as slice::HalfBitsSliceExt>::reinterpret_cast_mut,bug3,src/slice.rs:501:5: 510:6
+tokio-native-tls-0.3.1,AllowStd::<S>::with_context,bug1,src/lib.rs:119:5: 131:6
+scoped-tls-1.0.1,ScopedKey::<T>::with,bug1,src/lib.rs:164:5: 173:6
