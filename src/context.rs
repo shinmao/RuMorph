@@ -41,24 +41,30 @@ pub struct RuMorphCtxtOwner<'tcx> {
     related_item_cache: RelatedItemMap,
     adt_impl_cache: AdtImplMap<'tcx>,
     report_level: ReportLevel,
+    optimize_option: bool,
 }
 
 /// Visit MIR body and returns a RuMorph IR function
 /// Check rustc::mir::visit::Visitor for possible visit targets
 /// https://doc.rust-lang.org/nightly/nightly-rustc/rustc/mir/visit/trait.Visitor.html
 impl<'tcx> RuMorphCtxtOwner<'tcx> {
-    pub fn new(tcx: TyCtxt<'tcx>, report_level: ReportLevel) -> Self {
+    pub fn new(tcx: TyCtxt<'tcx>, report_level: ReportLevel, optimize_option: bool) -> Self {
         RuMorphCtxtOwner {
             tcx,
             translation_cache: DashMap::new(),
             related_item_cache: RelatedFnCollector::collect(tcx),
             adt_impl_cache: create_adt_impl_map(tcx),
             report_level,
+            optimize_option,
         }
     }
 
     pub fn tcx(&self) -> TyCtxt<'tcx> {
         self.tcx
+    }
+
+    pub fn opt_option(&self) -> bool {
+        self.optimize_option
     }
 
     pub fn types_with_related_items(

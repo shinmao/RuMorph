@@ -41,7 +41,7 @@ pub mod prelude;
 
 use rustc_middle::ty::TyCtxt;
 
-use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker, BrokenBitPatternsChecker};
+use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker, BrokenBitPatternsChecker, UnsafeDataflowChecker};
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
 use crate::context::RuMorphCtxtOwner;
@@ -58,6 +58,8 @@ pub struct RuMorphConfig {
     pub broken_layout_enabled: bool,
     pub uninit_exposure_enabled: bool,
     pub broken_bitpatterns_enabled: bool,
+    pub unsafe_dataflow_enabled: bool,
+    pub optimize_enabled: bool,
 }
 
 impl Default for RuMorphConfig {
@@ -68,6 +70,8 @@ impl Default for RuMorphConfig {
             broken_layout_enabled: true,
             uninit_exposure_enabled: true,
             broken_bitpatterns_enabled: true,
+            unsafe_dataflow_enabled: true,
+            optimize_enabled: true,
         }
     }
 }
@@ -108,7 +112,7 @@ where
 
 pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     // workaround to mimic arena lifetime
-    let rcx_owner = RuMorphCtxtOwner::new(tcx, config.report_level);
+    let rcx_owner = RuMorphCtxtOwner::new(tcx, config.report_level, config.optimize_enabled);
     let rcx = &*Box::leak(Box::new(rcx_owner));
 
     // shadow the variable tcx
@@ -135,6 +139,13 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     if config.broken_bitpatterns_enabled {
         run_analysis("BrokenBitPatterns", || {
             let checker = BrokenBitPatternsChecker::new(rcx);
+            checker.analyze();
+        })
+    }
+
+    if config.unsafe_dataflow_enabled {
+        run_analysis("UnsafeDataflow", || {
+            let checker = UnsafeDataflowChecker::new(rcx);
             checker.analyze();
         })
     }

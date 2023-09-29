@@ -1,6 +1,7 @@
 mod broken_layout;
 mod uninit_exposure;
 mod broken_bitpatterns;
+mod unsafe_dataflow;
 
 use rustc_hir::{ItemKind, ImplPolarity, ItemId, hir_id::OwnerId, OwnerNode};
 use rustc_middle::hir::Owner;
@@ -17,6 +18,7 @@ use std::collections::HashSet;
 pub use broken_layout::{BehaviorFlag as BrokenLayoutBehaviorFlag, BrokenLayoutChecker};
 pub use uninit_exposure::{BehaviorFlag as UninitExposureBehaviorFlag, UninitExposureChecker};
 pub use broken_bitpatterns::{BehaviorFlag as BrokenBitPatternsBehaviorFlag, BrokenBitPatternsChecker};
+pub use unsafe_dataflow::{BehaviorFlag as UnsafeDataflowBehaviorFlag, UnsafeDataflowChecker};
 
 pub type AnalysisResult<'tcx, T> = Result<T, Box<dyn AnalysisError + 'tcx>>;
 
@@ -73,6 +75,7 @@ pub enum AnalysisKind {
     BrokenLayout(BrokenLayoutBehaviorFlag),
     UninitExposure(UninitExposureBehaviorFlag),
     BrokenBitPatterns(BrokenBitPatternsBehaviorFlag),
+    UnsafeDataflow(UnsafeDataflowBehaviorFlag),
 }
 
 trait IntoReportLevel {
@@ -121,6 +124,37 @@ impl Into<Cow<'static, str>> for AnalysisKind {
                 let mut v = vec!["BrokenBitPatterns:"];
                 v.join("/").into()
             },
+            AnalysisKind::UnsafeDataflow(bypass_kinds) => {
+                let mut v = vec!["UnsafeDataflow:"];
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::READ_FLOW) {
+                    v.push("ReadFlow")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::COPY_FLOW) {
+                    v.push("CopyFlow")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::VEC_FROM_RAW) {
+                    v.push("VecFromRaw")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::TRANSMUTE) {
+                    v.push("Transmute")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::WRITE_FLOW) {
+                    v.push("WriteFlow")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::PTR_AS_REF) {
+                    v.push("PtrAsRef")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::SLICE_UNCHECKED) {
+                    v.push("SliceUnchecked")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::SLICE_FROM_RAW) {
+                    v.push("SliceFromRaw")
+                }
+                if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::VEC_SET_LEN) {
+                    v.push("VecSetLen")
+                }
+                v.join("/").into()
+            }
         }
     }
 }
@@ -156,14 +190,22 @@ pub struct LayoutChecker<'tcx> {
 // on x86 u64 and f64 are only aligned to 4 bytes
 impl<'tcx> LayoutChecker<'tcx> {
     pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, f_ty: Ty<'tcx>, t_ty: Ty<'tcx>) -> Self {
+        // optimization option to call trait checker
+        let opt_option = rc.opt_option();
+
         progress_info!("LayoutChecker- from_ty:{:?}, to_ty:{:?}", f_ty, t_ty);
         let (mut f_layout, mut t_layout) = (false, false);
         // rustc_middle::ty::TyCtxt
         let tcx = rc.tcx();
         let (f_ty_, t_ty_) = (get_pointee(f_ty), get_pointee(t_ty));
-
-        let tc = TraitChecker::new(rc, p_env, f_ty_, t_ty_);
-        let ty_bnd = tc.get_satisfied_ty();
+        
+        let ty_bnd = if opt_option == true {
+            let tc = GenericChecker::new(rc, p_env, f_ty_, t_ty_);
+            tc.get_satisfied_ty()
+        } else {
+            let empty_ty_set: HashSet<Ty<'tcx>> = HashSet::new();
+            empty_ty_set
+        };
 
         // try to handle external type if we can't get type information
         let mut ext_fty_info: u64 = 0;
@@ -256,10 +298,10 @@ impl<'tcx> LayoutChecker<'tcx> {
             let from_size = from_layout.size();
             let mut ag_status = if let TyKind::Param(_) = t_ty_.kind() {
                 // in this case, we can't get layout because t_ty_ is generic type
-                // call TraitChecker for help
+                // call GenericChecker for help
                 let is_wrapped = f_ty_.contains(t_ty_);
                 if !is_wrapped {
-                    if tc.is_ty_arbitrary() {
+                    if ty_bnd.len() == 0 {
                         // t_ty_ could be arbitrary types
                         Comparison::Less
                     } else {
@@ -298,6 +340,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             };
 
             if f_ty_.is_c_void(tcx) {
+
                 ag_status = Comparison::Noidea;
             }
             
@@ -316,10 +359,10 @@ impl<'tcx> LayoutChecker<'tcx> {
             let to_size = to_layout.size();
             let mut ag_status = if let TyKind::Param(_) = f_ty_.kind() {
                 // f_ty_ is generic type
-                // call TraitChecker for help
+                // call GenericChecker for help
                 let is_wrapped = t_ty_.contains(f_ty_);
                 if !is_wrapped {
-                    if tc.is_ty_arbitrary() {
+                    if ty_bnd.len() == 0 {
                         // f_ty_ could be arbitrary types
                         if to_align.abi.bytes() == 1 {
                             Comparison::NoideaG
@@ -359,6 +402,7 @@ impl<'tcx> LayoutChecker<'tcx> {
                 }
                 res
             };
+            
 
             if t_ty_.to_string() == "usize" {
                 ag_status = Comparison::Noidea;
@@ -493,6 +537,12 @@ impl<'tcx> LayoutChecker<'tcx> {
         };
         (is_from_foreign, is_to_foreign)
     }
+
+    pub fn is_from_to_dyn(&self) -> (bool, bool) {
+        let is_from_dyn = self.from_ty.is_trait() | self.from_ty.is_dyn_star();
+        let is_to_dyn = self.to_ty.is_trait() | self.to_ty.is_dyn_star();
+        (is_from_dyn, is_to_dyn)
+    }
 }
 
 // get the pointee or wrapped type
@@ -615,12 +665,12 @@ impl<'tcx> ValueChecker<'tcx> {
     }
 }
 
-pub struct TraitChecker<'tcx> {
+pub struct GenericChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
     trait_set: HashSet<Ty<'tcx>>,
 }
 
-impl<'tcx> TraitChecker<'tcx> {
+impl<'tcx> GenericChecker<'tcx> {
     pub fn new(rc: RuMorphCtxt<'tcx>, p_env: ParamEnv<'tcx>, from_ty: Ty<'tcx>, to_ty: Ty<'tcx>) -> Self {
         let tcx = rc.tcx();
         let hir = tcx.hir();
@@ -686,12 +736,19 @@ impl<'tcx> TraitChecker<'tcx> {
                         }
                     }
                 }
+
+                // handle known external trait e.g., Pod
+                if trait_name == "bytemuck::Pod" || trait_name == "plain::Plain" {
+                    let ty_bnd = Self::get_satisfied_ty_for_Pod(tcx);
+                    satisfied_ty_set.extend(&ty_bnd);
+                    progress_info!("current trait bound type set: {:?}", satisfied_ty_set);
+                }
             }
         }
 
         progress_info!("trait bound type set: {:?}", satisfied_ty_set);
 
-        TraitChecker {
+        GenericChecker {
             rcx: rc,
             trait_set: satisfied_ty_set.clone(),
         }
@@ -701,7 +758,31 @@ impl<'tcx> TraitChecker<'tcx> {
         self.trait_set.clone()
     }
 
-    pub fn is_ty_arbitrary(&self) -> bool {
-        self.trait_set.len() == 0
+    fn get_satisfied_ty_for_Pod(tcx: TyCtxt<'tcx>) -> HashSet<Ty<'tcx>> {
+        let mut satisfied_ty_set_for_pod: HashSet<Ty<'tcx>> = HashSet::new();
+        // f64, u64, i8, i32, u8, i16, u16, u32, usize, i128, isize, i64, u128, f32
+        let pod_ty = vec![
+            tcx.mk_ty_from_kind(TyKind::Int(IntTy::Isize)),
+            tcx.mk_ty_from_kind(TyKind::Int(IntTy::I8)),
+            tcx.mk_ty_from_kind(TyKind::Int(IntTy::I16)),
+            tcx.mk_ty_from_kind(TyKind::Int(IntTy::I32)),
+            tcx.mk_ty_from_kind(TyKind::Int(IntTy::I64)),
+            tcx.mk_ty_from_kind(TyKind::Int(IntTy::I128)),
+
+            tcx.mk_ty_from_kind(TyKind::Uint(UintTy::Usize)),
+            tcx.mk_ty_from_kind(TyKind::Uint(UintTy::U8)),
+            tcx.mk_ty_from_kind(TyKind::Uint(UintTy::U16)),
+            tcx.mk_ty_from_kind(TyKind::Uint(UintTy::U32)),
+            tcx.mk_ty_from_kind(TyKind::Uint(UintTy::U64)),
+            tcx.mk_ty_from_kind(TyKind::Uint(UintTy::U128)),
+
+            tcx.mk_ty_from_kind(TyKind::Float(FloatTy::F32)),
+            tcx.mk_ty_from_kind(TyKind::Float(FloatTy::F64))
+        ];
+
+        for pt in pod_ty.iter() {
+            satisfied_ty_set_for_pod.insert(*pt);
+        }
+        satisfied_ty_set_for_pod.clone()
     }
 }

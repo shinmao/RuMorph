@@ -234,6 +234,11 @@ mod inner {
                                                 let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let align_status = lc.get_align_status();
 
+                                                let (is_from_dyn, is_to_dyn) = lc.is_from_to_dyn();
+                                                if is_from_dyn | is_to_dyn {
+                                                    continue;
+                                                }
+
                                                 let pl = get_place_from_op(&op);
                                                 match pl {
                                                     Ok(place) => {
@@ -268,6 +273,11 @@ mod inner {
                                             Ok(from_ty) => {
                                                 let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let align_status = lc.get_align_status();
+
+                                                let (is_from_dyn, is_to_dyn) = lc.is_from_to_dyn();
+                                                if is_from_dyn | is_to_dyn {
+                                                    continue;
+                                                }
 
                                                 let pl = get_place_from_op(&op);
                                                 match pl {

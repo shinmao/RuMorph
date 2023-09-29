@@ -75,6 +75,8 @@ fn parse_config() -> (RuMorphConfig, Vec<String>) {
             "-Zsensitivity-high" => config.report_level = ReportLevel::Error,
             "-Zsensitivity-med" => config.report_level = ReportLevel::Warning,
             "-Zsensitivity-low" => config.report_level = ReportLevel::Info,
+            "-Zenable-optimize" => config.optimize_enabled = true,
+            "-Zdisable-optimize" => config.optimize_enabled = false,
             _ => {
                 rustc_args.push(arg);
             }

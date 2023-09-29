@@ -10,7 +10,7 @@ use termcolor::Color;
 use crate::graph::GraphTaint;
 use crate::prelude::*;
 use crate::{
-    analysis::{AnalysisKind, IntoReportLevel, ValueChecker, TraitChecker, Comparison},
+    analysis::{AnalysisKind, IntoReportLevel, ValueChecker, Comparison},
     graph::TaintAnalyzer,
     ir,
     paths::{self, *},
