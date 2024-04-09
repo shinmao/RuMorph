@@ -1,7 +1,7 @@
 use rustc_hir::{def_id::DefId, BodyId, Unsafety};
 use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls, AggregateKind};
 use rustc_middle::mir::RETURN_PLACE;
-use rustc_middle::ty::{Ty, Instance, ParamEnv, TyKind};
+use rustc_middle::ty::{self, Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
 
 use snafu::{Backtrace, Snafu};
@@ -218,7 +218,7 @@ mod inner {
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                progress_info!("statement: {:?}", statement);
+                // progress_info!("statement: {:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         // rhs
@@ -259,7 +259,7 @@ mod inner {
                                                                     self.status
                                                                         .creation
                                                                         .push(statement.source_info.span);
-                                                                    progress_info!("cast leads to ub in this statement");
+                                                                    // progress_info!("cast leads to ub in this statement");
                                                                 }
                                                             },
                                                             _ => {
@@ -268,20 +268,23 @@ mod inner {
                                                         }
                                                     },
                                                     Err(_e) => {
-                                                        progress_info!("Can't get place from the cast operand");
+                                                        // progress_info!("Can't get place from the cast operand");
                                                     },
                                                 }
                                             },
                                             Err(_e) => {
-                                                progress_info!("Can't get ty from the cast place");
+                                                // progress_info!("Can't get ty from the cast place");
                                             },
                                         }
                                     },
                                     CastKind::Transmute => {
-                                        progress_info!("transmute");
                                         let f_ty = get_ty_from_op(self.body, self.rcx, &op);
                                         match f_ty {
                                             Ok(from_ty) => {
+                                                if !is_ptr_ty(from_ty, to_ty) {
+                                                    continue;
+                                                }
+                                                progress_info!("transmute::ptr-ptr");
                                                 let vc = ValueChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let value_status = vc.get_val_status();
 
@@ -311,7 +314,7 @@ mod inner {
                                                                     self.status
                                                                         .creation
                                                                         .push(statement.source_info.span);
-                                                                    progress_info!("cast leads to ub in this statement");
+                                                                    // progress_info!("cast leads to ub in this statement");
                                                                 }
                                                             },
                                                             _ => {
@@ -320,12 +323,12 @@ mod inner {
                                                         }
                                                     },
                                                     Err(_e) => {
-                                                        progress_info!("Can't get place from the transmute operand");
+                                                        // progress_info!("Can't get place from the transmute operand");
                                                     },
                                                 }
                                             },
                                             Err(_e) => {
-                                                progress_info!("Can't get ty from the transmute place");
+                                                // progress_info!("Can't get ty from the transmute place");
                                             },
                                         }
                                     },
@@ -340,7 +343,7 @@ mod inner {
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
-                progress_info!("terminator: {:?}", terminator);
+                // progress_info!("terminator: {:?}", terminator);
                 match terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
@@ -354,13 +357,13 @@ mod inner {
                         let ext = tcx.ext();
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
-                        progress_info!("terminator with symbol: {:?}", symbol_vec);
+                        // progress_info!("terminator with symbol: {:?}", symbol_vec);
                         let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
                         if sym.contains("alloc") {
                             let id = dest.local.index();
                             taint_analyzer
                                 .clear_source(id);
-                        } else if sym.starts_with("from") && sym.ends_with("unchecked") {
+                        } else if paths::STR_UNCHECKED_LIST.contains(&symbol_vec) {
                             let id = dest.local.index();
                             for conv_id in tconv_source.iter() {
                                 if taint_analyzer.is_reachable(*conv_id, id) {
@@ -372,7 +375,7 @@ mod inner {
                                     self.status
                                         .creation
                                         .push(terminator.original.source_info.span);
-                                    progress_info!("leads to ub in this terminator");
+                                    // progress_info!("leads to ub in this terminator");
                                     break;
                                 }
                             }
@@ -441,6 +444,26 @@ mod inner {
             }
         }
     }
+}
+
+// check whether both from_ty and to_ty are pointer types
+fn is_ptr_ty<'tcx>(from_ty: Ty<'tcx>, to_ty: Ty<'tcx>) -> bool {
+    // (from_ty|to_ty) needs to be raw pointer or reference
+    let is_fty_ptr = if let ty::RawPtr(_) = from_ty.kind() {
+        true
+    } else if let ty::Ref(..) = from_ty.kind() {
+        true
+    } else {
+        false
+    };
+    let is_tty_ptr = if let ty::RawPtr(_) = to_ty.kind() {
+        true
+    } else if let ty::Ref(..) = to_ty.kind() {
+        true
+    } else {
+        false
+    };
+    (is_fty_ptr & is_tty_ptr)
 }
 
 fn get_place_from_op<'tcx>(op: &Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {

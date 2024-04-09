@@ -59,6 +59,8 @@ pub const MAYBEUNINIT: [&str; 5] = ["core", "mem", "maybe_uninit", "MaybeUninit"
 pub const STR_FROM_UNCHECKED: [&str; 4] = ["core", "str", "converts", "from_utf8_unchecked"];
 pub const STR_FROM_UNCHECKED_MUT: [&str; 4] = ["core", "str", "converts", "from_utf8_unchecked_mut"];
 
+pub const CHAR_FROM_UNCHECKED: [&str; 5] = ["core", "char", "methods", "<impl char>", "from_u32_unchecked"];
+
 // for alignment
 pub const READ_UNALIGNED: [&str; 3] = ["core", "ptr", "read_unaligned"];
 pub const WRITE_UNALIGNED: [&str; 3] = ["core", "ptr", "write_unaligned"];
@@ -125,6 +127,7 @@ pub static STR_UNCHECKED_LIST: Lazy<PathSet> = Lazy::new(move || {
     PathSet::new(&[
         &STR_FROM_UNCHECKED,
         &STR_FROM_UNCHECKED_MUT,
+        &CHAR_FROM_UNCHECKED,
     ])
 });
 

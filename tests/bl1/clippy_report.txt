@@ -1,0 +1,137 @@
+    Checking bl1 v0.1.0 (/home/RuMorph/tests/bl1)
+warning: unused variable: `t`
+  --> src/main.rs:17:9
+   |
+17 |     let t: &i64 = unsafe { core::mem::transmute(val) };
+   |         ^ help: if this is intentional, prefix it with an underscore: `_t`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `a`
+  --> src/main.rs:33:9
+   |
+33 |     let a: i32 = 3;
+   |         ^ help: if this is intentional, prefix it with an underscore: `_a`
+
+warning: function `risky_cast_III` is never used
+ --> src/main.rs:1:4
+  |
+1 | fn risky_cast_III() {
+  |    ^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` on by default
+
+warning: function `risky_cast_II` is never used
+ --> src/main.rs:7:4
+  |
+7 | fn risky_cast_II(val: *const i32) -> *const i64 {
+  |    ^^^^^^^^^^^^^
+
+warning: function `risky_cast` is never used
+  --> src/main.rs:11:4
+   |
+11 | fn risky_cast(val: &i32) -> &i64 {
+   |    ^^^^^^^^^^
+
+warning: function `risky_transmute_II` is never used
+  --> src/main.rs:16:4
+   |
+16 | fn risky_transmute_II<'a>(val: &'a i32, val2: &'a i64) -> &'a i64 {
+   |    ^^^^^^^^^^^^^^^^^^
+
+warning: function `risky_transmute` is never used
+  --> src/main.rs:21:4
+   |
+21 | fn risky_transmute(val: *const i32) -> *const i64{
+   |    ^^^^^^^^^^^^^^^
+
+warning: function `safe_transmute` is never used
+  --> src/main.rs:28:4
+   |
+28 | fn safe_transmute(val: &i64) -> &i32 {
+   |    ^^^^^^^^^^^^^^
+
+casting caller:risky_cast_III
+warning: Here is cast(risky_cast_III>uint>uint=>immut_to_mut>warn(align1>4))!
+ --> src/main.rs:3:30
+  |
+3 |     println!("{}", unsafe { *(a[1..4].as_ptr() as *mut u32) });
+  |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_ptr
+  = note: requested on the command line with `-W clippy::ptr-as-ptr`
+
+casting caller:risky_cast_III
+casting caller:risky_cast_II
+warning: Here is cast(risky_cast_II>int>int=>safe>warn(align4>8))!
+ --> src/main.rs:8:5
+  |
+8 |     val as *const i64
+  |     ^^^^^^^^^^^^^^^^^
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_ptr
+
+casting caller:risky_cast_II
+casting caller:risky_cast
+warning: Here is cast(risky_cast>int>int=>safe>warn(align4>8))!
+  --> src/main.rs:12:13
+   |
+12 |     let t = val as *const i32 as *const i64;
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_ptr
+
+casting caller:risky_cast
+transmute caller:risky_transmute_II
+transmute:(&int>&int>warn(align4>8))
+warning: Here is transmute(risky_transmute_II>&int>&int=>warn(align4>8))!
+  --> src/main.rs:17:28
+   |
+17 |     let t: &i64 = unsafe { core::mem::transmute(val) };
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#transmute_statistics
+   = note: `#[warn(clippy::transmute_statistics)]` on by default
+
+transmute caller:risky_transmute
+transmute:(*const int>*const int>warn(align4>8))
+warning: Here is transmute(risky_transmute>*const int>*const int=>warn(align4>8))!
+  --> src/main.rs:23:9
+   |
+23 |         std::mem::transmute(val)
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#transmute_statistics
+
+transmute caller:safe_transmute
+transmute:(&int>&int>safe)
+warning: Here is transmute(safe_transmute>&int>&int=>safe)!
+  --> src/main.rs:29:14
+   |
+29 |     unsafe { core::mem::transmute(val) }
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#transmute_statistics
+
+warning: function `risky_cast_III` should have a snake case name
+ --> src/main.rs:1:4
+  |
+1 | fn risky_cast_III() {
+  |    ^^^^^^^^^^^^^^ help: convert the identifier to snake case (notice the capitalization): `risky_cast_iii`
+  |
+  = note: `#[warn(non_snake_case)]` on by default
+
+warning: function `risky_cast_II` should have a snake case name
+ --> src/main.rs:7:4
+  |
+7 | fn risky_cast_II(val: *const i32) -> *const i64 {
+  |    ^^^^^^^^^^^^^ help: convert the identifier to snake case (notice the capitalization): `risky_cast_ii`
+
+warning: function `risky_transmute_II` should have a snake case name
+  --> src/main.rs:16:4
+   |
+16 | fn risky_transmute_II<'a>(val: &'a i32, val2: &'a i64) -> &'a i64 {
+   |    ^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case (notice the capitalization): `risky_transmute_ii`
+
+warning: `bl1` (bin "bl1") generated 17 warnings (run `cargo clippy --fix --bin "bl1"` to apply 2 suggestions)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.13s

@@ -51,6 +51,8 @@ impl PathsDiscovery {
             let mut b: u8 = 1;
             std::ptr::read_unaligned(&a as *const u8 as *const u16);
             std::ptr::write_unaligned(&mut b as *mut u8 as *mut u16, 2);
+
+            char::from_u32_unchecked(0x2764);
         }
     }
 }

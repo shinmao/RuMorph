@@ -238,7 +238,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let (from_align, to_align) = (from_layout.align(), to_layout.align());
             let (from_size, to_size) = (from_layout.size(), to_layout.size());
             // for align_status
-            progress_info!("LayoutChecker- from_align:{}, to_align:{}", from_align.abi.bytes(), to_align.abi.bytes());
+            // progress_info!("LayoutChecker- from_align:{}, to_align:{}", from_align.abi.bytes(), to_align.abi.bytes());
             let mut ag_status = if from_align.abi.bytes() < to_align.abi.bytes() {
                 Comparison::Less
             } else if from_align.abi.bytes() == to_align.abi.bytes() {
@@ -257,14 +257,14 @@ impl<'tcx> LayoutChecker<'tcx> {
                         TyKind::Uint(uint_ty) => {
                             // u64
                             if (uint_ty.name_str() == "u64") && (4 < to_align.abi.bytes()) {
-                                progress_info!("from_align could be :{} on x86", 4);
+                                // progress_info!("from_align could be :{} on x86", 4);
                                 ag_status = Comparison::Less;
                             }
                         },
                         TyKind::Float(float_ty) => {
                             // f64
                             if (float_ty.name_str() == "f64") && (4 < to_align.abi.bytes()) {
-                                progress_info!("from_align could be :{} on x86", 4);
+                                // progress_info!("from_align could be :{} on x86", 4);
                                 ag_status = Comparison::Less;
                             }
                         },
@@ -274,10 +274,11 @@ impl<'tcx> LayoutChecker<'tcx> {
             }
             // if to_ty is usize, then take the case away
             // or from_ty is c_void, also take the case away
-            if t_ty_.to_string() == "usize" || f_ty_.is_c_void(tcx) {
+            // or from zero-sized type
+            if t_ty_.to_string() == "usize" || f_ty_.is_c_void(tcx) || from_size.bytes() == 0 {
                 ag_status = Comparison::Noidea;
             }
-            progress_info!("LayoutChecker- from_size:{}, to_size:{}", from_size.bytes(), to_size.bytes());
+            // progress_info!("LayoutChecker- from_size:{}, to_size:{}", from_size.bytes(), to_size.bytes());
             // for size_status
             let sz_status = if from_size.bytes() < to_size.bytes() {
                 Comparison::Less
@@ -297,6 +298,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let from_align = from_layout.align();
             let from_size = from_layout.size();
             let mut ag_status = if let TyKind::Param(_) = t_ty_.kind() {
+                progress_info!("generic type conversion");
                 // in this case, we can't get layout because t_ty_ is generic type
                 // call GenericChecker for help
                 let is_wrapped = f_ty_.contains(t_ty_);
@@ -339,8 +341,7 @@ impl<'tcx> LayoutChecker<'tcx> {
                 res
             };
 
-            if f_ty_.is_c_void(tcx) {
-
+            if f_ty_.is_c_void(tcx) || f_ty_.to_string() == "usize" || from_size.bytes() == 0 {
                 ag_status = Comparison::Noidea;
             }
             
@@ -358,6 +359,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let to_align = to_layout.align();
             let to_size = to_layout.size();
             let mut ag_status = if let TyKind::Param(_) = f_ty_.kind() {
+                progress_info!("generic type conversion");
                 // f_ty_ is generic type
                 // call GenericChecker for help
                 let is_wrapped = t_ty_.contains(f_ty_);
@@ -547,7 +549,7 @@ impl<'tcx> LayoutChecker<'tcx> {
 
 // get the pointee or wrapped type
 fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
-    progress_info!("get_pointee: > {:?} as type: {:?}", matched_ty, matched_ty.kind());
+    // progress_info!("get_pointee: > {:?} as type: {:?}", matched_ty, matched_ty.kind());
     let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
         get_pointee(ty_mut.ty)
     } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {
@@ -596,8 +598,8 @@ impl<'tcx> ValueChecker<'tcx> {
 
         // we only focus on the type conversion between generic and concrete type
         // compare the range of value set to get the size status
-        progress_info!("from_ty is c_void? {}", from_ty.is_c_void(tcx));
-        progress_info!("to_ty is c_void? {}", to_ty.is_c_void(tcx));
+        // progress_info!("from_ty is c_void? {}", from_ty.is_c_void(tcx));
+        // progress_info!("to_ty is c_void? {}", to_ty.is_c_void(tcx));
         let is_from_c_void = from_ty.to_string().contains("c_void");
         let is_to_c_void = to_ty.to_string().contains("c_void");
         let val_status = if (from_gen == true || is_from_c_void) && (to_gen == false && !is_to_c_void) {
@@ -675,6 +677,7 @@ impl<'tcx> GenericChecker<'tcx> {
         let tcx = rc.tcx();
         let hir = tcx.hir();
 
+        let mut trait_bnd_set: HashSet<String> = HashSet::new();
         let mut satisfied_ty_set: HashSet<Ty<'tcx>> = HashSet::new();
 
         for cb in p_env.caller_bounds() {
@@ -684,6 +687,7 @@ impl<'tcx> GenericChecker<'tcx> {
             if let Some(trait_pred) = cb.to_opt_poly_trait_pred() {
                 let trait_def_id = trait_pred.def_id();
                 let trait_name = tcx.def_path_str(trait_def_id);
+                trait_bnd_set.insert(trait_name.clone());
                 progress_info!("current trait name: ({})", trait_name);
 
                 // for each implementation
@@ -702,8 +706,10 @@ impl<'tcx> GenericChecker<'tcx> {
                                 TyKind::Adt(adt_def, impl_trait_substs) => {
                                     let adt_did = adt_def.did();
                                     let adt_ty = tcx.type_of(adt_did).skip_binder();
-                                    for gen_arg in impl_trait_substs.iter() {
-                                        if let Some(arg_ty) = gen_arg.as_type() {
+                                    // progress_info!("{} is implemented on adt({:?})", trait_name, adt_ty);
+                                    satisfied_ty_set.insert(adt_ty);
+                                    // for gen_arg in impl_trait_substs.iter() {
+                                        //if let Some(arg_ty) = gen_arg.as_type() {
                                             // if arg_ty.to_string() == from_ty.to_string() {
                                             //     progress_info!("{} is implemented on from_ty: {:?}", trait_name, from_ty);
                                             //     from_satisfied_ty_set.extend(&satisfied_ty_set);
@@ -712,9 +718,9 @@ impl<'tcx> GenericChecker<'tcx> {
                                             //     progress_info!("{} is implemented on to_ty: {:?}", trait_name, to_ty);
                                             //     to_satisfied_ty_set.extend(&satisfied_ty_set);
                                             // }
-                                            progress_info!("{} is implemented on adt({:?})", trait_name, arg_ty);
-                                        }
-                                    }
+                                            // progress_info!("{} is implemented on adt({:?})", trait_name, arg_ty);
+                                       // }
+                                    // }
                                 },
                                 TyKind::Param(p_ty) => {
                                     let param_ty = p_ty.to_ty(tcx);
@@ -726,10 +732,10 @@ impl<'tcx> GenericChecker<'tcx> {
                                     //     progress_info!("{} is implemented on to_ty: {:?}", trait_name, to_ty);
                                     //     to_satisfied_ty_set.extend(&satisfied_ty_set);
                                     // }
-                                    progress_info!("{} is implemented on gen_param({:?})", trait_name, param_ty);
+                                    // progress_info!("{} is implemented on gen_param({:?})", trait_name, param_ty);
                                 },
                                 _ => {
-                                    progress_info!("{} is implemented on {:?}", trait_name, impl_ty);
+                                    // progress_info!("{} is implemented on {:?}", trait_name, impl_ty);
                                     satisfied_ty_set.insert(impl_ty);
                                 },
                             }
@@ -741,12 +747,25 @@ impl<'tcx> GenericChecker<'tcx> {
                 if trait_name == "bytemuck::Pod" || trait_name == "plain::Plain" {
                     let ty_bnd = Self::get_satisfied_ty_for_Pod(tcx);
                     satisfied_ty_set.extend(&ty_bnd);
-                    progress_info!("current trait bound type set: {:?}", satisfied_ty_set);
+                    // progress_info!("current trait bound type set: {:?}", satisfied_ty_set);
                 }
             }
         }
 
-        progress_info!("trait bound type set: {:?}", satisfied_ty_set);
+        // check trait_bnd_set
+        let std_trait_set = HashSet::from([
+            String::from("std::marker::Copy"), 
+            String::from("std::clone::Clone"), 
+            String::from("std::marker::Sized")
+        ]);
+        // if all trait_bound is std::marker, then we could assume it to be arbitrary type
+        // to avoid messing up with build type manually
+        // we just clear the satisfied ty set
+        if trait_bnd_set.is_subset(&std_trait_set) {
+            satisfied_ty_set.clear();
+        }
+
+        // progress_info!("trait bound type set: {:?}", satisfied_ty_set);
 
         GenericChecker {
             rcx: rc,

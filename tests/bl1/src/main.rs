@@ -1,3 +1,9 @@
+fn risky_cast_III() {
+    let a: [u8; 5] = [1; 5];
+    println!("{}", unsafe { *(a[1..4].as_ptr() as *mut u32) });
+}
+
+
 fn risky_cast_II(val: *const i32) -> *const i64 {
     val as *const i64
 }

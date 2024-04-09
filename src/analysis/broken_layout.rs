@@ -1,7 +1,7 @@
 use rustc_hir::{def_id::DefId, BodyId, Unsafety};
 use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls, AggregateKind};
 use rustc_middle::mir::RETURN_PLACE;
-use rustc_middle::ty::{Ty, Instance, ParamEnv, TyKind};
+use rustc_middle::ty::{self, Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
 
 use snafu::{Backtrace, Snafu};
@@ -211,12 +211,13 @@ mod inner {
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
+                progress_info!("{:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         // lhs could also contains deref operation
                         if lplace.is_indirect() {
                             // contains deref projection
-                            progress_info!("warn::deref on place:{}", lplace.local.index());
+                            // progress_info!("warn::deref on place:{}", lplace.local.index());
                             taint_analyzer.mark_sink(lplace.local.index());
                             self.status
                                 .plain_deref
@@ -247,8 +248,9 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less => {
-                                                                progress_info!("warn::align from id{} to lplace{}", id, lplace.local.index());
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
+                                                                let id2 = lplace.local.index();
+                                                                progress_info!("warn::align from id{} to lplace{}", id, id2);
+                                                                taint_analyzer.mark_source(id2, &BehaviorFlag::CAST);
                                                                 self.status
                                                                     .ty_convs
                                                                     .push(statement.source_info.span);
@@ -257,20 +259,23 @@ mod inner {
                                                         }
                                                     },
                                                     Err(_e) => {
-                                                        progress_info!("Can't get place from the cast operand");
+                                                        // progress_info!("Can't get place from the cast operand");
                                                     },
                                                 }
                                             },
                                             Err(_e) => {
-                                                progress_info!("Can't get ty from the cast place");
+                                                // progress_info!("Can't get ty from the cast place");
                                             },
                                         }
                                     },
                                     CastKind::Transmute => {
-                                        progress_info!("transmute");
                                         let f_ty = get_ty_from_op(self.body, self.rcx, &op);
                                         match f_ty {
                                             Ok(from_ty) => {
+                                                if !is_ptr_ty(from_ty, to_ty) {
+                                                    continue;
+                                                }
+                                                progress_info!("transmute::ptr-ptr");
                                                 let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
                                                 let align_status = lc.get_align_status();
 
@@ -288,7 +293,8 @@ mod inner {
                                                         match align_status {
                                                             Comparison::Less => {
                                                                 progress_info!("warn::align");
-                                                                taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
+                                                                let id2 = lplace.local.index();
+                                                                taint_analyzer.mark_source(id2, &BehaviorFlag::TRANSMUTE);
                                                                 self.status
                                                                     .ty_convs
                                                                     .push(statement.source_info.span);
@@ -297,12 +303,12 @@ mod inner {
                                                         }
                                                     },
                                                     Err(_e) => {
-                                                        progress_info!("Can't get place from the transmute operand");
+                                                        // progress_info!("Can't get place from the transmute operand");
                                                     },
                                                 }
                                             },
                                             Err(_e) => {
-                                                progress_info!("Can't get ty from the transmute place");
+                                                // progress_info!("Can't get ty from the transmute place");
                                             },
                                         }
                                     },
@@ -315,10 +321,10 @@ mod inner {
                                 match op {
                                     Operand::Copy(pl) | Operand::Move(pl) => {
                                         let id = pl.local.index();
-                                        progress_info!("[dbg] lplace: {}, rplace: {}", lplace.local.index(), pl.local.index());
+                                        // progress_info!("[dbg] lplace: {}, rplace: {}", lplace.local.index(), pl.local.index());
                                         if pl.is_indirect() {
                                             // contains deref projection
-                                            progress_info!("warn::deref on place:{}", id);
+                                            // progress_info!("warn::deref on place:{}", id);
                                             taint_analyzer.mark_sink(id);
                                             self.status
                                                 .plain_deref
@@ -336,7 +342,7 @@ mod inner {
                                 let id = pl.local.index();
                                 if pl.is_indirect() {
                                     // contains deref projection
-                                    progress_info!("warn::deref on place:{}", id);
+                                    // progress_info!("warn::deref on place:{}", id);
                                     taint_analyzer.mark_sink(id);
                                     self.status
                                         .plain_deref
@@ -351,6 +357,7 @@ mod inner {
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
+                // progress_info!("terminator: {:?}", terminator);
                 match terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
@@ -365,12 +372,23 @@ mod inner {
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
                         let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
-                        if sym.contains("alloc") || sym.contains("unaligned") {
+                        if sym.contains("alloc") {
                             let id = dest.local.index();
                             taint_analyzer
                                 .clear_source(id);
+                        } else if sym.contains("unaligned") {
+                            for arg in args {
+                                match arg {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer
+                                            .clear_source(id);
+                                    },
+                                    _ => {},
+                                }
+                            }
                         } else if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            // progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
                             for arg in args {
                                 // arg: mir::Operand
                                 match arg {
@@ -385,7 +403,7 @@ mod inner {
                                 }
                             }
                         } else if paths::WEAK_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
-                            progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
+                            // progress_info!("triggered with lifetime bypass: {:?}", symbol_vec);
                             for arg in args {
                                 match arg {
                                     Operand::Copy(pl) | Operand::Move(pl) => {
@@ -443,6 +461,26 @@ mod inner {
             }
         }
     }
+}
+
+// check whether both from_ty and to_ty are pointer types
+fn is_ptr_ty<'tcx>(from_ty: Ty<'tcx>, to_ty: Ty<'tcx>) -> bool {
+    // (from_ty|to_ty) needs to be raw pointer or reference
+    let is_fty_ptr = if let ty::RawPtr(_) = from_ty.kind() {
+        true
+    } else if let ty::Ref(..) = from_ty.kind() {
+        true
+    } else {
+        false
+    };
+    let is_tty_ptr = if let ty::RawPtr(_) = to_ty.kind() {
+        true
+    } else if let ty::Ref(..) = to_ty.kind() {
+        true
+    } else {
+        false
+    };
+    (is_fty_ptr & is_tty_ptr)
 }
 
 fn get_place_from_op<'tcx>(op: &Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {

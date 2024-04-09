@@ -48,7 +48,7 @@ fn read_csv<D: DeserializeOwned>(file: impl Read) -> Result<Vec<D>> {
 
 /**
 The purpose of executor:
-from 052923 cratesio dbdump
+from 031824 cratesio dbdump
 get top 20k downloaded crates
 write into list as .txt file
 **/
@@ -56,7 +56,7 @@ fn executor() -> Result<()> {
     let mut crates: Vec<Crate> = Vec::new();
     let mut versions: Vec<CrateVersion> = Vec::new();
 
-    let csv_path = "../db-dump.tar.gz";
+    let csv_path = "db-dump.tar.gz";
     let mut archive = Archive::new(
         Decoder::new(
             BufReader::new(
@@ -134,5 +134,5 @@ fn executor() -> Result<()> {
 
 fn main() {
     //let _ = executor();
-    println!("Tested by RuMorph");
+    println!("Tested by TypePulse");
 }
