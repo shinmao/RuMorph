@@ -65,7 +65,7 @@ In the colum of Status, it shows the confirmation by packages' authors or RUSTSE
 | [if-addrs](https://crates.io/crates/if-addrs) | D-BL 2 | ptr-as | 🌓 | [issue](https://github.com/messense/if-addrs/issues/30) |
 | [unix_path](https://crates.io/crates/unix_path) | D-UM | ptr-as | 🌓 | [issue](https://gitlab.com/SnejUgal/unix_path/-/issues/2) |
 | [pnet_datalink](https://crates.io/crates/pnet_datalink) | D-BL 2 | ptr-as | 🌓 | [issue](https://github.com/libpnet/libpnet/issues/648) |
-
+| [candle_core](https://crates.io/crates/candle-core) | D-BL 3 | ptr-as | | [issue](https://github.com/huggingface/candle/issues/2040) |
 
 
 

@@ -263,6 +263,7 @@ mod inner {
                                                         let (is_from_foreign, is_to_foreign) = lc.is_from_to_foreign();
                                                         let (is_from_trans, is_to_trans) = lc.is_from_to_transparent();
                                                         let (is_from_c, is_to_c) = lc.is_from_to_c();
+                                                        let (is_from_pack, is_to_pack) = lc.is_from_to_pack();
                                                         let (is_from_dyn, is_to_dyn) = lc.is_from_to_dyn();
                                                         // progress_info!("from_prime: {}, from_adt: {}, from_gen: {}, from_foreign: {}, from_transparent: {}, from_c: {}, from_dyn: {}", is_from_prime, is_from_adt, is_from_gen, is_from_foreign, is_from_trans, is_from_c, is_from_dyn);
                                                         // progress_info!("to_prime: {}, to_adt: {}, to_gen: {}, to_foreign: {}, to_transparent: {}, to_c: {}, to_dyn: {}", is_to_prime, is_to_adt, is_to_gen, is_to_foreign, is_to_trans, is_to_c, is_to_dyn);
@@ -302,7 +303,7 @@ mod inner {
                                                             }
                                                         } else if is_from_adt && is_to_adt && !tty.is_c_void(tcx) && !fty.is_c_void(tcx) {
                                                             // if one of the adt doesn't have stable layout, then it is dangerous
-                                                            if ((!is_from_c && !is_to_c) && (!is_from_trans && !is_to_trans)) && (fty.to_string() != tty.to_string()) && (!fty.to_string().contains("MaybeUninit")) {
+                                                            if ((!is_from_c && !is_to_c) && (!is_from_trans && !is_to_trans) && (!is_from_pack && !is_to_pack)) && (fty.to_string() != tty.to_string()) && (!fty.to_string().contains("MaybeUninit")) {
                                                                 // progress_info!("warn::cast (adt>adt) from id{} to lplace{}", id, lplace.local.index());
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                 self.status
@@ -310,7 +311,7 @@ mod inner {
                                                                     .push(statement.source_info.span);
                                                             }
                                                         } else if (is_from_adt && is_to_prime && tty.to_string() != "usize") | (is_from_adt && is_to_arr_slice) && (!fty.to_string().contains("MaybeUninit")) {
-                                                            if !is_from_trans && !is_from_c {
+                                                            if !is_from_trans && !is_from_c && !is_from_pack {
                                                                 // progress_info!("warn::cast (adt>prime/arr/slice) from id{} to lplace{}", id, lplace.local.index());
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::CAST);
                                                                 self.status
@@ -359,6 +360,7 @@ mod inner {
                                                         let (is_from_foreign, is_to_foreign) = lc.is_from_to_foreign();
                                                         let (is_from_trans, is_to_trans) = lc.is_from_to_transparent();
                                                         let (is_from_c, is_to_c) = lc.is_from_to_c();
+                                                        let (is_from_pack, is_to_pack) = lc.is_from_to_pack();
                                                         let (is_from_dyn, is_to_dyn) = lc.is_from_to_dyn();
                                                         // progress_info!("from_prime: {}, from_adt: {}, from_gen: {}, from_foreign: {}, from_transparent: {}, from_c: {}, from_dyn: {}", is_from_prime, is_from_adt, is_from_gen, is_from_foreign, is_from_trans, is_from_c, is_from_dyn);
                                                         // progress_info!("to_prime: {}, to_adt: {}, to_gen: {}, to_foreign: {}, to_transparent: {}, to_c: {}, to_dyn: {}", is_to_prime, is_to_adt, is_to_gen, is_to_foreign, is_to_trans, is_to_c, is_to_dyn);
@@ -400,7 +402,7 @@ mod inner {
                                                         } else if is_from_adt && is_to_adt && !tty.is_c_void(tcx) && !fty.is_c_void(tcx) {
                                                             // if one of the adt doesn't have stable layout, then it is dangerous
                                                             let from_ty_name = fty.to_string();
-                                                            if ((!is_from_c && !is_to_c) && (!is_from_trans && !is_to_trans)) && (from_ty_name != tty.to_string()) && (!from_ty_name.contains("MaybeUninit")) {
+                                                            if ((!is_from_c && !is_to_c) && (!is_from_trans && !is_to_trans) && (!is_from_pack && !is_to_pack)) && (from_ty_name != tty.to_string()) && (!from_ty_name.contains("MaybeUninit")) {
                                                                 progress_info!("warn::transmute (adt>adt) from id{} to lplace{}", id, lplace.local.index());
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                 self.status
@@ -409,7 +411,7 @@ mod inner {
                                                             }
                                                         } else if (is_from_adt && is_to_prime && tty.to_string() != "usize") | (is_from_adt && is_to_arr_slice) {
                                                             let from_ty_name = fty.to_string();
-                                                            if !is_from_trans && !is_from_c && (!from_ty_name.contains("MaybeUninit")) {
+                                                            if !is_from_trans && !is_from_c && !is_from_pack && (!from_ty_name.contains("MaybeUninit")) {
                                                                 // progress_info!("warn::transmute (adt>prime/arr/slice) from id{} to lplace{}", id, lplace.local.index());
                                                                 taint_analyzer.mark_source(id, &BehaviorFlag::TRANSMUTE);
                                                                 self.status

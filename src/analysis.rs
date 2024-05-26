@@ -2,6 +2,7 @@ mod broken_layout;
 mod uninit_exposure;
 mod broken_bitpatterns;
 mod unsafe_dataflow;
+mod overflow;
 
 use rustc_hir::{ItemKind, ImplPolarity, ItemId, hir_id::OwnerId, OwnerNode};
 use rustc_middle::hir::Owner;
@@ -19,6 +20,7 @@ pub use broken_layout::{BehaviorFlag as BrokenLayoutBehaviorFlag, BrokenLayoutCh
 pub use uninit_exposure::{BehaviorFlag as UninitExposureBehaviorFlag, UninitExposureChecker};
 pub use broken_bitpatterns::{BehaviorFlag as BrokenBitPatternsBehaviorFlag, BrokenBitPatternsChecker};
 pub use unsafe_dataflow::{BehaviorFlag as UnsafeDataflowBehaviorFlag, UnsafeDataflowChecker};
+pub use overflow::{BehaviorFlag as OverflowBehaviorFlag, OverflowChecker};
 
 pub type AnalysisResult<'tcx, T> = Result<T, Box<dyn AnalysisError + 'tcx>>;
 
@@ -76,6 +78,7 @@ pub enum AnalysisKind {
     UninitExposure(UninitExposureBehaviorFlag),
     BrokenBitPatterns(BrokenBitPatternsBehaviorFlag),
     UnsafeDataflow(UnsafeDataflowBehaviorFlag),
+    Overflow(OverflowBehaviorFlag),
 }
 
 trait IntoReportLevel {
@@ -153,6 +156,10 @@ impl Into<Cow<'static, str>> for AnalysisKind {
                 if bypass_kinds.contains(UnsafeDataflowBehaviorFlag::VEC_SET_LEN) {
                     v.push("VecSetLen")
                 }
+                v.join("/").into()
+            },
+            AnalysisKind::Overflow(bypass_kinds) => {
+                let mut v = vec!["Overflow:"];
                 v.join("/").into()
             }
         }
@@ -505,6 +512,22 @@ impl<'tcx> LayoutChecker<'tcx> {
 
         let is_to = if let TyKind::Adt(def, _) = self.to_ty.kind() {
             def.repr().c()
+        } else {
+            false
+        };
+
+        (is_from, is_to)
+    }
+
+    pub fn is_from_to_pack(&self) -> (bool, bool) {
+        let is_from = if let TyKind::Adt(def, _) = self.from_ty.kind() {
+            def.repr().packed()
+        } else {
+            false
+        };
+
+        let is_to = if let TyKind::Adt(def, _) = self.to_ty.kind() {
+            def.repr().packed()
         } else {
             false
         };

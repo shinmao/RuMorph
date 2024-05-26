@@ -1,6 +1,12 @@
 import time, subprocess, os
 
-os.chdir('/home/RuMorph/crates/source/ag-0.19.2')
 start_time = time.time()
-subprocess.call('cargo rumorph', shell=True)
+with open('final_crate_list.txt', 'r') as f:
+    for line in f:
+        path = '/home/RuMorph/cratesII/' + line.rstrip()
+        if not os.path.exists(path):
+            continue
+        os.chdir(path)
+        subprocess.call('cargo rumorph', shell=True)
+f.close()
 print(time.time() - start_time)

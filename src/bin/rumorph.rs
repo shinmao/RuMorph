@@ -70,6 +70,8 @@ fn parse_config() -> (RuMorphConfig, Vec<String>) {
             "-Zrumorph-disable-uninit-exposure" => config.uninit_exposure_enabled = false,
             "-Zrumorph-enable-broken-bitpatterns" => config.broken_bitpatterns_enabled = true,
             "-Zrumorph-disable-broken-bitpatterns" => config.broken_bitpatterns_enabled = false,
+            "-Zrumorph-enable-overflow" => config.overflow_enabled = true,
+            "-Zrumorph-disable-overflow" => config.overflow_enabled = false,
             "-v" => config.verbosity = Verbosity::Verbose,
             "-vv" => config.verbosity = Verbosity::Trace,
             "-Zsensitivity-high" => config.report_level = ReportLevel::Error,

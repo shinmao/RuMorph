@@ -149,7 +149,7 @@ impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
                 ret.join(&taint_state[id]);
             }
         }
-
+        
         return ret;
     }
 }

@@ -211,7 +211,7 @@ mod inner {
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                progress_info!("{:?}", statement);
+                // progress_info!("{:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         // lhs could also contains deref operation
@@ -249,7 +249,7 @@ mod inner {
                                                         match align_status {
                                                             Comparison::Less => {
                                                                 let id2 = lplace.local.index();
-                                                                progress_info!("warn::align from id{} to lplace{}", id, id2);
+                                                                // progress_info!("warn::align from id{} to lplace{}", id, id2);
                                                                 taint_analyzer.mark_source(id2, &BehaviorFlag::CAST);
                                                                 self.status
                                                                     .ty_convs
@@ -292,7 +292,7 @@ mod inner {
                                                         // if A's align < B's align, taint as source
                                                         match align_status {
                                                             Comparison::Less => {
-                                                                progress_info!("warn::align");
+                                                                // progress_info!("warn::align");
                                                                 let id2 = lplace.local.index();
                                                                 taint_analyzer.mark_source(id2, &BehaviorFlag::TRANSMUTE);
                                                                 self.status

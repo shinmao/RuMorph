@@ -144,12 +144,20 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                                 let id = rplace.local.index();
                                 v[id].push(lplace.local.index());
                             },
+                            Rvalue::BinaryOp(_, box (op1, op2))
+                            | Rvalue::CheckedBinaryOp(_, box (op1, op2)) => {
+                                let id1 = op1.place().unwrap().local.index();
+                                let id2 = op2.place().unwrap().local.index();
+                                v[id1].push(lplace.local.index());
+                                v[id2].push(lplace.local.index());
+                            },
                             _ => {},
                         }
                     },
                     _ => {},
                 }
             }
+
             // we also need to handle terminator case
             match &bb.terminator.kind {
                 // ir::Terminator
