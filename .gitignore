@@ -28,5 +28,6 @@ rumorph-home/
 tests/realworld_cases/
 tests/bl1/target/
 tests/bl2/target/
+tests/overflow/target/
 
 test_for_bug1.py
