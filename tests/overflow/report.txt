@@ -1,0 +1,37 @@
+2024-05-28 22:24:00.421674 |INFO | [rumorph-progress] Running cargo rumorph
+2024-05-28 22:24:00.591160 |INFO | [rumorph-progress] Running rumorph for target bin:overflow
+warning: variable does not need to be mutable
+ --> src/main.rs:2:9
+  |
+2 |     let mut balance = 1u64;
+  |         ----^^^^^^^
+  |         |
+  |         help: remove this `mut`
+  |
+  = note: `#[warn(unused_mut)]` on by default
+
+warning: variable does not need to be mutable
+ --> src/main.rs:3:9
+  |
+3 |     let mut remained = balance - amount;
+  |         ----^^^^^^^^
+  |         |
+  |         help: remove this `mut`
+
+2024-05-28 22:24:00.928019 |INFO | [rumorph-progress] RuMorph started
+2024-05-28 22:24:00.928242 |INFO | [rumorph-progress] Overflow analysis started
+2024-05-28 22:24:00.928261 |INFO | [rumorph-progress] OverflowChecker::analyze(withdraw)
+2024-05-28 22:24:00.929181 |INFO | [rumorph-progress] find the bug with behavior_flag: EXTERNAL
+2024-05-28 22:24:00.929213 |INFO | [rumorph-progress] OverflowChecker::analyze(main)
+2024-05-28 22:24:00.929290 |INFO | [rumorph-progress] bug not found
+2024-05-28 22:24:00.929300 |INFO | [rumorph-progress] Overflow analysis finished
+2024-05-28 22:24:00.929304 |INFO | [rumorph-progress] RuMorph finished
+Error (Overflow:): Potential overflow issue in `withdraw`
+-> src/main.rs:1:1: 5:2
+fn withdraw(amount: u64) {
+    let mut balance = 1u64;
+    let mut remained = [0m[32mbalance - amount[0m;
+    println!("{:?}", remained);
+}
+[0m
+2024-05-28 22:24:00.939720 |INFO | [rumorph-progress] cargo rumorph finished

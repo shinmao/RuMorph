@@ -195,10 +195,13 @@ mod inner {
 
         fn analyze(mut self) -> OverflowStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
+            // use `tainted_source` to maintain tainted external function args
+            let mut tainted_source = Vec::new();
 
             // mark all the arguments as taint source
             for arg_idx in 1usize..self.body.original.arg_count + 1 {
                 // progress_info!("external as source: {:?}", arg_idx);
+                tainted_source.push(arg_idx);
                 taint_analyzer.mark_source(arg_idx, &BehaviorFlag::EXTERNAL);
             }
 
@@ -213,12 +216,34 @@ mod inner {
                             | Rvalue::CheckedBinaryOp(op, box (op1, op2)) => {
                                 match op {
                                     BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div => {
-                                        if ( op1.ty(self.body, self.rcx.tcx()).is_numeric() || op2.ty(self.body, self.rcx.tcx()).is_numeric() ) {
-                                            taint_analyzer.mark_sink(lplace.local.index());
-                                            self.status
-                                                .ty_convs
-                                                .push(statement.source_info.span);
+                                        if ( op1.ty(self.body, self.rcx.tcx()).is_numeric() ) {
+                                            // check whether op1 belongs to func args
+                                            let id1 = op1.place();
+                                            if let Some(idx) = id1 {
+                                                let idx1 = idx.local.index();
+                                                if tainted_source.contains(&(idx1 as usize)) {
+                                                    if let Operand::Constant(_) = op1 {
+                                                        // if external function arg is constant, then clear the source
+                                                        taint_analyzer.clear_source(idx1);
+                                                    }
+                                                }
+                                            }
+                                        } 
+                                        if ( op2.ty(self.body, self.rcx.tcx()).is_numeric() ) {
+                                            let id2 = op2.place();
+                                            if let Some(idx) = id2 {
+                                                let idx2 = idx.local.index();
+                                                if tainted_source.contains(&(idx2 as usize)) {
+                                                    if let Operand::Constant(_) = op2 {
+                                                        taint_analyzer.clear_source(idx2);
+                                                    }
+                                                }
+                                            }
                                         }
+                                        taint_analyzer.mark_sink(lplace.local.index());
+                                        self.status
+                                            .ty_convs
+                                            .push(statement.source_info.span);
                                     },
                                     _ => {},
                                 }
