@@ -211,11 +211,16 @@ mod inner {
                         match rval {
                             Rvalue::BinaryOp(op, box (op1, op2))
                             | Rvalue::CheckedBinaryOp(op, box (op1, op2)) => {
-                                if ( op1.ty(self.body, self.rcx.tcx()).is_numeric() || op2.ty(self.body, self.rcx.tcx()).is_numeric() ) {
-                                    taint_analyzer.mark_sink(lplace.local.index());
-                                    self.status
-                                        .ty_convs
-                                        .push(statement.source_info.span);
+                                match op {
+                                    BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div => {
+                                        if ( op1.ty(self.body, self.rcx.tcx()).is_numeric() || op2.ty(self.body, self.rcx.tcx()).is_numeric() ) {
+                                            taint_analyzer.mark_sink(lplace.local.index());
+                                            self.status
+                                                .ty_convs
+                                                .push(statement.source_info.span);
+                                        }
+                                    },
+                                    _ => {},
                                 }
                             },
                             _ => {},
