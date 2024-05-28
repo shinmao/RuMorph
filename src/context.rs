@@ -146,10 +146,22 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                             },
                             Rvalue::BinaryOp(_, box (op1, op2))
                             | Rvalue::CheckedBinaryOp(_, box (op1, op2)) => {
-                                let id1 = op1.place().unwrap().local.index();
-                                let id2 = op2.place().unwrap().local.index();
-                                v[id1].push(lplace.local.index());
-                                v[id2].push(lplace.local.index());
+                                let id1 = op1.place();
+                                let id2 = op2.place();
+                                match id1 {
+                                    Some(idx) => {
+                                        let idx1 = idx.local.index();
+                                        v[idx1].push(lplace.local.index());
+                                    },
+                                    None => {},
+                                }
+                                match id2 {
+                                    Some(idx) => {
+                                        let idx2 = idx.local.index();
+                                        v[idx2].push(lplace.local.index());
+                                    },
+                                    None => {},
+                                }
                             },
                             _ => {},
                         }
