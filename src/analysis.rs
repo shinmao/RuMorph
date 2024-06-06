@@ -3,6 +3,7 @@ mod uninit_exposure;
 mod broken_bitpatterns;
 mod unsafe_dataflow;
 mod overflow;
+mod err_handling;
 
 use rustc_hir::{ItemKind, ImplPolarity, ItemId, hir_id::OwnerId, OwnerNode};
 use rustc_middle::hir::Owner;
@@ -21,6 +22,7 @@ pub use uninit_exposure::{BehaviorFlag as UninitExposureBehaviorFlag, UninitExpo
 pub use broken_bitpatterns::{BehaviorFlag as BrokenBitPatternsBehaviorFlag, BrokenBitPatternsChecker};
 pub use unsafe_dataflow::{BehaviorFlag as UnsafeDataflowBehaviorFlag, UnsafeDataflowChecker};
 pub use overflow::{BehaviorFlag as OverflowBehaviorFlag, OverflowChecker};
+pub use err_handling::{BehaviorFlag as ErrHandleBehaviorFlag, ErrHandleChecker};
 
 pub type AnalysisResult<'tcx, T> = Result<T, Box<dyn AnalysisError + 'tcx>>;
 
@@ -79,6 +81,7 @@ pub enum AnalysisKind {
     BrokenBitPatterns(BrokenBitPatternsBehaviorFlag),
     UnsafeDataflow(UnsafeDataflowBehaviorFlag),
     Overflow(OverflowBehaviorFlag),
+    ErrHandle(ErrHandleBehaviorFlag),
 }
 
 trait IntoReportLevel {
@@ -160,6 +163,10 @@ impl Into<Cow<'static, str>> for AnalysisKind {
             },
             AnalysisKind::Overflow(bypass_kinds) => {
                 let mut v = vec!["Overflow:"];
+                v.join("/").into()
+            },
+            AnalysisKind::ErrHandle(bypass_kinds) => {
+                let mut v = vec!["Err handling:"];
                 v.join("/").into()
             }
         }
@@ -245,7 +252,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let (from_align, to_align) = (from_layout.align(), to_layout.align());
             let (from_size, to_size) = (from_layout.size(), to_layout.size());
             // for align_status
-            // progress_info!("LayoutChecker- from_align:{}, to_align:{}", from_align.abi.bytes(), to_align.abi.bytes());
+            progress_info!("LayoutChecker- from_align:{}, to_align:{}", from_align.abi.bytes(), to_align.abi.bytes());
             let mut ag_status = if from_align.abi.bytes() < to_align.abi.bytes() {
                 Comparison::Less
             } else if from_align.abi.bytes() == to_align.abi.bytes() {
@@ -304,6 +311,7 @@ impl<'tcx> LayoutChecker<'tcx> {
             let from_layout = from_ty_and_layout.layout;
             let from_align = from_layout.align();
             let from_size = from_layout.size();
+            progress_info!("kind of t_ty: {:?}", t_ty_.kind());
             let mut ag_status = if let TyKind::Param(_) = t_ty_.kind() {
                 progress_info!("generic type conversion");
                 // in this case, we can't get layout because t_ty_ is generic type

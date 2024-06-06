@@ -41,7 +41,7 @@ pub mod prelude;
 
 use rustc_middle::ty::TyCtxt;
 
-use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker, BrokenBitPatternsChecker, UnsafeDataflowChecker, OverflowChecker};
+use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker, BrokenBitPatternsChecker, UnsafeDataflowChecker, OverflowChecker, ErrHandleChecker};
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
 use crate::context::RuMorphCtxtOwner;
@@ -60,6 +60,7 @@ pub struct RuMorphConfig {
     pub broken_bitpatterns_enabled: bool,
     pub unsafe_dataflow_enabled: bool,
     pub overflow_enabled: bool,
+    pub errhandle_enabled: bool,
     pub optimize_enabled: bool,
 }
 
@@ -73,6 +74,7 @@ impl Default for RuMorphConfig {
             broken_bitpatterns_enabled: true,
             unsafe_dataflow_enabled: true,
             overflow_enabled: true,
+            errhandle_enabled: true,
             optimize_enabled: true,
         }
     }
@@ -122,28 +124,28 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     let tcx = ();
 
     // Broken layout analysis
-    // if config.broken_layout_enabled {
-    //     run_analysis("BrokenLayout", || {
-    //         let checker = BrokenLayoutChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
+    if config.broken_layout_enabled {
+        run_analysis("BrokenLayout", || {
+            let checker = BrokenLayoutChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 
     // Uninit Exposure analysis
-    // if config.uninit_exposure_enabled {
-    //     run_analysis("UninitExposure", || {
-    //         let checker = UninitExposureChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
+    if config.uninit_exposure_enabled {
+        run_analysis("UninitExposure", || {
+            let checker = UninitExposureChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 
     // Broken Bit patterns analysis
-    // if config.broken_bitpatterns_enabled {
-    //     run_analysis("BrokenBitPatterns", || {
-    //         let checker = BrokenBitPatternsChecker::new(rcx);
-    //         checker.analyze();
-    //     })
-    // }
+    if config.broken_bitpatterns_enabled {
+        run_analysis("BrokenBitPatterns", || {
+            let checker = BrokenBitPatternsChecker::new(rcx);
+            checker.analyze();
+        })
+    }
 
     // if config.unsafe_dataflow_enabled {
     //     run_analysis("UnsafeDataflow", || {
@@ -155,6 +157,13 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     if config.overflow_enabled {
         run_analysis("Overflow", || {
             let checker = OverflowChecker::new(rcx);
+            checker.analyze();
+        })
+    }
+
+    if config.errhandle_enabled {
+        run_analysis("ErrHandle", || {
+            let checker = ErrHandleChecker::new(rcx);
             checker.analyze();
         })
     }

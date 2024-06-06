@@ -27,6 +27,10 @@ pub enum TerminatorKind<'tcx> {
         args: Vec<mir::Operand<'tcx>>,
         dest: mir::Place<'tcx>,
     },
+    SwitchInt {
+        discr: mir::Operand<'tcx>,
+        targets: mir::SwitchTargets,
+    },
     FnPtr {
         value: mir::ConstantKind<'tcx>,
     },

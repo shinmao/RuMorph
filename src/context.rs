@@ -261,13 +261,19 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                     } else {
                         ir::TerminatorKind::Unimplemented("non-constant function call".into())
                     }
-                }
+                },
+                TerminatorKind::SwitchInt { discr, targets } => {
+                    ir::TerminatorKind::SwitchInt { 
+                        discr: discr.clone(), 
+                        targets: targets.clone() 
+                    }
+                },
                 TerminatorKind::Drop { .. } => {
                     // TODO: implement Drop and DropAndReplace terminators
                     ir::TerminatorKind::Unimplemented(
                         format!("TODO terminator: {:?}", terminator).into(),
                     )
-                }
+                },
                 _ => ir::TerminatorKind::Unimplemented(
                     format!("Unknown terminator: {:?}", terminator).into(),
                 ),

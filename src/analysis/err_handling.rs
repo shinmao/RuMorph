@@ -1,5 +1,5 @@
 use rustc_hir::{def_id::DefId, BodyId, Unsafety};
-use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls, AggregateKind, BinOp};
+use rustc_middle::mir::{Operand, StatementKind, Rvalue, CastKind, Place, HasLocalDecls, AggregateKind};
 use rustc_middle::mir::RETURN_PLACE;
 use rustc_middle::ty::{self, Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
@@ -22,15 +22,15 @@ use crate::{
 };
 
 #[derive(Debug, Snafu)]
-pub enum OverflowError {
+pub enum ErrHandleError {
     PushPopBlock { backtrace: Backtrace },
     ResolveError { backtrace: Backtrace },
     InvalidSpan { backtrace: Backtrace },
 }
 
-impl AnalysisError for OverflowError {
+impl AnalysisError for ErrHandleError {
     fn kind(&self) -> AnalysisErrorKind {
-        use OverflowError::*;
+        use ErrHandleError::*;
         match self {
             PushPopBlock { .. } => AnalysisErrorKind::Unreachable,
             ResolveError { .. } => AnalysisErrorKind::OutOfScope,
@@ -39,13 +39,13 @@ impl AnalysisError for OverflowError {
     }
 }
 
-pub struct OverflowChecker<'tcx> {
+pub struct ErrHandleChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
 }
 
-impl<'tcx> OverflowChecker<'tcx> {
+impl<'tcx> ErrHandleChecker<'tcx> {
     pub fn new(rcx: RuMorphCtxt<'tcx>) -> Self {
-        OverflowChecker { rcx }
+        ErrHandleChecker { rcx }
     }
 
     pub fn analyze(self) {
@@ -56,15 +56,17 @@ impl<'tcx> OverflowChecker<'tcx> {
         for (_ty_hir_id, (body_id, related_item_span)) in self.rcx.types_with_related_items() {
             
             // print the funciton name of current body
-            progress_info!("OverflowChecker::analyze({})", 
+            progress_info!("ErrHandleChecker::analyze({})", 
                         tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
             );
 
 
-            if let Some(status) = inner::OverflowBodyAnalyzer::analyze_body(self.rcx, body_id)
+            if let Some(status) = inner::ErrHandleBodyAnalyzer::analyze_body(self.rcx, body_id)
             {
                 let behavior_flag = status.behavior_flag();
-                if !behavior_flag.is_empty() {
+                if !behavior_flag.is_empty()
+                    //&& behavior_flag.report_level() >= self.rcx.report_level()
+                {
                     progress_info!("find the bug with behavior_flag: {:?}", behavior_flag);
                     let mut color_span = unwrap_or!(
                         utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
@@ -90,12 +92,16 @@ impl<'tcx> OverflowChecker<'tcx> {
                         color_span.add_sub_span(Color::Green, span);
                     }
 
+                    for &span in status.branch_handle_spans() {
+                        color_span.add_sub_span(Color::Red, span);
+                    }
+
                     rumorph_report(Report::with_color_span(
                         tcx,
                         behavior_flag.report_level(true),
-                        AnalysisKind::Overflow(behavior_flag),
+                        AnalysisKind::ErrHandle(behavior_flag),
                         format!(
-                            "Potential overflow issue in `{}`",
+                            "Potential Err Handling issue in `{}`",
                             tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
                         ),
                         &color_span,
@@ -112,16 +118,17 @@ mod inner {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct OverflowStatus {
+    pub struct ErrHandleStatus {
         strong_bypasses: Vec<Span>,
         weak_bypasses: Vec<Span>,
         plain_deref: Vec<Span>,
         unresolvable_generic_functions: Vec<Span>,
         ty_convs: Vec<Span>,
+        branch_handles: Vec<Span>,
         behavior_flag: BehaviorFlag,
     }
 
-    impl OverflowStatus {
+    impl ErrHandleStatus {
         pub fn behavior_flag(&self) -> BehaviorFlag {
             self.behavior_flag
         }
@@ -142,22 +149,25 @@ mod inner {
             &self.unresolvable_generic_functions
         }
 
-        // used as overflow operation here
         pub fn ty_conv_spans(&self) -> &Vec<Span> {
             &self.ty_convs
         }
+
+        pub fn branch_handle_spans(&self) -> &Vec<Span> {
+            &self.branch_handles
+        }
     }
 
-    pub struct OverflowBodyAnalyzer<'a, 'tcx> {
+    pub struct ErrHandleBodyAnalyzer<'a, 'tcx> {
         rcx: RuMorphCtxt<'tcx>,
         body: &'a ir::Body<'tcx>,
         param_env: ParamEnv<'tcx>,
-        status: OverflowStatus,
+        status: ErrHandleStatus,
     }
 
-    impl<'a, 'tcx> OverflowBodyAnalyzer<'a, 'tcx> {
+    impl<'a, 'tcx> ErrHandleBodyAnalyzer<'a, 'tcx> {
         fn new(rcx: RuMorphCtxt<'tcx>, param_env: ParamEnv<'tcx>, body: &'a ir::Body<'tcx>) -> Self {
-            OverflowBodyAnalyzer {
+            ErrHandleBodyAnalyzer {
                 rcx,
                 body,
                 param_env,
@@ -165,7 +175,7 @@ mod inner {
             }
         }
 
-        pub fn analyze_body(rcx: RuMorphCtxt<'tcx>, body_id: BodyId) -> Option<OverflowStatus> {
+        pub fn analyze_body(rcx: RuMorphCtxt<'tcx>, body_id: BodyId) -> Option<ErrHandleStatus> {
             let hir_map = rcx.tcx().hir();
             let body_did = hir_map.body_owner_def_id(body_id).to_def_id();
 
@@ -186,67 +196,54 @@ mod inner {
                     }
                     Ok(body) => {
                         let param_env = rcx.tcx().param_env(body_did);
-                        let body_analyzer = OverflowBodyAnalyzer::new(rcx, param_env, body);
+                        let body_analyzer = ErrHandleBodyAnalyzer::new(rcx, param_env, body);
                         Some(body_analyzer.analyze())
                     }
                 }
             }
         }
 
-        fn analyze(mut self) -> OverflowStatus {
+        fn analyze(mut self) -> ErrHandleStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
-            // use `tainted_source` to maintain tainted external function args
-            let mut tainted_source = Vec::new();
-
-            // mark all the arguments as taint source
-            for arg_idx in 1usize..self.body.original.arg_count + 1 {
-                // progress_info!("external as source: {:?}", arg_idx);
-                tainted_source.push(arg_idx);
-                taint_analyzer.mark_source(arg_idx, &BehaviorFlag::EXTERNAL);
-            }
 
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
                 progress_info!("{:?}", statement);
-                match statement.kind {
-                    StatementKind::Assign(box (lplace, rval)) => {
-                        match rval {
-                            Rvalue::BinaryOp(op, box (op1, op2))
-                            | Rvalue::CheckedBinaryOp(op, box (op1, op2)) => {
-                                match op {
-                                    BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div => {
-                                        if ( op1.ty(self.body, self.rcx.tcx()).is_numeric() ) {
-                                            // check whether op1 belongs to func args
-                                            let id1 = op1.place();
-                                            if let Some(idx) = id1 {
-                                                let idx1 = idx.local.index();
-                                                if tainted_source.contains(&(idx1 as usize)) {
-                                                    if let Operand::Constant(_) = op1 {
-                                                        // if external function arg is constant, then clear the source
-                                                        taint_analyzer.clear_source(idx1);
-                                                    }
-                                                }
-                                            }
-                                        } 
-                                        if ( op2.ty(self.body, self.rcx.tcx()).is_numeric() ) {
-                                            let id2 = op2.place();
-                                            if let Some(idx) = id2 {
-                                                let idx2 = idx.local.index();
-                                                if tainted_source.contains(&(idx2 as usize)) {
-                                                    if let Operand::Constant(_) = op2 {
-                                                        taint_analyzer.clear_source(idx2);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        taint_analyzer.mark_sink(lplace.local.index());
-                                        self.status
-                                            .ty_convs
-                                            .push(statement.source_info.span);
-                                    },
-                                    _ => {},
-                                }
+            }
+
+            for (_id, terminator) in self.body.terminators().enumerate() {
+                // progress_info!("terminator: {:?}", terminator);
+                match &terminator.kind {
+                    ir::TerminatorKind::StaticCall {
+                        callee_did,
+                        callee_substs,
+                        ref args,
+                        dest,
+                        ..
+                    } => {
+                        let tcx = self.rcx.tcx();
+                        // TyCtxtExtension
+                        let ext = tcx.ext();
+                        // Check for lifetime bypass
+                        let symbol_vec = ext.get_def_path(*callee_did);
+                        let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
+                        if sym.contains("checked_add") || sym.contains("checked_sub") {
+                            let id = dest.local.index();
+                            taint_analyzer.mark_source(id, &BehaviorFlag::CHECKEDCALL);
+                        }
+                    },
+                    ir::TerminatorKind::SwitchInt {
+                        discr,
+                        targets
+                    } => {
+                        match discr {
+                            Operand::Copy(pl) | Operand::Move(pl) => {
+                                let id = pl.local.index();
+                                taint_analyzer.mark_sink(id);
+                                self.status
+                                    .branch_handles
+                                    .push(terminator.original.source_info.span);
                             },
                             _ => {},
                         }
@@ -255,22 +252,7 @@ mod inner {
                 }
             }
 
-            for (_id, terminator) in self.body.terminators().enumerate() {
-                progress_info!("terminator: {:?}", terminator);
-                match &terminator.kind {
-                    ir::TerminatorKind::SwitchInt {
-                        discr,
-                        targets
-                    } => {
-                        progress_info!("{:?}, {:?}", discr, targets);
-                    },
-                    _ => {},
-                }
-            }
-
-            let prog_flag = taint_analyzer.propagate();
-            // println!("{:?}", prog_flag);
-            self.status.behavior_flag = prog_flag;
+            self.status.behavior_flag = taint_analyzer.propagate();
             self.status
         }
     }
@@ -342,7 +324,7 @@ fn get_ty_from_op<'tcx>(bd: &ir::Body<'tcx>, rcx: RuMorphCtxt<'tcx>, op: &Operan
 bitflags! {
     #[derive(Default)]
     pub struct BehaviorFlag: u16 {
-        const EXTERNAL = 0b00000001;
+        const CHECKEDCALL = 0b00000001;
         const TRANSMUTE = 0b00000010;
     }
 }
@@ -351,7 +333,7 @@ impl IntoReportLevel for BehaviorFlag {
     fn report_level(&self, visibility: bool) -> ReportLevel {
         use BehaviorFlag as Flag;
 
-        let high = Flag::EXTERNAL | Flag::TRANSMUTE;
+        let high = Flag::CHECKEDCALL | Flag::TRANSMUTE;
         //let med = Flag::READ_FLOW | Flag::COPY_FLOW | Flag::WRITE_FLOW;
 
         // if !(*self & high).is_empty() {

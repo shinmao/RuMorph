@@ -211,7 +211,7 @@ mod inner {
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                // progress_info!("{:?}", statement);
+                progress_info!("{:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         // lhs could also contains deref operation
