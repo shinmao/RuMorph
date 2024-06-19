@@ -357,7 +357,7 @@ mod inner {
                         let ext = tcx.ext();
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(callee_did);
-                        // progress_info!("terminator with symbol: {:?}", symbol_vec);
+                        progress_info!("terminator with symbol: {:?}", symbol_vec);
                         let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
                         if sym.contains("alloc") {
                             let id = dest.local.index();
@@ -365,20 +365,16 @@ mod inner {
                                 .clear_source(id);
                         } else if paths::STR_UNCHECKED_LIST.contains(&symbol_vec) {
                             let id = dest.local.index();
-                            for conv_id in tconv_source.iter() {
-                                if taint_analyzer.is_reachable(*conv_id, id) {
-                                    taint_analyzer.mark_at_once(id, &BehaviorFlag::FUNC);
-                                    self.status
-                                        .ty_convs
-                                        .push(terminator.original.source_info.span);
+                            // for conv_id in tconv_source.iter() {
+                            // if taint_analyzer.is_reachable(*conv_id, id) {
+                            taint_analyzer.mark_at_once(id, &BehaviorFlag::TRANSMUTE);
+                            self.status.ty_convs.push(terminator.original.source_info.span);
 
-                                    self.status
-                                        .creation
-                                        .push(terminator.original.source_info.span);
-                                    // progress_info!("leads to ub in this terminator");
-                                    break;
-                                }
-                            }
+                            self.status.creation.push(terminator.original.source_info.span);
+                            progress_info!("leads to ub in this terminator");
+                            break;
+                            // }
+                            // }
                         } else if paths::STRONG_LIFETIME_BYPASS_LIST.contains(&symbol_vec) {
                             // taint_analyzer
                             //     .mark_source(id, STRONG_BYPASS_MAP.get(&symbol_vec).unwrap());
@@ -494,7 +490,6 @@ bitflags! {
     pub struct BehaviorFlag: u16 {
         const CAST = 0b00000001;
         const TRANSMUTE = 0b00000010;
-        const FUNC = 0b00000100;
     }
 }
 

@@ -104,10 +104,13 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             .map(|local_decl| self.translate_local_decl(local_decl))
             .collect::<Vec<_>>();
 
+        progress_info!("size: {:?}", body.basic_blocks.len());
+        let mut bb_successor_list: Vec<Vec<usize>> = vec![vec![]; body.basic_blocks.len()];
         let basic_blocks: Vec<_> = body
             .basic_blocks
             .iter()
-            .map(|basic_block| self.translate_basic_block(basic_block))
+            .enumerate()
+            .map(|(idx, basic_block)| self.translate_basic_block(&mut bb_successor_list[idx], basic_block))
             .collect::<Result<Vec<_>, _>>()?;
 
         // we only locate local rather than place
@@ -200,11 +203,13 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             basic_blocks,
             original: body.to_owned(),
             place_neighbor_list: v,
+            bb_neighbor_list: bb_successor_list, 
         })
     }
 
     fn translate_basic_block(
         &self,
+        bb_neighbors:&mut Vec<usize>,
         basic_block: &mir::BasicBlockData<'tcx>,
     ) -> TranslationResult<'tcx, ir::BasicBlock<'tcx>> {
         let statements = basic_block
@@ -218,6 +223,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                 .terminator
                 .as_ref()
                 .expect("Terminator should not be empty at this point"),
+            bb_neighbors
         )?;
 
         Ok(ir::BasicBlock {
@@ -230,10 +236,14 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
     fn translate_terminator(
         &self,
         terminator: &mir::Terminator<'tcx>,
+        successor_list: &mut Vec<usize>
     ) -> TranslationResult<'tcx, ir::Terminator<'tcx>> {
         Ok(ir::Terminator {
             kind: match &terminator.kind {
-                TerminatorKind::Goto { target } => ir::TerminatorKind::Goto(target.index()),
+                TerminatorKind::Goto { target } => {
+                    successor_list.push(target.index());
+                    ir::TerminatorKind::Goto(target.index())
+                },
                 TerminatorKind::Return => ir::TerminatorKind::Return,
                 TerminatorKind::Call {
                     func: func_operand,
@@ -263,6 +273,9 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                     }
                 },
                 TerminatorKind::SwitchInt { discr, targets } => {
+                    for b in targets.all_targets() {
+                        successor_list.push(b.index());
+                    }
                     ir::TerminatorKind::SwitchInt { 
                         discr: discr.clone(), 
                         targets: targets.clone() 

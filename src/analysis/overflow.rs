@@ -208,10 +208,45 @@ mod inner {
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                progress_info!("{:?}", statement);
+                // progress_info!("{:?}", statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         match rval {
+                            Rvalue::Cast(cast_kind, op, to_ty) => {
+                                match cast_kind {
+                                    CastKind::IntToInt | CastKind::FloatToInt | CastKind::FloatToFloat | CastKind::IntToFloat | CastKind::Transmute => {
+                                        let f_ty = get_ty_from_op(self.body, self.rcx, &op);
+                                        match f_ty {
+                                            Ok(from_ty) => {
+                                                let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
+                                                let align_status = lc.get_align_status();
+
+                                                let pl = get_place_from_op(&op);
+                                                match pl {
+                                                    Ok(place) => {
+                                                        let id = place.local.index();
+
+                                                        // if A's align < B's align, taint as source
+                                                        match align_status {
+                                                            Comparison::Greater => {
+                                                                let id2 = lplace.local.index();
+                                                                taint_analyzer.mark_sink(id2);
+                                                                self.status
+                                                                    .ty_convs
+                                                                    .push(statement.source_info.span);
+                                                            },
+                                                            _ => {},
+                                                        }
+                                                    },
+                                                    Err(_e) => {},
+                                                }
+                                            },
+                                            Err(_e) => {},
+                                        }
+                                    },
+                                    _ => {},
+                                }
+                            },
                             Rvalue::BinaryOp(op, box (op1, op2))
                             | Rvalue::CheckedBinaryOp(op, box (op1, op2)) => {
                                 match op {
@@ -256,13 +291,32 @@ mod inner {
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
-                progress_info!("terminator: {:?}", terminator);
+                // progress_info!("terminator: {:?}", terminator);
                 match &terminator.kind {
+                    ir::TerminatorKind::StaticCall {
+                        callee_did,
+                        callee_substs,
+                        ref args,
+                        dest,
+                        ..
+                    } => {
+                        let tcx = self.rcx.tcx();
+                        // TyCtxtExtension
+                        let ext = tcx.ext();
+                        let symbol_vec = ext.get_def_path(*callee_did);
+                        let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
+                        // let z = x.pow(y);
+                        // we will taint z as sink
+                        if sym.contains("pow") && !sym.contains("checked_") {
+                            let id = dest.local.index();
+                            taint_analyzer.mark_sink(id);
+                        }
+                    },
                     ir::TerminatorKind::SwitchInt {
                         discr,
                         targets
                     } => {
-                        progress_info!("{:?}, {:?}", discr, targets);
+                        // progress_info!("{:?}, {:?}", discr, targets);
                     },
                     _ => {},
                 }

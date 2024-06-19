@@ -206,10 +206,23 @@ mod inner {
         fn analyze(mut self) -> ErrHandleStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
+            let mut cleanup_bb = Vec::new();
+            let mut idx = 0;
+            for bb in &self.body.basic_blocks {
+                match &bb.terminator.kind {
+                    ir::TerminatorKind::Return => {
+                        cleanup_bb.push(idx);
+                    },
+                    _ => {},
+                }
+                idx = idx + 1;
+            }
+            progress_info!("cleanup_bb: {:?}", cleanup_bb);
+
             for statement in self.body.statements() {
                 // statement here is mir::Statement without translation
                 // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                progress_info!("{:?}", statement);
+                // progress_info!("{:?}", statement);
             }
 
             for (_id, terminator) in self.body.terminators().enumerate() {
@@ -228,24 +241,44 @@ mod inner {
                         // Check for lifetime bypass
                         let symbol_vec = ext.get_def_path(*callee_did);
                         let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
-                        if sym.contains("checked_add") || sym.contains("checked_sub") {
+                        // checked_* return Option
+                        // expect, ok_or, ok_or_else, map, map_or, map_or_else, unwrap, unwrap_or..
+                        if sym.contains("checked_") {
                             let id = dest.local.index();
                             taint_analyzer.mark_source(id, &BehaviorFlag::CHECKEDCALL);
+                        } 
+                        
+                        if sym.contains("expect") || sym.contains("ok_or") || 
+                            sym.contains("map") || sym.contains("unwrap") ||
+                            sym.contains("is_some") {
+                            let id = dest.local.index();
+                            taint_analyzer.mark_sink(id);
                         }
                     },
                     ir::TerminatorKind::SwitchInt {
                         discr,
                         targets
                     } => {
-                        match discr {
-                            Operand::Copy(pl) | Operand::Move(pl) => {
-                                let id = pl.local.index();
-                                taint_analyzer.mark_sink(id);
-                                self.status
-                                    .branch_handles
-                                    .push(terminator.original.source_info.span);
-                            },
-                            _ => {},
+                        // first, check whether the targets contain return statement
+                        let mut return_reachable: bool = false;
+                        for tg in targets.all_targets() {
+                            // breadth first search
+                            for cb in &cleanup_bb {
+                                return_reachable |= self.body.is_return(tg.index(), *cb);
+                            }
+                        }
+                        // if not return in depth of 2, we consider it is not correct error handling
+                        if !return_reachable {
+                            match discr {
+                                Operand::Copy(pl) | Operand::Move(pl) => {
+                                    let id = pl.local.index();
+                                    taint_analyzer.mark_sink(id);
+                                    self.status
+                                        .branch_handles
+                                        .push(terminator.original.source_info.span);
+                                },
+                                _ => {},
+                            }
                         }
                     },
                     _ => {},
