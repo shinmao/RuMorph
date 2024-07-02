@@ -113,6 +113,8 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
             .map(|(idx, basic_block)| self.translate_basic_block(&mut bb_successor_list[idx], basic_block))
             .collect::<Result<Vec<_>, _>>()?;
 
+        progress_info!("bb_successor_list: {:?}", bb_successor_list);
+        
         // we only locate local rather than place
         // e.g., (*_3).field: we would only locate _3
         let mut v = Vec::new();
@@ -169,6 +171,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                             _ => {},
                         }
                     },
+                    // StatementKind::SetDiscriminant {
                     _ => {},
                 }
             }
@@ -238,6 +241,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
         terminator: &mir::Terminator<'tcx>,
         successor_list: &mut Vec<usize>
     ) -> TranslationResult<'tcx, ir::Terminator<'tcx>> {
+        progress_info!("original terminator: {:?}", terminator);
         Ok(ir::Terminator {
             kind: match &terminator.kind {
                 TerminatorKind::Goto { target } => {
@@ -249,6 +253,7 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                     func: func_operand,
                     args,
                     destination: dest,
+                    target,
                     ..
                 } => {
 
@@ -256,13 +261,16 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                         let func_ty = func.literal.ty();
                         match func_ty.kind() {
                             TyKind::FnDef(def_id, callee_substs) => {
+                                if let Some(bb) = target {
+                                    successor_list.push(bb.index());
+                                }
                                 ir::TerminatorKind::StaticCall {
                                     callee_did: *def_id,
                                     callee_substs,
                                     args: args.clone(),
                                     dest: *dest,
                                 }
-                            }
+                            },
                             TyKind::FnPtr(_) => ir::TerminatorKind::FnPtr {
                                 value: func.literal.clone(),
                             },
@@ -281,8 +289,27 @@ impl<'tcx> RuMorphCtxtOwner<'tcx> {
                         targets: targets.clone() 
                     }
                 },
-                TerminatorKind::Drop { .. } => {
+                TerminatorKind::Drop { place, target, .. } => {
                     // TODO: implement Drop and DropAndReplace terminators
+                    successor_list.push(target.index());
+                    ir::TerminatorKind::Unimplemented(
+                        format!("TODO terminator: {:?}", terminator).into(),
+                    )
+                },
+                TerminatorKind::Assert { cond, expected, msg, target, .. } => {
+                    successor_list.push(target.index());
+                    ir::TerminatorKind::Unimplemented(
+                        format!("TODO terminator: {:?}", terminator).into(),
+                    )
+                },
+                TerminatorKind::Yield { value, resume, .. } => {
+                    successor_list.push(resume.index());
+                    ir::TerminatorKind::Unimplemented(
+                        format!("TODO terminator: {:?}", terminator).into(),
+                    )
+                },
+                TerminatorKind::FalseEdge { real_target, .. } => {
+                    successor_list.push(real_target.index());
                     ir::TerminatorKind::Unimplemented(
                         format!("TODO terminator: {:?}", terminator).into(),
                     )

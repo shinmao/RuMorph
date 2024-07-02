@@ -2,13 +2,14 @@
 //! Note that this is a translation of non-monomorphized, generic MIR.
 
 use std::borrow::Cow;
-use std::collections::{VecDeque, HashSet};
+use std::collections::{VecDeque, HashMap};
 use rustc_hir::def_id::DefId;
 use rustc_index::{IndexVec, IndexSlice};
 use rustc_middle::{
     mir,
     ty::{subst::SubstsRef, Ty},
 };
+use crate::progress_info;
 
 #[derive(Debug)]
 pub struct Terminator<'tcx> {
@@ -34,6 +35,7 @@ pub enum TerminatorKind<'tcx> {
     FnPtr {
         value: mir::ConstantKind<'tcx>,
     },
+    Drop(usize),
     Unimplemented(Cow<'static, str>),
 }
 
@@ -80,33 +82,38 @@ impl<'tcx> Body<'tcx> {
         self.basic_blocks.iter().map(|block| &block.terminator)
     }
 
-    pub fn is_return(&self, idx: usize, ret_idx: usize) -> bool {
+    pub fn arr_return(&self, idx: usize, ret_idx: usize) -> Option<Vec<usize>> {
         // check whether the basic block with idx can navigate to return in two-level depth
         let mut work_list = VecDeque::new();
-        let mut visited = HashSet::new();
-        let mut visited_depth: Vec<usize> = vec![0; self.bb_neighbor_list.len()];
-        let depth_limit = 2usize;
+        let mut visited = HashMap::new();
 
         work_list.push_back(idx);
-        visited.insert(idx);
-        visited_depth[idx] = 0usize;
+        visited.insert(idx, None);
         while let Some(curr) = work_list.pop_front() {
-            if visited_depth[curr] > depth_limit {
-                continue;
+            if curr == ret_idx {
+                let mut path = Vec::new();
+                let mut step = Some(curr);
+                while let Some(node) = step {
+                    path.push(node);
+                    step = visited[&node];
+                }
+                path.reverse();
+                return Some(path);
             }
 
+            progress_info!("curr: {:?} 's neighbors: {:?}", curr, &self.bb_neighbor_list[curr]);
             for next in &self.bb_neighbor_list[curr] {
-                if *next == ret_idx {
-                    return true;
-                }
-                if !visited.contains(&next) {
+                if !visited.contains_key(next) {
                     work_list.push_back(*next);
-                    visited.insert(*next);
-                    visited_depth[*next] = visited_depth[curr] + 1;
+                    visited.insert(*next, Some(curr));
                 }
             }
         }
 
-        false
+        None
+    }
+
+    pub fn is_direct_successor(&self, pre: usize, suc: usize) -> bool {
+        self.bb_neighbor_list[pre].contains(&suc)
     }
 }

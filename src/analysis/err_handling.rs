@@ -72,18 +72,6 @@ impl<'tcx> ErrHandleChecker<'tcx> {
                         utils::ColorSpan::new(tcx, related_item_span).context(InvalidSpan) => continue
                     );
 
-                    for &span in status.strong_bypass_spans() {
-                        color_span.add_sub_span(Color::Red, span);
-                    }
-
-                    for &span in status.weak_bypass_spans() {
-                        color_span.add_sub_span(Color::Yellow, span);
-                    }
-
-                    for &span in status.unresolvable_generic_function_spans() {
-                        color_span.add_sub_span(Color::Cyan, span);
-                    }
-
                     for &span in status.plain_deref_spans() {
                         color_span.add_sub_span(Color::Blue, span);
                     }
@@ -206,6 +194,8 @@ mod inner {
         fn analyze(mut self) -> ErrHandleStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
+            let mut checked_idx = usize::MAX;
+
             let mut cleanup_bb = Vec::new();
             let mut idx = 0;
             for bb in &self.body.basic_blocks {
@@ -218,14 +208,18 @@ mod inner {
                 idx = idx + 1;
             }
             progress_info!("cleanup_bb: {:?}", cleanup_bb);
-
-            for statement in self.body.statements() {
-                // statement here is mir::Statement without translation
-                // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                // progress_info!("{:?}", statement);
+            
+            idx = 0;
+            for bb in &self.body.basic_blocks {
+                progress_info!("basic block index: {:?}", idx);
+                for s in &bb.statements {
+                    progress_info!("{:?}", s);
+                }
+                progress_info!("{:?}", bb.terminator);
+                idx = idx + 1;
             }
 
-            for (_id, terminator) in self.body.terminators().enumerate() {
+            for (bb_idx, terminator) in self.body.terminators().enumerate() {
                 // progress_info!("terminator: {:?}", terminator);
                 match &terminator.kind {
                     ir::TerminatorKind::StaticCall {
@@ -246,38 +240,60 @@ mod inner {
                         if sym.contains("checked_") {
                             let id = dest.local.index();
                             taint_analyzer.mark_source(id, &BehaviorFlag::CHECKEDCALL);
+                            checked_idx = bb_idx;
                         } 
                         
-                        if sym.contains("expect") || sym.contains("ok_or") || 
-                            sym.contains("map") || sym.contains("unwrap") ||
-                            sym.contains("is_some") {
-                            let id = dest.local.index();
-                            taint_analyzer.mark_sink(id);
-                        }
+                        // if sym.contains("expect") || sym.contains("ok_or") || 
+                        //     sym.contains("map") || sym.contains("unwrap") ||
+                        //     sym.contains("is_some") {
+                        //     let id = dest.local.index();
+                        //     taint_analyzer.mark_sink(id);
+                        // }
                     },
                     ir::TerminatorKind::SwitchInt {
                         discr,
                         targets
                     } => {
-                        // first, check whether the targets contain return statement
-                        let mut return_reachable: bool = false;
-                        for tg in targets.all_targets() {
-                            // breadth first search
-                            for cb in &cleanup_bb {
-                                return_reachable |= self.body.is_return(tg.index(), *cb);
+                        // check whether SwitchInt is the direct successor of checked_* functions
+                        if (checked_idx != usize::MAX) && (self.body.is_direct_successor(checked_idx, bb_idx)) {
+                            // check whether the targets contain return statement
+                            let mut not_return: bool = false;
+                            let mut return_arrs = Vec::new();
+                            for tg in targets.all_targets() {
+                                // breadth first search
+                                for cb in &cleanup_bb {
+                                    progress_info!("{:?} -> {:?}", tg.index(), *cb);
+                                    return_arrs.push(self.body.arr_return(tg.index(), *cb));
+                                }
                             }
-                        }
-                        // if not return in depth of 2, we consider it is not correct error handling
-                        if !return_reachable {
-                            match discr {
-                                Operand::Copy(pl) | Operand::Move(pl) => {
-                                    let id = pl.local.index();
-                                    taint_analyzer.mark_sink(id);
-                                    self.status
-                                        .branch_handles
-                                        .push(terminator.original.source_info.span);
-                                },
-                                _ => {},
+
+                            progress_info!("return arrays: {:?}", return_arrs);
+
+                            for (i, sarr1) in return_arrs.iter().enumerate() {
+                                for (j, sarr2) in return_arrs.iter().enumerate() {
+                                    if let Some(path1) = sarr1 {
+                                        if let Some(path2) = sarr2 {
+                                            if i != j && is_subarray(&path1[1..], &path2[1..]) {
+                                                not_return |= true; 
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            progress_info!("no return? :{:?}", not_return);
+                            
+                            if not_return {
+                                match discr {
+                                    Operand::Copy(pl) | Operand::Move(pl) => {
+                                        let id = pl.local.index();
+                                        taint_analyzer.mark_sink(id);
+                                        self.status
+                                            .branch_handles
+                                            .push(terminator.original.source_info.span);
+                                    },
+                                    _ => {},
+                                }
                             }
                         }
                     },
@@ -309,6 +325,23 @@ mod inner {
             }
         }
     }
+}
+
+fn is_subarray(sub: &[usize], arr: &[usize]) -> bool {
+    if sub.is_empty() {
+        return false;
+    }
+
+    if sub.len() > arr.len() {
+        return false;
+    }
+
+    for i in 0..=(arr.len() - sub.len()) {
+        if (&arr[i..i + sub.len()] == sub) && (sub.len() > 2) {
+            return true;
+        }
+    }
+    false
 }
 
 // check whether both from_ty and to_ty are pointer types
