@@ -74,6 +74,8 @@ fn parse_config() -> (RuMorphConfig, Vec<String>) {
             "-Zrumorph-disable-overflow" => config.overflow_enabled = false,
             "-Zrumorph-enable-errhandle" => config.errhandle_enabled = true,
             "-Zrumorph-disable-errhandle" => config.errhandle_enabled = false,
+            "-Zrumorph-enable-truncation" => config.truncation_enabled = true,
+            "-Zrumorph-disable-truncation" => config.truncation_enabled = false,
             "-v" => config.verbosity = Verbosity::Verbose,
             "-vv" => config.verbosity = Verbosity::Trace,
             "-Zsensitivity-high" => config.report_level = ReportLevel::Error,

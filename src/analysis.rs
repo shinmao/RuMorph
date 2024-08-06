@@ -4,6 +4,7 @@ mod broken_bitpatterns;
 mod unsafe_dataflow;
 mod overflow;
 mod err_handling;
+mod truncation;
 
 use rustc_hir::{ItemKind, ImplPolarity, ItemId, hir_id::OwnerId, OwnerNode};
 use rustc_middle::hir::Owner;
@@ -23,6 +24,7 @@ pub use broken_bitpatterns::{BehaviorFlag as BrokenBitPatternsBehaviorFlag, Brok
 pub use unsafe_dataflow::{BehaviorFlag as UnsafeDataflowBehaviorFlag, UnsafeDataflowChecker};
 pub use overflow::{BehaviorFlag as OverflowBehaviorFlag, OverflowChecker};
 pub use err_handling::{BehaviorFlag as ErrHandleBehaviorFlag, ErrHandleChecker};
+pub use truncation::{BehaviorFlag as TruncationBehaviorFlag, TruncationChecker};
 
 pub type AnalysisResult<'tcx, T> = Result<T, Box<dyn AnalysisError + 'tcx>>;
 
@@ -82,6 +84,7 @@ pub enum AnalysisKind {
     UnsafeDataflow(UnsafeDataflowBehaviorFlag),
     Overflow(OverflowBehaviorFlag),
     ErrHandle(ErrHandleBehaviorFlag),
+    Truncation(TruncationBehaviorFlag),
 }
 
 trait IntoReportLevel {
@@ -168,7 +171,11 @@ impl Into<Cow<'static, str>> for AnalysisKind {
             AnalysisKind::ErrHandle(bypass_kinds) => {
                 let mut v = vec!["Err handling:"];
                 v.join("/").into()
-            }
+            },
+            AnalysisKind::Truncation(bypass_kinds) => {
+                let mut v = vec!["Truncation:"];
+                v.join("/").into()
+            },
         }
     }
 }

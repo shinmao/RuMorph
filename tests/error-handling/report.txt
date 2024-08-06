@@ -1,57 +1,289 @@
-2024-06-18 21:07:12.883136 |INFO | [rumorph-progress] Running cargo rumorph
-2024-06-18 21:07:13.053216 |INFO | [rumorph-progress] Running rumorph for target bin:error-handling
-2024-06-18 21:07:13.385430 |INFO | [rumorph-progress] RuMorph started
-2024-06-18 21:07:13.385690 |INFO | [rumorph-progress] BrokenLayout analysis started
-2024-06-18 21:07:13.385709 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(overflow)
-2024-06-18 21:07:13.385720 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.385725 |INFO | [rumorph-progress] BrokenLayoutChecker::analyze(main)
-2024-06-18 21:07:13.385731 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.385736 |INFO | [rumorph-progress] BrokenLayout analysis finished
-2024-06-18 21:07:13.385740 |INFO | [rumorph-progress] UninitExposure analysis started
-2024-06-18 21:07:13.385744 |INFO | [rumorph-progress] UninitExposureChecker::analyze(overflow)
-2024-06-18 21:07:13.385751 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.385756 |INFO | [rumorph-progress] UninitExposureChecker::analyze(main)
-2024-06-18 21:07:13.385761 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.385766 |INFO | [rumorph-progress] UninitExposure analysis finished
-2024-06-18 21:07:13.385771 |INFO | [rumorph-progress] BrokenBitPatterns analysis started
-2024-06-18 21:07:13.385776 |INFO | [rumorph-progress] BrokenBitPatternsChecker::analyze(overflow)
-2024-06-18 21:07:13.385783 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.385788 |INFO | [rumorph-progress] BrokenBitPatternsChecker::analyze(main)
-2024-06-18 21:07:13.385793 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.385798 |INFO | [rumorph-progress] BrokenBitPatterns analysis finished
-2024-06-18 21:07:13.385802 |INFO | [rumorph-progress] Overflow analysis started
-2024-06-18 21:07:13.385807 |INFO | [rumorph-progress] OverflowChecker::analyze(overflow)
-2024-06-18 21:07:13.386661 |INFO | [rumorph-progress] size: 10
-2024-06-18 21:07:13.386828 |INFO | [rumorph-progress] find the bug with behavior_flag: EXTERNAL
-2024-06-18 21:07:13.386859 |INFO | [rumorph-progress] OverflowChecker::analyze(main)
-2024-06-18 21:07:13.386979 |INFO | [rumorph-progress] size: 2
-2024-06-18 21:07:13.386998 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.387003 |INFO | [rumorph-progress] Overflow analysis finished
-2024-06-18 21:07:13.387008 |INFO | [rumorph-progress] ErrHandle analysis started
-2024-06-18 21:07:13.387014 |INFO | [rumorph-progress] ErrHandleChecker::analyze(overflow)
-2024-06-18 21:07:13.387021 |INFO | [rumorph-progress] cleanup_bb: [9]
-2024-06-18 21:07:13.387062 |INFO | [rumorph-progress] find the bug with behavior_flag: CHECKEDCALL
-2024-06-18 21:07:13.387088 |INFO | [rumorph-progress] ErrHandleChecker::analyze(main)
-2024-06-18 21:07:13.387095 |INFO | [rumorph-progress] cleanup_bb: [1]
-2024-06-18 21:07:13.387102 |INFO | [rumorph-progress] bug not found
-2024-06-18 21:07:13.387107 |INFO | [rumorph-progress] ErrHandle analysis finished
-2024-06-18 21:07:13.387111 |INFO | [rumorph-progress] RuMorph finished
+2024-06-28 03:31:05.672750 |INFO | [rumorph-progress] Running cargo rumorph
+2024-06-28 03:31:05.841696 |INFO | [rumorph-progress] Running rumorph for target bin:error-handling
+2024-06-28 03:31:06.177365 |INFO | [rumorph-progress] RuMorph started
+2024-06-28 03:31:06.177576 |INFO | [rumorph-progress] Overflow analysis started
+2024-06-28 03:31:06.177594 |INFO | [rumorph-progress] OverflowChecker::analyze(overflow)
+2024-06-28 03:31:06.178536 |INFO | [rumorph-progress] size: 21
+2024-06-28 03:31:06.178550 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:2:22: 2:34 (#0), scope: scope[1] }, kind: assert(!move (_6.1: bool), "attempt to compute `{} - {}`, which would overflow", move _5, const 2_u64) -> bb1 }
+2024-06-28 03:31:06.178637 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:2:22: 2:49 (#0), scope: scope[1] }, kind: _3 = core::num::<impl u64>::checked_add(move _4, const 1_u64) -> bb2 }
+2024-06-28 03:31:06.189358 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:2:12: 2:19 (#0), scope: scope[1] }, kind: switchInt(move _7) -> [1: bb3, otherwise: bb6] }
+2024-06-28 03:31:06.189400 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#5), scope: scope[1] }, kind: _10 = std::fmt::Arguments::<'_>::new_const(move _11) -> bb4 }
+2024-06-28 03:31:06.189419 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#4), scope: scope[1] }, kind: _9 = std::io::_print(move _10) -> bb5 }
+2024-06-28 03:31:06.189429 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:2:5: 6:6 (#0), scope: scope[0] }, kind: goto -> bb9 }
+2024-06-28 03:31:06.189438 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#7), scope: scope[0] }, kind: _17 = std::fmt::Arguments::<'_>::new_const(move _18) -> bb7 }
+2024-06-28 03:31:06.189448 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#6), scope: scope[0] }, kind: _16 = std::io::_print(move _17) -> bb8 }
+2024-06-28 03:31:06.189457 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:2:5: 6:6 (#0), scope: scope[0] }, kind: goto -> bb9 }
+2024-06-28 03:31:06.189465 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[0] }, kind: _24 = std::fmt::Arguments::<'_>::new_const(move _25) -> bb10 }
+2024-06-28 03:31:06.189475 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[0] }, kind: _23 = std::io::_print(move _24) -> bb11 }
+2024-06-28 03:31:06.189485 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:10:22: 10:34 (#0), scope: scope[2] }, kind: assert(!move (_33.1: bool), "attempt to compute `{} - {}`, which would overflow", move _32, const 1_u64) -> bb12 }
+2024-06-28 03:31:06.189500 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:10:22: 10:49 (#0), scope: scope[2] }, kind: _30 = core::num::<impl u64>::checked_add(move _31, const 1_u64) -> bb13 }
+2024-06-28 03:31:06.189511 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:10:12: 10:19 (#0), scope: scope[2] }, kind: switchInt(move _34) -> [1: bb14, otherwise: bb17] }
+2024-06-28 03:31:06.189520 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#11), scope: scope[2] }, kind: _37 = std::fmt::Arguments::<'_>::new_const(move _38) -> bb15 }
+2024-06-28 03:31:06.189531 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#10), scope: scope[2] }, kind: _36 = std::io::_print(move _37) -> bb16 }
+2024-06-28 03:31:06.189540 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:10:5: 12:6 (#0), scope: scope[0] }, kind: goto -> bb18 }
+2024-06-28 03:31:06.189548 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:10:5: 12:6 (#0), scope: scope[0] }, kind: goto -> bb18 }
+2024-06-28 03:31:06.189555 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#13), scope: scope[0] }, kind: _44 = std::fmt::Arguments::<'_>::new_const(move _45) -> bb19 }
+2024-06-28 03:31:06.189565 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#12), scope: scope[0] }, kind: _43 = std::io::_print(move _44) -> bb20 }
+2024-06-28 03:31:06.189574 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:15:2: 15:2 (#0), scope: scope[0] }, kind: return }
+2024-06-28 03:31:06.189581 |INFO | [rumorph-progress] bb_successor_list: [[1], [2], [3, 6], [4], [5], [9], [7], [8], [9], [10], [11], [12], [13], [14, 17], [15], [16], [18], [18], [19], [20], []]
+2024-06-28 03:31:06.189652 |INFO | [rumorph-progress] find the bug with behavior_flag: EXTERNAL
+2024-06-28 03:31:06.189688 |INFO | [rumorph-progress] OverflowChecker::analyze(main)
+2024-06-28 03:31:06.189799 |INFO | [rumorph-progress] size: 2
+2024-06-28 03:31:06.189809 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:18:5: 18:23 (#0), scope: scope[0] }, kind: _1 = overflow(const _) -> bb1 }
+2024-06-28 03:31:06.189822 |INFO | [rumorph-progress] original terminator: Terminator { source_info: SourceInfo { span: src/main.rs:19:2: 19:2 (#0), scope: scope[0] }, kind: return }
+2024-06-28 03:31:06.189828 |INFO | [rumorph-progress] bb_successor_list: [[1], []]
+2024-06-28 03:31:06.189839 |INFO | [rumorph-progress] bug not found
+2024-06-28 03:31:06.189843 |INFO | [rumorph-progress] Overflow analysis finished
+2024-06-28 03:31:06.189848 |INFO | [rumorph-progress] ErrHandle analysis started
+2024-06-28 03:31:06.189852 |INFO | [rumorph-progress] ErrHandleChecker::analyze(overflow)
+2024-06-28 03:31:06.189858 |INFO | [rumorph-progress] cleanup_bb: [20]
+2024-06-28 03:31:06.189862 |INFO | [rumorph-progress] basic block index: 0
+2024-06-28 03:31:06.189867 |INFO | [rumorph-progress] StorageLive(_2)
+2024-06-28 03:31:06.189871 |INFO | [rumorph-progress] StorageLive(_3)
+2024-06-28 03:31:06.189875 |INFO | [rumorph-progress] StorageLive(_4)
+2024-06-28 03:31:06.189878 |INFO | [rumorph-progress] StorageLive(_5)
+2024-06-28 03:31:06.189882 |INFO | [rumorph-progress] _5 = _1
+2024-06-28 03:31:06.189887 |INFO | [rumorph-progress] _6 = CheckedSub(_5, const 2_u64)
+2024-06-28 03:31:06.189901 |INFO | [rumorph-progress] Terminator { kind: Unimplemented("TODO terminator: Terminator { source_info: SourceInfo { span: src/main.rs:2:22: 2:34 (#0), scope: scope[1] }, kind: assert(!move (_6.1: bool), \"attempt to compute `{} - {}`, which would overflow\", move _5, const 2_u64) -> bb1 }"), original: Terminator { source_info: SourceInfo { span: src/main.rs:2:22: 2:34 (#0), scope: scope[1] }, kind: assert(!move (_6.1: bool), "attempt to compute `{} - {}`, which would overflow", move _5, const 2_u64) -> bb1 } }
+2024-06-28 03:31:06.189926 |INFO | [rumorph-progress] basic block index: 1
+2024-06-28 03:31:06.189930 |INFO | [rumorph-progress] _4 = move (_6.0: u64)
+2024-06-28 03:31:06.189934 |INFO | [rumorph-progress] StorageDead(_5)
+2024-06-28 03:31:06.189938 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:29733 ~ core[6c80]::num::{impl#9}::checked_add), callee_substs: [], args: [move _4, const 1_u64], dest: _3 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:2:22: 2:49 (#0), scope: scope[1] }, kind: _3 = core::num::<impl u64>::checked_add(move _4, const 1_u64) -> bb2 } }
+2024-06-28 03:31:06.189993 |INFO | [rumorph-progress] basic block index: 2
+2024-06-28 03:31:06.189997 |INFO | [rumorph-progress] StorageDead(_4)
+2024-06-28 03:31:06.190001 |INFO | [rumorph-progress] _7 = discriminant(_3)
+2024-06-28 03:31:06.190005 |INFO | [rumorph-progress] Terminator { kind: SwitchInt { discr: move _7, targets: SwitchTargets { values: [1], targets: [bb3, bb6] } }, original: Terminator { source_info: SourceInfo { span: src/main.rs:2:12: 2:19 (#0), scope: scope[1] }, kind: switchInt(move _7) -> [1: bb3, otherwise: bb6] } }
+2024-06-28 03:31:06.190017 |INFO | [rumorph-progress] basic block index: 3
+2024-06-28 03:31:06.190021 |INFO | [rumorph-progress] StorageLive(_8)
+2024-06-28 03:31:06.190025 |INFO | [rumorph-progress] StorageLive(_9)
+2024-06-28 03:31:06.190029 |INFO | [rumorph-progress] StorageLive(_10)
+2024-06-28 03:31:06.190032 |INFO | [rumorph-progress] StorageLive(_11)
+2024-06-28 03:31:06.190036 |INFO | [rumorph-progress] StorageLive(_12)
+2024-06-28 03:31:06.190039 |INFO | [rumorph-progress] StorageLive(_13)
+2024-06-28 03:31:06.190043 |INFO | [rumorph-progress] _53 = const _
+2024-06-28 03:31:06.190047 |INFO | [rumorph-progress] _13 = &(*_53)
+2024-06-28 03:31:06.190052 |INFO | [rumorph-progress] _12 = &(*_13)
+2024-06-28 03:31:06.190057 |INFO | [rumorph-progress] _11 = move _12 as &[&str] (Pointer(Unsize))
+2024-06-28 03:31:06.190064 |INFO | [rumorph-progress] StorageDead(_12)
+2024-06-28 03:31:06.190068 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:9127 ~ core[6c80]::fmt::{impl#2}::new_const), callee_substs: [ReErased], args: [move _11], dest: _10 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#5), scope: scope[1] }, kind: _10 = std::fmt::Arguments::<'_>::new_const(move _11) -> bb4 } }
+2024-06-28 03:31:06.190090 |INFO | [rumorph-progress] basic block index: 4
+2024-06-28 03:31:06.190094 |INFO | [rumorph-progress] StorageDead(_11)
+2024-06-28 03:31:06.190098 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _10], dest: _9 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#4), scope: scope[1] }, kind: _9 = std::io::_print(move _10) -> bb5 } }
+2024-06-28 03:31:06.190110 |INFO | [rumorph-progress] basic block index: 5
+2024-06-28 03:31:06.190114 |INFO | [rumorph-progress] StorageDead(_10)
+2024-06-28 03:31:06.190118 |INFO | [rumorph-progress] StorageDead(_13)
+2024-06-28 03:31:06.190121 |INFO | [rumorph-progress] StorageDead(_9)
+2024-06-28 03:31:06.190125 |INFO | [rumorph-progress] _8 = const ()
+2024-06-28 03:31:06.190155 |INFO | [rumorph-progress] StorageDead(_8)
+2024-06-28 03:31:06.190159 |INFO | [rumorph-progress] _2 = const ()
+2024-06-28 03:31:06.190163 |INFO | [rumorph-progress] Terminator { kind: Goto(9), original: Terminator { source_info: SourceInfo { span: src/main.rs:2:5: 6:6 (#0), scope: scope[0] }, kind: goto -> bb9 } }
+2024-06-28 03:31:06.190171 |INFO | [rumorph-progress] basic block index: 6
+2024-06-28 03:31:06.190175 |INFO | [rumorph-progress] StorageLive(_15)
+2024-06-28 03:31:06.190179 |INFO | [rumorph-progress] StorageLive(_16)
+2024-06-28 03:31:06.190182 |INFO | [rumorph-progress] StorageLive(_17)
+2024-06-28 03:31:06.190186 |INFO | [rumorph-progress] StorageLive(_18)
+2024-06-28 03:31:06.190190 |INFO | [rumorph-progress] StorageLive(_19)
+2024-06-28 03:31:06.190193 |INFO | [rumorph-progress] StorageLive(_20)
+2024-06-28 03:31:06.190197 |INFO | [rumorph-progress] _52 = const _
+2024-06-28 03:31:06.190201 |INFO | [rumorph-progress] _20 = &(*_52)
+2024-06-28 03:31:06.190205 |INFO | [rumorph-progress] _19 = &(*_20)
+2024-06-28 03:31:06.190210 |INFO | [rumorph-progress] _18 = move _19 as &[&str] (Pointer(Unsize))
+2024-06-28 03:31:06.190216 |INFO | [rumorph-progress] StorageDead(_19)
+2024-06-28 03:31:06.190220 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:9127 ~ core[6c80]::fmt::{impl#2}::new_const), callee_substs: [ReErased], args: [move _18], dest: _17 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#7), scope: scope[0] }, kind: _17 = std::fmt::Arguments::<'_>::new_const(move _18) -> bb7 } }
+2024-06-28 03:31:06.190233 |INFO | [rumorph-progress] basic block index: 7
+2024-06-28 03:31:06.190237 |INFO | [rumorph-progress] StorageDead(_18)
+2024-06-28 03:31:06.190240 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _17], dest: _16 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#6), scope: scope[0] }, kind: _16 = std::io::_print(move _17) -> bb8 } }
+2024-06-28 03:31:06.190252 |INFO | [rumorph-progress] basic block index: 8
+2024-06-28 03:31:06.190256 |INFO | [rumorph-progress] StorageDead(_17)
+2024-06-28 03:31:06.190259 |INFO | [rumorph-progress] StorageDead(_20)
+2024-06-28 03:31:06.190263 |INFO | [rumorph-progress] StorageDead(_16)
+2024-06-28 03:31:06.190267 |INFO | [rumorph-progress] _15 = const ()
+2024-06-28 03:31:06.190271 |INFO | [rumorph-progress] StorageDead(_15)
+2024-06-28 03:31:06.190275 |INFO | [rumorph-progress] _2 = const ()
+2024-06-28 03:31:06.190279 |INFO | [rumorph-progress] Terminator { kind: Goto(9), original: Terminator { source_info: SourceInfo { span: src/main.rs:2:5: 6:6 (#0), scope: scope[0] }, kind: goto -> bb9 } }
+2024-06-28 03:31:06.190286 |INFO | [rumorph-progress] basic block index: 9
+2024-06-28 03:31:06.190290 |INFO | [rumorph-progress] StorageDead(_3)
+2024-06-28 03:31:06.190293 |INFO | [rumorph-progress] StorageDead(_2)
+2024-06-28 03:31:06.190297 |INFO | [rumorph-progress] StorageLive(_22)
+2024-06-28 03:31:06.190301 |INFO | [rumorph-progress] StorageLive(_23)
+2024-06-28 03:31:06.190304 |INFO | [rumorph-progress] StorageLive(_24)
+2024-06-28 03:31:06.190308 |INFO | [rumorph-progress] StorageLive(_25)
+2024-06-28 03:31:06.190312 |INFO | [rumorph-progress] StorageLive(_26)
+2024-06-28 03:31:06.190315 |INFO | [rumorph-progress] StorageLive(_27)
+2024-06-28 03:31:06.190319 |INFO | [rumorph-progress] _51 = const _
+2024-06-28 03:31:06.190323 |INFO | [rumorph-progress] _27 = &(*_51)
+2024-06-28 03:31:06.190327 |INFO | [rumorph-progress] _26 = &(*_27)
+2024-06-28 03:31:06.190332 |INFO | [rumorph-progress] _25 = move _26 as &[&str] (Pointer(Unsize))
+2024-06-28 03:31:06.190337 |INFO | [rumorph-progress] StorageDead(_26)
+2024-06-28 03:31:06.190341 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:9127 ~ core[6c80]::fmt::{impl#2}::new_const), callee_substs: [ReErased], args: [move _25], dest: _24 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#9), scope: scope[0] }, kind: _24 = std::fmt::Arguments::<'_>::new_const(move _25) -> bb10 } }
+2024-06-28 03:31:06.190354 |INFO | [rumorph-progress] basic block index: 10
+2024-06-28 03:31:06.190357 |INFO | [rumorph-progress] StorageDead(_25)
+2024-06-28 03:31:06.190361 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _24], dest: _23 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#8), scope: scope[0] }, kind: _23 = std::io::_print(move _24) -> bb11 } }
+2024-06-28 03:31:06.190372 |INFO | [rumorph-progress] basic block index: 11
+2024-06-28 03:31:06.190376 |INFO | [rumorph-progress] StorageDead(_24)
+2024-06-28 03:31:06.190379 |INFO | [rumorph-progress] StorageDead(_27)
+2024-06-28 03:31:06.190383 |INFO | [rumorph-progress] StorageDead(_23)
+2024-06-28 03:31:06.190387 |INFO | [rumorph-progress] _22 = const ()
+2024-06-28 03:31:06.190391 |INFO | [rumorph-progress] StorageDead(_22)
+2024-06-28 03:31:06.190395 |INFO | [rumorph-progress] StorageLive(_29)
+2024-06-28 03:31:06.190398 |INFO | [rumorph-progress] StorageLive(_30)
+2024-06-28 03:31:06.190402 |INFO | [rumorph-progress] StorageLive(_31)
+2024-06-28 03:31:06.190406 |INFO | [rumorph-progress] StorageLive(_32)
+2024-06-28 03:31:06.190409 |INFO | [rumorph-progress] _32 = _1
+2024-06-28 03:31:06.190413 |INFO | [rumorph-progress] _33 = CheckedSub(_32, const 1_u64)
+2024-06-28 03:31:06.190419 |INFO | [rumorph-progress] Terminator { kind: Unimplemented("TODO terminator: Terminator { source_info: SourceInfo { span: src/main.rs:10:22: 10:34 (#0), scope: scope[2] }, kind: assert(!move (_33.1: bool), \"attempt to compute `{} - {}`, which would overflow\", move _32, const 1_u64) -> bb12 }"), original: Terminator { source_info: SourceInfo { span: src/main.rs:10:22: 10:34 (#0), scope: scope[2] }, kind: assert(!move (_33.1: bool), "attempt to compute `{} - {}`, which would overflow", move _32, const 1_u64) -> bb12 } }
+2024-06-28 03:31:06.190434 |INFO | [rumorph-progress] basic block index: 12
+2024-06-28 03:31:06.190438 |INFO | [rumorph-progress] _31 = move (_33.0: u64)
+2024-06-28 03:31:06.190443 |INFO | [rumorph-progress] StorageDead(_32)
+2024-06-28 03:31:06.190447 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:29733 ~ core[6c80]::num::{impl#9}::checked_add), callee_substs: [], args: [move _31, const 1_u64], dest: _30 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:10:22: 10:49 (#0), scope: scope[2] }, kind: _30 = core::num::<impl u64>::checked_add(move _31, const 1_u64) -> bb13 } }
+2024-06-28 03:31:06.190460 |INFO | [rumorph-progress] basic block index: 13
+2024-06-28 03:31:06.190465 |INFO | [rumorph-progress] StorageDead(_31)
+2024-06-28 03:31:06.190468 |INFO | [rumorph-progress] _34 = discriminant(_30)
+2024-06-28 03:31:06.190472 |INFO | [rumorph-progress] Terminator { kind: SwitchInt { discr: move _34, targets: SwitchTargets { values: [1], targets: [bb14, bb17] } }, original: Terminator { source_info: SourceInfo { span: src/main.rs:10:12: 10:19 (#0), scope: scope[2] }, kind: switchInt(move _34) -> [1: bb14, otherwise: bb17] } }
+2024-06-28 03:31:06.190482 |INFO | [rumorph-progress] basic block index: 14
+2024-06-28 03:31:06.190486 |INFO | [rumorph-progress] StorageLive(_35)
+2024-06-28 03:31:06.190490 |INFO | [rumorph-progress] StorageLive(_36)
+2024-06-28 03:31:06.190494 |INFO | [rumorph-progress] StorageLive(_37)
+2024-06-28 03:31:06.190498 |INFO | [rumorph-progress] StorageLive(_38)
+2024-06-28 03:31:06.190501 |INFO | [rumorph-progress] StorageLive(_39)
+2024-06-28 03:31:06.190505 |INFO | [rumorph-progress] StorageLive(_40)
+2024-06-28 03:31:06.190508 |INFO | [rumorph-progress] _50 = const _
+2024-06-28 03:31:06.190513 |INFO | [rumorph-progress] _40 = &(*_50)
+2024-06-28 03:31:06.190517 |INFO | [rumorph-progress] _39 = &(*_40)
+2024-06-28 03:31:06.190521 |INFO | [rumorph-progress] _38 = move _39 as &[&str] (Pointer(Unsize))
+2024-06-28 03:31:06.190526 |INFO | [rumorph-progress] StorageDead(_39)
+2024-06-28 03:31:06.190530 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:9127 ~ core[6c80]::fmt::{impl#2}::new_const), callee_substs: [ReErased], args: [move _38], dest: _37 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#11), scope: scope[2] }, kind: _37 = std::fmt::Arguments::<'_>::new_const(move _38) -> bb15 } }
+2024-06-28 03:31:06.190543 |INFO | [rumorph-progress] basic block index: 15
+2024-06-28 03:31:06.190546 |INFO | [rumorph-progress] StorageDead(_38)
+2024-06-28 03:31:06.190550 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _37], dest: _36 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#10), scope: scope[2] }, kind: _36 = std::io::_print(move _37) -> bb16 } }
+2024-06-28 03:31:06.190561 |INFO | [rumorph-progress] basic block index: 16
+2024-06-28 03:31:06.190565 |INFO | [rumorph-progress] StorageDead(_37)
+2024-06-28 03:31:06.190569 |INFO | [rumorph-progress] StorageDead(_40)
+2024-06-28 03:31:06.190572 |INFO | [rumorph-progress] StorageDead(_36)
+2024-06-28 03:31:06.190576 |INFO | [rumorph-progress] _35 = const ()
+2024-06-28 03:31:06.190582 |INFO | [rumorph-progress] StorageDead(_35)
+2024-06-28 03:31:06.190586 |INFO | [rumorph-progress] _29 = const ()
+2024-06-28 03:31:06.190590 |INFO | [rumorph-progress] Terminator { kind: Goto(18), original: Terminator { source_info: SourceInfo { span: src/main.rs:10:5: 12:6 (#0), scope: scope[0] }, kind: goto -> bb18 } }
+2024-06-28 03:31:06.190597 |INFO | [rumorph-progress] basic block index: 17
+2024-06-28 03:31:06.190601 |INFO | [rumorph-progress] _29 = const ()
+2024-06-28 03:31:06.190605 |INFO | [rumorph-progress] Terminator { kind: Goto(18), original: Terminator { source_info: SourceInfo { span: src/main.rs:10:5: 12:6 (#0), scope: scope[0] }, kind: goto -> bb18 } }
+2024-06-28 03:31:06.190612 |INFO | [rumorph-progress] basic block index: 18
+2024-06-28 03:31:06.190616 |INFO | [rumorph-progress] StorageDead(_30)
+2024-06-28 03:31:06.190619 |INFO | [rumorph-progress] StorageDead(_29)
+2024-06-28 03:31:06.190623 |INFO | [rumorph-progress] StorageLive(_42)
+2024-06-28 03:31:06.190627 |INFO | [rumorph-progress] StorageLive(_43)
+2024-06-28 03:31:06.190630 |INFO | [rumorph-progress] StorageLive(_44)
+2024-06-28 03:31:06.190634 |INFO | [rumorph-progress] StorageLive(_45)
+2024-06-28 03:31:06.190637 |INFO | [rumorph-progress] StorageLive(_46)
+2024-06-28 03:31:06.190641 |INFO | [rumorph-progress] StorageLive(_47)
+2024-06-28 03:31:06.190645 |INFO | [rumorph-progress] _49 = const _
+2024-06-28 03:31:06.190649 |INFO | [rumorph-progress] _47 = &(*_49)
+2024-06-28 03:31:06.190653 |INFO | [rumorph-progress] _46 = &(*_47)
+2024-06-28 03:31:06.190657 |INFO | [rumorph-progress] _45 = move _46 as &[&str] (Pointer(Unsize))
+2024-06-28 03:31:06.190663 |INFO | [rumorph-progress] StorageDead(_46)
+2024-06-28 03:31:06.190667 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(2:9127 ~ core[6c80]::fmt::{impl#2}::new_const), callee_substs: [ReErased], args: [move _45], dest: _44 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:28: 137:61 (#13), scope: scope[0] }, kind: _44 = std::fmt::Arguments::<'_>::new_const(move _45) -> bb19 } }
+2024-06-28 03:31:06.190679 |INFO | [rumorph-progress] basic block index: 19
+2024-06-28 03:31:06.190683 |INFO | [rumorph-progress] StorageDead(_45)
+2024-06-28 03:31:06.190687 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(1:3295 ~ std[cd42]::io::stdio::_print), callee_substs: [], args: [move _44], dest: _43 }, original: Terminator { source_info: SourceInfo { span: /root/.rustup/toolchains/nightly-2023-06-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/macros.rs:137:9: 137:62 (#12), scope: scope[0] }, kind: _43 = std::io::_print(move _44) -> bb20 } }
+2024-06-28 03:31:06.190698 |INFO | [rumorph-progress] basic block index: 20
+2024-06-28 03:31:06.190701 |INFO | [rumorph-progress] StorageDead(_44)
+2024-06-28 03:31:06.190705 |INFO | [rumorph-progress] StorageDead(_47)
+2024-06-28 03:31:06.190709 |INFO | [rumorph-progress] StorageDead(_43)
+2024-06-28 03:31:06.190712 |INFO | [rumorph-progress] _42 = const ()
+2024-06-28 03:31:06.190717 |INFO | [rumorph-progress] StorageDead(_42)
+2024-06-28 03:31:06.190720 |INFO | [rumorph-progress] _0 = const ()
+2024-06-28 03:31:06.190725 |INFO | [rumorph-progress] Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:15:2: 15:2 (#0), scope: scope[0] }, kind: return } }
+2024-06-28 03:31:06.190744 |INFO | [rumorph-progress] 3 -> 20
+2024-06-28 03:31:06.190753 |INFO | [rumorph-progress] curr: 3 's neighbors: [4]
+2024-06-28 03:31:06.190758 |INFO | [rumorph-progress] curr: 4 's neighbors: [5]
+2024-06-28 03:31:06.190763 |INFO | [rumorph-progress] curr: 5 's neighbors: [9]
+2024-06-28 03:31:06.190767 |INFO | [rumorph-progress] curr: 9 's neighbors: [10]
+2024-06-28 03:31:06.190771 |INFO | [rumorph-progress] curr: 10 's neighbors: [11]
+2024-06-28 03:31:06.190775 |INFO | [rumorph-progress] curr: 11 's neighbors: [12]
+2024-06-28 03:31:06.190779 |INFO | [rumorph-progress] curr: 12 's neighbors: [13]
+2024-06-28 03:31:06.190783 |INFO | [rumorph-progress] curr: 13 's neighbors: [14, 17]
+2024-06-28 03:31:06.190788 |INFO | [rumorph-progress] curr: 14 's neighbors: [15]
+2024-06-28 03:31:06.190792 |INFO | [rumorph-progress] curr: 17 's neighbors: [18]
+2024-06-28 03:31:06.190796 |INFO | [rumorph-progress] curr: 15 's neighbors: [16]
+2024-06-28 03:31:06.190800 |INFO | [rumorph-progress] curr: 18 's neighbors: [19]
+2024-06-28 03:31:06.190804 |INFO | [rumorph-progress] curr: 16 's neighbors: [18]
+2024-06-28 03:31:06.190809 |INFO | [rumorph-progress] curr: 19 's neighbors: [20]
+2024-06-28 03:31:06.190814 |INFO | [rumorph-progress] 6 -> 20
+2024-06-28 03:31:06.190819 |INFO | [rumorph-progress] curr: 6 's neighbors: [7]
+2024-06-28 03:31:06.190823 |INFO | [rumorph-progress] curr: 7 's neighbors: [8]
+2024-06-28 03:31:06.190827 |INFO | [rumorph-progress] curr: 8 's neighbors: [9]
+2024-06-28 03:31:06.190832 |INFO | [rumorph-progress] curr: 9 's neighbors: [10]
+2024-06-28 03:31:06.190836 |INFO | [rumorph-progress] curr: 10 's neighbors: [11]
+2024-06-28 03:31:06.190840 |INFO | [rumorph-progress] curr: 11 's neighbors: [12]
+2024-06-28 03:31:06.190844 |INFO | [rumorph-progress] curr: 12 's neighbors: [13]
+2024-06-28 03:31:06.190848 |INFO | [rumorph-progress] curr: 13 's neighbors: [14, 17]
+2024-06-28 03:31:06.190852 |INFO | [rumorph-progress] curr: 14 's neighbors: [15]
+2024-06-28 03:31:06.190856 |INFO | [rumorph-progress] curr: 17 's neighbors: [18]
+2024-06-28 03:31:06.190860 |INFO | [rumorph-progress] curr: 15 's neighbors: [16]
+2024-06-28 03:31:06.190864 |INFO | [rumorph-progress] curr: 18 's neighbors: [19]
+2024-06-28 03:31:06.190867 |INFO | [rumorph-progress] curr: 16 's neighbors: [18]
+2024-06-28 03:31:06.190871 |INFO | [rumorph-progress] curr: 19 's neighbors: [20]
+2024-06-28 03:31:06.190877 |INFO | [rumorph-progress] return arrays: [Some([3, 4, 5, 9, 10, 11, 12, 13, 17, 18, 19, 20]), Some([6, 7, 8, 9, 10, 11, 12, 13, 17, 18, 19, 20])]
+2024-06-28 03:31:06.190886 |INFO | [rumorph-progress] no return? :false
+2024-06-28 03:31:06.190896 |INFO | [rumorph-progress] 14 -> 20
+2024-06-28 03:31:06.190901 |INFO | [rumorph-progress] curr: 14 's neighbors: [15]
+2024-06-28 03:31:06.190905 |INFO | [rumorph-progress] curr: 15 's neighbors: [16]
+2024-06-28 03:31:06.190909 |INFO | [rumorph-progress] curr: 16 's neighbors: [18]
+2024-06-28 03:31:06.190913 |INFO | [rumorph-progress] curr: 18 's neighbors: [19]
+2024-06-28 03:31:06.190917 |INFO | [rumorph-progress] curr: 19 's neighbors: [20]
+2024-06-28 03:31:06.190922 |INFO | [rumorph-progress] 17 -> 20
+2024-06-28 03:31:06.190925 |INFO | [rumorph-progress] curr: 17 's neighbors: [18]
+2024-06-28 03:31:06.190930 |INFO | [rumorph-progress] curr: 18 's neighbors: [19]
+2024-06-28 03:31:06.190934 |INFO | [rumorph-progress] curr: 19 's neighbors: [20]
+2024-06-28 03:31:06.190939 |INFO | [rumorph-progress] return arrays: [Some([14, 15, 16, 18, 19, 20]), Some([17, 18, 19, 20])]
+2024-06-28 03:31:06.190945 |INFO | [rumorph-progress] no return? :true
+2024-06-28 03:31:06.190957 |INFO | [rumorph-progress] find the bug with behavior_flag: CHECKEDCALL
+2024-06-28 03:31:06.190988 |INFO | [rumorph-progress] ErrHandleChecker::analyze(main)
+2024-06-28 03:31:06.190994 |INFO | [rumorph-progress] cleanup_bb: [1]
+2024-06-28 03:31:06.190998 |INFO | [rumorph-progress] basic block index: 0
+2024-06-28 03:31:06.191002 |INFO | [rumorph-progress] StorageLive(_1)
+2024-06-28 03:31:06.191006 |INFO | [rumorph-progress] Terminator { kind: StaticCall { callee_did: DefId(0:3 ~ error_handling[fb9b]::overflow), callee_substs: [], args: [const _], dest: _1 }, original: Terminator { source_info: SourceInfo { span: src/main.rs:18:5: 18:23 (#0), scope: scope[0] }, kind: _1 = overflow(const _) -> bb1 } }
+2024-06-28 03:31:06.191025 |INFO | [rumorph-progress] basic block index: 1
+2024-06-28 03:31:06.191029 |INFO | [rumorph-progress] StorageDead(_1)
+2024-06-28 03:31:06.191033 |INFO | [rumorph-progress] _0 = const ()
+2024-06-28 03:31:06.191037 |INFO | [rumorph-progress] Terminator { kind: Return, original: Terminator { source_info: SourceInfo { span: src/main.rs:19:2: 19:2 (#0), scope: scope[0] }, kind: return } }
+2024-06-28 03:31:06.191046 |INFO | [rumorph-progress] bug not found
+2024-06-28 03:31:06.191050 |INFO | [rumorph-progress] ErrHandle analysis finished
+2024-06-28 03:31:06.191053 |INFO | [rumorph-progress] RuMorph finished
 Error (Overflow:): Potential overflow issue in `overflow`
--> src/main.rs:1:1: 6:2
+-> src/main.rs:1:1: 15:2
 fn overflow(amount: u64) {
     if let Some(_) = [0m[32m(amount - 2)[0m.checked_add(1) {
         println!("safe!");   
+    } else {
+        println!("not safe");
     }
+    
     println!("end of overflow");
+
+    if let Some(_) = [0m[32m(amount - 1)[0m.checked_add(1) {
+        println!("safe");
+    } 
+
+    println!("end of function");
 }
 [0m
 Error (Err handling:): Potential Err Handling issue in `overflow`
--> src/main.rs:1:1: 6:2
+-> src/main.rs:1:1: 15:2
 fn overflow(amount: u64) {
-    if let [0m[31mSome(_)[0m = (amount - 2).checked_add(1) {
+    if let Some(_) = (amount - 2).checked_add(1) {
         println!("safe!");   
+    } else {
+        println!("not safe");
     }
+    
     println!("end of overflow");
+
+    if let [0m[31mSome(_)[0m = (amount - 1).checked_add(1) {
+        println!("safe");
+    } 
+
+    println!("end of function");
 }
 [0m
-2024-06-18 21:07:13.395188 |INFO | [rumorph-progress] cargo rumorph finished
+2024-06-28 03:31:06.201567 |INFO | [rumorph-progress] cargo rumorph finished

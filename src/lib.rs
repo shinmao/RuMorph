@@ -41,7 +41,14 @@ pub mod prelude;
 
 use rustc_middle::ty::TyCtxt;
 
-use crate::analysis::{BrokenLayoutChecker, UninitExposureChecker, BrokenBitPatternsChecker, UnsafeDataflowChecker, OverflowChecker, ErrHandleChecker};
+use crate::analysis::{BrokenLayoutChecker, 
+    UninitExposureChecker, 
+    BrokenBitPatternsChecker, 
+    UnsafeDataflowChecker, 
+    OverflowChecker, 
+    ErrHandleChecker,
+    TruncationChecker
+};
 use crate::log::Verbosity;
 use crate::report::ReportLevel;
 use crate::context::RuMorphCtxtOwner;
@@ -61,6 +68,7 @@ pub struct RuMorphConfig {
     pub unsafe_dataflow_enabled: bool,
     pub overflow_enabled: bool,
     pub errhandle_enabled: bool,
+    pub truncation_enabled: bool,
     pub optimize_enabled: bool,
 }
 
@@ -75,6 +83,7 @@ impl Default for RuMorphConfig {
             unsafe_dataflow_enabled: true,
             overflow_enabled: true,
             errhandle_enabled: true,
+            truncation_enabled: true,
             optimize_enabled: true,
         }
     }
@@ -154,16 +163,23 @@ pub fn analyze<'tcx>(tcx: TyCtxt<'tcx>, config: RuMorphConfig) {
     //     })
     // }
 
-    if config.overflow_enabled {
-        run_analysis("Overflow", || {
-            let checker = OverflowChecker::new(rcx);
-            checker.analyze();
-        })
-    }
+    // if config.overflow_enabled {
+    //     run_analysis("Overflow", || {
+    //         let checker = OverflowChecker::new(rcx);
+    //         checker.analyze();
+    //     })
+    // }
 
-    if config.errhandle_enabled {
-        run_analysis("ErrHandle", || {
-            let checker = ErrHandleChecker::new(rcx);
+    // if config.errhandle_enabled {
+    //     run_analysis("ErrHandle", || {
+    //         let checker = ErrHandleChecker::new(rcx);
+    //         checker.analyze();
+    //     })
+    // }
+
+    if config.truncation_enabled {
+        run_analysis("Truncation", || {
+            let checker = TruncationChecker::new(rcx);
             checker.analyze();
         })
     }

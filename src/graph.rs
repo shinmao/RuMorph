@@ -30,6 +30,7 @@ pub struct TaintAnalyzer<'a, G: Graph, T: GraphTaint> {
     len: usize,
     sources: Vec<T>,
     sinks: Vec<bool>,
+    reachable_sink: Vec<usize>,
 }
 
 impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
@@ -40,6 +41,7 @@ impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
             len: graph_len,
             sources: vec![T::default(); graph_len],
             sinks: vec![false; graph_len],
+            reachable_sink: Vec::new(),
         }
     }
 
@@ -117,7 +119,7 @@ impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
     }
 
     // Checks reachability between `self.sources` & `self.sinks`.
-    pub fn propagate(&self) -> T {
+    pub fn propagate(&mut self) -> T {
         let mut taint_state = vec![T::default(); self.len];
         let mut work_list = VecDeque::new();
 
@@ -146,11 +148,16 @@ impl<'a, G: Graph, T: GraphTaint> TaintAnalyzer<'a, G, T> {
         let mut ret = T::default();
         for id in 0..self.len {
             if self.sinks[id] && !taint_state[id].is_empty() {
+                self.reachable_sink.push(id);
                 ret.join(&taint_state[id]);
             }
         }
         
         return ret;
+    }
+
+    pub fn get_reachable_sinks(&self) -> &Vec<usize> {
+        &self.reachable_sink
     }
 }
 

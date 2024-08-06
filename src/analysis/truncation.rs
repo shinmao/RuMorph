@@ -23,15 +23,15 @@ use crate::{
 };
 
 #[derive(Debug, Snafu)]
-pub enum OverflowError {
+pub enum TruncationError {
     PushPopBlock { backtrace: Backtrace },
     ResolveError { backtrace: Backtrace },
     InvalidSpan { backtrace: Backtrace },
 }
 
-impl AnalysisError for OverflowError {
+impl AnalysisError for TruncationError {
     fn kind(&self) -> AnalysisErrorKind {
-        use OverflowError::*;
+        use TruncationError::*;
         match self {
             PushPopBlock { .. } => AnalysisErrorKind::Unreachable,
             ResolveError { .. } => AnalysisErrorKind::OutOfScope,
@@ -40,13 +40,13 @@ impl AnalysisError for OverflowError {
     }
 }
 
-pub struct OverflowChecker<'tcx> {
+pub struct TruncationChecker<'tcx> {
     rcx: RuMorphCtxt<'tcx>,
 }
 
-impl<'tcx> OverflowChecker<'tcx> {
+impl<'tcx> TruncationChecker<'tcx> {
     pub fn new(rcx: RuMorphCtxt<'tcx>) -> Self {
-        OverflowChecker { rcx }
+        TruncationChecker { rcx }
     }
 
     pub fn analyze(self) {
@@ -57,12 +57,12 @@ impl<'tcx> OverflowChecker<'tcx> {
         for (_ty_hir_id, (body_id, related_item_span)) in self.rcx.types_with_related_items() {
             
             // print the funciton name of current body
-            progress_info!("OverflowChecker::analyze({})", 
+            progress_info!("TruncationChecker::analyze({})", 
                         tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
             );
 
 
-            if let Some(status) = inner::OverflowBodyAnalyzer::analyze_body(self.rcx, body_id)
+            if let Some(status) = inner::TruncationBodyAnalyzer::analyze_body(self.rcx, body_id)
             {
                 let behavior_flag = status.behavior_flag();
                 let err = status.error_kind();
@@ -96,9 +96,9 @@ impl<'tcx> OverflowChecker<'tcx> {
                     rumorph_report(Report::with_color_span(
                         tcx,
                         behavior_flag.report_level(true),
-                        AnalysisKind::Overflow(behavior_flag),
+                        AnalysisKind::Truncation(behavior_flag),
                         format!(
-                            "Potential overflow issue in `{}` with Pattern `{}` at line `{}`",
+                            "Potential Truncation issue in `{}` with Pattern `{}` at line `{}`",
                             tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id()),
                             err,
                             lc
@@ -117,7 +117,7 @@ mod inner {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct OverflowStatus {
+    pub struct TruncationStatus {
         strong_bypasses: Vec<Span>,
         weak_bypasses: Vec<Span>,
         plain_deref: Vec<Span>,
@@ -128,7 +128,7 @@ mod inner {
         loc: usize,
     }
 
-    impl OverflowStatus {
+    impl TruncationStatus {
         pub fn behavior_flag(&self) -> BehaviorFlag {
             self.behavior_flag
         }
@@ -149,7 +149,7 @@ mod inner {
             &self.unresolvable_generic_functions
         }
 
-        // used as overflow operation here
+        // used as truncation operation here
         pub fn ty_conv_spans(&self) -> &Vec<Span> {
             &self.ty_convs
         }
@@ -163,16 +163,16 @@ mod inner {
         }
     }
 
-    pub struct OverflowBodyAnalyzer<'a, 'tcx> {
+    pub struct TruncationBodyAnalyzer<'a, 'tcx> {
         rcx: RuMorphCtxt<'tcx>,
         body: &'a ir::Body<'tcx>,
         param_env: ParamEnv<'tcx>,
-        status: OverflowStatus,
+        status: TruncationStatus,
     }
 
-    impl<'a, 'tcx> OverflowBodyAnalyzer<'a, 'tcx> {
+    impl<'a, 'tcx> TruncationBodyAnalyzer<'a, 'tcx> {
         fn new(rcx: RuMorphCtxt<'tcx>, param_env: ParamEnv<'tcx>, body: &'a ir::Body<'tcx>) -> Self {
-            OverflowBodyAnalyzer {
+            TruncationBodyAnalyzer {
                 rcx,
                 body,
                 param_env,
@@ -180,7 +180,7 @@ mod inner {
             }
         }
 
-        pub fn analyze_body(rcx: RuMorphCtxt<'tcx>, body_id: BodyId) -> Option<OverflowStatus> {
+        pub fn analyze_body(rcx: RuMorphCtxt<'tcx>, body_id: BodyId) -> Option<TruncationStatus> {
             let hir_map = rcx.tcx().hir();
             let body_did = hir_map.body_owner_def_id(body_id).to_def_id();
 
@@ -201,17 +201,20 @@ mod inner {
                     }
                     Ok(body) => {
                         let param_env = rcx.tcx().param_env(body_did);
-                        let body_analyzer = OverflowBodyAnalyzer::new(rcx, param_env, body);
+                        let body_analyzer = TruncationBodyAnalyzer::new(rcx, param_env, body);
                         Some(body_analyzer.analyze())
                     }
                 }
             }
         }
 
-        fn analyze(mut self) -> OverflowStatus {
+        fn analyze(mut self) -> TruncationStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
             // use `tainted_source` to maintain tainted external function args
             let mut tainted_source = Vec::new();
+            let mut place_size = HashMap::new();
+            let mut sliced_array_place = 0 as usize;
+            let mut rangefull_place = 0 as usize;
 
             let mut error_kind_map = HashMap::new();
             let mut sink_loc_map = HashMap::new();
@@ -220,92 +223,37 @@ mod inner {
             for arg_idx in 1usize..self.body.original.arg_count + 1 {
                 // progress_info!("external as source: {:?}", arg_idx);
                 tainted_source.push(arg_idx);
-                taint_analyzer.mark_source(arg_idx, &BehaviorFlag::EXTERNAL);
+            }
+
+            for local in self.body.original.args_iter() {
+                let local_decl = &self.body.original.local_decls[local];
+                let ty = get_pointee(local_decl.ty);
+
+                if let Ok(layout) = self.rcx.tcx().layout_of(self.param_env.and(ty)) {
+                    let size = layout.size.bytes();
+                    println!("Parameter {:?} with idx {:?} size: {} bytes", local, local.index(), size);
+                    place_size.insert(local.index(), size);
+                } else {
+                    println!("Failed to get layout for parameter {:?}", local);
+                }
             }
 
             for statement in self.body.statements() {
-                // statement here is mir::Statement without translation
-                // while iterating statements, we plan to mark ty conv as source / plain deref as sink
-                let sp = statement.source_info.span;
-                let sm = self.rcx.tcx().sess.source_map();
-                let loc = sm.lookup_char_pos(sp.lo()).line;
+                progress_info!("kind: {:?} -> {:?}", statement.kind, statement);
                 match statement.kind {
                     StatementKind::Assign(box (lplace, rval)) => {
                         match rval {
-                            Rvalue::Cast(cast_kind, op, to_ty) => {
-                                match cast_kind {
-                                    CastKind::IntToInt | CastKind::FloatToInt | CastKind::FloatToFloat | CastKind::IntToFloat | CastKind::Transmute => {
-                                        let f_ty = get_ty_from_op(self.body, self.rcx, &op);
-                                        match f_ty {
-                                            Ok(from_ty) => {
-                                                let lc = LayoutChecker::new(self.rcx, self.param_env, from_ty, to_ty);
-                                                let align_status = lc.get_align_status();
-
-                                                let pl = get_place_from_op(&op);
-                                                match pl {
-                                                    Ok(place) => {
-                                                        let id = place.local.index();
-
-                                                        // if A's align < B's align, taint as source
-                                                        match align_status {
-                                                            Comparison::Greater => {
-                                                                let id2 = lplace.local.index();
-                                                                taint_analyzer.mark_sink(id2);
-                                                                error_kind_map.insert(id2, "downcast");
-                                                                sink_loc_map.insert(id2, loc);
-                                                                self.status
-                                                                    .ty_convs
-                                                                    .push(statement.source_info.span);
-                                                            },
-                                                            _ => {},
-                                                        }
-                                                    },
-                                                    Err(_e) => {},
-                                                }
-                                            },
-                                            Err(_e) => {},
-                                        }
-                                    },
-                                    _ => {},
-                                }
+                            Rvalue::Use(op) => {
+                                progress_info!("use {:?}", op);
                             },
-                            Rvalue::BinaryOp(op, box (op1, op2))
-                            | Rvalue::CheckedBinaryOp(op, box (op1, op2)) => {
-                                match op {
-                                    BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div => {
-                                        if ( op1.ty(self.body, self.rcx.tcx()).is_numeric() ) {
-                                            // check whether op1 belongs to func args
-                                            let id1 = op1.place();
-                                            if let Some(idx) = id1 {
-                                                let idx1 = idx.local.index();
-                                                if tainted_source.contains(&(idx1 as usize)) {
-                                                    if let Operand::Constant(_) = op1 {
-                                                        // if external function arg is constant, then clear the source
-                                                        taint_analyzer.clear_source(idx1);
-                                                    }
-                                                }
-                                            }
-                                        } 
-                                        if ( op2.ty(self.body, self.rcx.tcx()).is_numeric() ) {
-                                            let id2 = op2.place();
-                                            if let Some(idx) = id2 {
-                                                let idx2 = idx.local.index();
-                                                if tainted_source.contains(&(idx2 as usize)) {
-                                                    if let Operand::Constant(_) = op2 {
-                                                        taint_analyzer.clear_source(idx2);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        let idx = lplace.local.index();
-                                        taint_analyzer.mark_sink(idx);
-                                        error_kind_map.insert(idx, "unsafeop");
-                                        sink_loc_map.insert(idx, loc);
-                                        self.status
-                                            .ty_convs
-                                            .push(statement.source_info.span);
-                                    },
-                                    _ => {},
+                            Rvalue::Repeat(op, _) => {
+                                progress_info!("use {:?}", op);
+                            },
+                            Rvalue::Aggregate(box aggregate_kind, operands) => {
+                                if let AggregateKind::Adt(def_id, variant_idx, _, _, _) = aggregate_kind {
+                                    if is_range_full(self.rcx, def_id) {
+                                        rangefull_place = lplace.local.index();
+                                    }
                                 }
                             },
                             _ => {},
@@ -331,21 +279,61 @@ mod inner {
                         // TyCtxtExtension
                         let ext = tcx.ext();
                         let symbol_vec = ext.get_def_path(*callee_did);
+                        progress_info!("here is symbol: {:?}", symbol_vec);
                         let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
-                        // let z = x.pow(y);
-                        // we will taint z as sink
-                        if sym.contains("pow") && !sym.contains("checked_") {
-                            let id = dest.local.index();
-                            taint_analyzer.mark_sink(id);
-                            error_kind_map.insert(id, "unsafeopcall");
-                            sink_loc_map.insert(id, loc);
+                        
+                        // e.g., copy_from_slice
+                        // requires the source and dest buffer have the same size
+                        // to make sure whether the original size of source buffer is larger than dest buffer
+                        // we need to detect whether source buffer is sliced
+                        if sym.contains("copy_") {
+                            if let [dst, src] = &args[..] {
+                                if let Some(src_place) = src.place() {
+                                    let src_idx = src_place.local.index();                                        
+                                    if sliced_array_place != 0 && taint_analyzer.is_reachable(sliced_array_place, src_idx) {
+                                        progress_info!("ts idx: {:?} -> src idx: {:?}", sliced_array_place, src_idx);
+                                        // if let (src_ty, dst_ty) = (src.ty(&self.body.original, self.rcx.tcx()), dst.ty(&self.body.original, self.rcx.tcx())) {
+                                            
+                                        //     let src_layout = self.rcx.tcx().layout_of(self.param_env.and(src_ty)).unwrap();
+                                        //     let dst_layout = self.rcx.tcx().layout_of(self.param_env.and(dst_ty)).unwrap();
+
+                                        //     let src_size = src_layout.size.bytes();
+                                        //     let dst_size = dst_layout.size.bytes();
+
+                                        //     if let Some(src_decl_size) = place_size.get(ts) {
+                                        //         if src_decl_size > &src_size {
+                                        //             progress_info!("{:?} -> {:?}", src_decl_size, src_size);
+                                        //             taint_analyzer.mark_at_once(src_idx, &BehaviorFlag::EXTERNAL);
+                                        //             error_kind_map.insert(src_idx, "copycall");
+                                        //             sink_loc_map.insert(src_idx, loc);
+                                        //         }
+                                        //     }
+                                        // }
+                                        // Here, if we found that the source buffer is sliced, we consider it copy from larger-sized buffer
+                                        taint_analyzer.mark_at_once(src_idx, &BehaviorFlag::EXTERNAL);
+                                        error_kind_map.insert(src_idx, "copycall");
+                                        sink_loc_map.insert(src_idx, loc);
+                                    }
+                                }
+                            }                            
+                        } else if sym.contains("index") {
+                            if let [buf, idx] = &args[..] {
+                                for ts in &tainted_source {
+                                    if let Some(buf_place) = buf.place() {
+                                        let buf_idx = buf_place.local.index();
+                                        if let Some(idx_place) = idx.place() {
+                                            let idx = idx_place.local.index();
+                                            if taint_analyzer.is_reachable(*ts, buf_idx) {
+                                                if !taint_analyzer.is_reachable(rangefull_place, idx) && rangefull_place != 0 {
+                                                    progress_info!("ts idx: {:?} -> buf idx: {:?}", *ts, buf_idx);
+                                                    sliced_array_place = buf_idx;   
+                                                }                                  
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    },
-                    ir::TerminatorKind::SwitchInt {
-                        discr,
-                        targets
-                    } => {
-                        // progress_info!("{:?}, {:?}", discr, targets);
                     },
                     _ => {},
                 }
@@ -360,13 +348,11 @@ mod inner {
                 self.status.error = match error_kind_map.get(sink) {
                     Some(err) => {
                         match *err {
-                            "downcast" => 1,
-                            "unsafeop" => 2,
-                            "unsafeopcall" => 3,
-                            _ => 4,
+                            "copycall" => 1,
+                            _ => 2,
                         }
                     },
-                    _ => 4,
+                    _ => 2,
                 };
                 // 0 represent not able to get line number
                 self.status.loc = match sink_loc_map.get(sink) {
@@ -400,45 +386,26 @@ mod inner {
     }
 }
 
-// check whether both from_ty and to_ty are pointer types
-fn is_ptr_ty<'tcx>(from_ty: Ty<'tcx>, to_ty: Ty<'tcx>) -> bool {
-    // (from_ty|to_ty) needs to be raw pointer or reference
-    let is_fty_ptr = if let ty::RawPtr(_) = from_ty.kind() {
-        true
-    } else if let ty::Ref(..) = from_ty.kind() {
-        true
+fn is_range_full<'tcx>(rcx: RuMorphCtxt<'tcx>, def_id: DefId) -> bool {
+    let range_full = rcx.tcx().lang_items().range_full_struct();
+    if let Some(range_full_id) = range_full {
+        def_id == range_full_id
     } else {
         false
-    };
-    let is_tty_ptr = if let ty::RawPtr(_) = to_ty.kind() {
-        true
-    } else if let ty::Ref(..) = to_ty.kind() {
-        true
-    } else {
-        false
-    };
-    (is_fty_ptr & is_tty_ptr)
-}
-
-fn get_place_from_op<'tcx>(op: &Operand<'tcx>) -> Result<Place<'tcx>, &'static str> {
-    match op {
-        Operand::Copy(place) | Operand::Move(place) => {
-            Ok(*place)
-        },
-        _ => { Err("Can't get place from operand") },
     }
 }
 
-fn get_ty_from_op<'tcx>(bd: &ir::Body<'tcx>, rcx: RuMorphCtxt<'tcx>, op: &Operand<'tcx>) -> Result<Ty<'tcx>, &'static str> {
-    match op {
-        Operand::Copy(place) | Operand::Move(place) => {
-            Ok(place.ty(bd, rcx.tcx()).ty)
-        },
-        Operand::Constant(box cnst) => {
-            Ok(cnst.ty())
-        },
-        _ => { Err("Can't get ty from place") },
-    }
+// get the pointee or wrapped type
+fn get_pointee(matched_ty: Ty<'_>) -> Ty<'_> {
+    // progress_info!("get_pointee: > {:?} as type: {:?}", matched_ty, matched_ty.kind());
+    let pointee = if let ty::RawPtr(ty_mut) = matched_ty.kind() {
+        get_pointee(ty_mut.ty)
+    } else if let ty::Ref(_, referred_ty, _) = matched_ty.kind() {
+        get_pointee(*referred_ty)
+    } else {
+        matched_ty
+    };
+    pointee
 }
 
 // Type Conversion Kind.

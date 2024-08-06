@@ -4,6 +4,7 @@ use rustc_middle::mir::RETURN_PLACE;
 use rustc_middle::ty::{self, Ty, Instance, ParamEnv, TyKind};
 use rustc_span::{Span, DUMMY_SP};
 
+use std::collections::HashMap;
 use snafu::{Backtrace, Snafu};
 use termcolor::Color;
 
@@ -64,6 +65,8 @@ impl<'tcx> ErrHandleChecker<'tcx> {
             if let Some(status) = inner::ErrHandleBodyAnalyzer::analyze_body(self.rcx, body_id)
             {
                 let behavior_flag = status.behavior_flag();
+                let err = status.error_kind();
+                let lc = status.get_error_loc();
                 if !behavior_flag.is_empty()
                     //&& behavior_flag.report_level() >= self.rcx.report_level()
                 {
@@ -89,8 +92,10 @@ impl<'tcx> ErrHandleChecker<'tcx> {
                         behavior_flag.report_level(true),
                         AnalysisKind::ErrHandle(behavior_flag),
                         format!(
-                            "Potential Err Handling issue in `{}`",
-                            tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id())
+                            "Potential Err Handling issue in `{}` with Pattern `{}` at line `{}`",
+                            tcx.def_path_str(hir_map.body_owner_def_id(body_id).to_def_id()),
+                            err,
+                            lc
                         ),
                         &color_span,
                     ))
@@ -114,6 +119,8 @@ mod inner {
         ty_convs: Vec<Span>,
         branch_handles: Vec<Span>,
         behavior_flag: BehaviorFlag,
+        error: usize,
+        loc: usize,
     }
 
     impl ErrHandleStatus {
@@ -143,6 +150,14 @@ mod inner {
 
         pub fn branch_handle_spans(&self) -> &Vec<Span> {
             &self.branch_handles
+        }
+
+        pub fn error_kind(&self) -> usize {
+            self.error
+        }
+
+        pub fn get_error_loc(&self) -> usize {
+            self.loc
         }
     }
 
@@ -194,7 +209,15 @@ mod inner {
         fn analyze(mut self) -> ErrHandleStatus {
             let mut taint_analyzer = TaintAnalyzer::new(self.body);
 
+            let mut error_kind_map = HashMap::new();
+            let mut sink_loc_map = HashMap::new();
+
             let mut checked_idx = usize::MAX;
+
+            // used to store immediate function call for tainted status
+            let mut immediate_status = Vec::new();
+
+            let mut checked_source = Vec::new();
 
             let mut cleanup_bb = Vec::new();
             let mut idx = 0;
@@ -219,8 +242,12 @@ mod inner {
                 idx = idx + 1;
             }
 
+            // lookup_char_pos
+
             for (bb_idx, terminator) in self.body.terminators().enumerate() {
-                // progress_info!("terminator: {:?}", terminator);
+                let sp = terminator.original.source_info.span;
+                let sm = self.rcx.tcx().sess.source_map();
+                let loc = sm.lookup_char_pos(sp.lo()).line;
                 match &terminator.kind {
                     ir::TerminatorKind::StaticCall {
                         callee_did,
@@ -237,18 +264,35 @@ mod inner {
                         let sym = symbol_vec[ symbol_vec.len() - 1 ].as_str();
                         // checked_* return Option
                         // expect, ok_or, ok_or_else, map, map_or, map_or_else, unwrap, unwrap_or..
+                        
+                        let id = dest.local.index();
                         if sym.contains("checked_") {
-                            let id = dest.local.index();
                             taint_analyzer.mark_source(id, &BehaviorFlag::CHECKEDCALL);
                             checked_idx = bb_idx;
+                            checked_source.push(id);
                         } 
+
+                        // unwrap_or -> error handling -> clear source -> not alarm
+                        // wnwrap_or -> error handling -> panic -> alarm
                         
-                        // if sym.contains("expect") || sym.contains("ok_or") || 
-                        //     sym.contains("map") || sym.contains("unwrap") ||
-                        //     sym.contains("is_some") {
-                        //     let id = dest.local.index();
-                        //     taint_analyzer.mark_sink(id);
-                        // }
+                        // at the end, we will clear the place id in immediate_status since it is handled
+                        if sym.contains("map") || sym.contains("unwrap_or") || sym.contains("ok_or") {
+                            immediate_status.push(id);
+                        }
+
+                        if !checked_source.is_empty() {
+                            if sym.contains("panic") || sym.contains("expect") {
+                                // only if panic/expect after checked* doesn't handle error correctly
+                                // use mark_at_once since there is no dataflow relationship, but only control flow
+                                taint_analyzer.mark_at_once(id, &BehaviorFlag::CHECKEDCALL);
+                                error_kind_map.insert(id, "panic");
+                                sink_loc_map.insert(id, loc);
+                                self.status
+                                    .branch_handles
+                                    .push(terminator.original.source_info.span);
+                                immediate_status.clear();
+                            }
+                        }
                     },
                     ir::TerminatorKind::SwitchInt {
                         discr,
@@ -288,6 +332,8 @@ mod inner {
                                     Operand::Copy(pl) | Operand::Move(pl) => {
                                         let id = pl.local.index();
                                         taint_analyzer.mark_sink(id);
+                                        error_kind_map.insert(id, "ignore");
+                                        sink_loc_map.insert(id, loc);
                                         self.status
                                             .branch_handles
                                             .push(terminator.original.source_info.span);
@@ -301,7 +347,37 @@ mod inner {
                 }
             }
 
+            // if already visiting all terminators
+            // there is unwrap/ok/map, but not find panic/expect to handle it
+            // then error is handled correctly and should not alarm
+            if !immediate_status.is_empty() {
+                progress_info!("clear source!! not alarm!!");
+                for src_id in immediate_status {
+                    taint_analyzer.clear_source(src_id);
+                }
+            }
+
             self.status.behavior_flag = taint_analyzer.propagate();
+            
+            // there are two kinds of error stored in error_kind_map: ignore and panic
+            for sink in taint_analyzer.get_reachable_sinks() {
+                self.status.error = match error_kind_map.get(sink) {
+                    Some(err) => {
+                        match *err {
+                            "panic" => 3,
+                            "ignore" => 1,
+                            _ => 4,
+                        }
+                    },
+                    _ => 4,
+                };
+                // 0 represent not able to get line number
+                self.status.loc = match sink_loc_map.get(sink) {
+                    Some(lc) => *lc,
+                    _ => 0,
+                };
+            }
+
             self.status
         }
     }
@@ -337,7 +413,7 @@ fn is_subarray(sub: &[usize], arr: &[usize]) -> bool {
     }
 
     for i in 0..=(arr.len() - sub.len()) {
-        if (&arr[i..i + sub.len()] == sub) && (sub.len() > 2) {
+        if (&arr[i..i + sub.len()] == sub) && (sub.len() > 3) {
             return true;
         }
     }
